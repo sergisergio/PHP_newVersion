@@ -28,9 +28,9 @@ class LoginController extends Controller
                 $this->msg->error("Identifiant ou mot de passe incorrect !", $this->getUrl());
             } else {
                 // if role = 1, run admin session, else, run user session
-                if (isset($_SESSION['loginToken']) AND isset($_POST['loginToken']) AND !empty($_SESSION['loginToken']) AND !empty($_POST['loginToken'])) {
+                //if (isset($_SESSION['loginToken']) AND isset($_POST['loginToken']) AND !empty($_SESSION['loginToken']) AND !empty($_POST['loginToken'])) {
                     // On vérifie que les deux correspondent
-                    if ($_SESSION['loginToken'] == $_POST['loginToken']) {
+                    //if ($_SESSION['loginToken'] == $_POST['loginToken']) {
                         if ($userExist && $userExist['roles'] == 1) {
                             $_SESSION['admin'] = $userExist;
                             header('Location: ' . '?c=adminDashboard');
@@ -40,11 +40,11 @@ class LoginController extends Controller
                             header('Location: ' . '?c=blog');
                             exit;
                         }
-                    }
-                    else {
-                        $this->msg->error("Une erreur s'est produite", $this->getUrl());
-                    }
-                }
+                    //}
+                    //else {
+                        //$this->msg->error("Une erreur s'est produite", $this->getUrl());
+                    //}
+                //}
             }
         }
 
@@ -101,9 +101,12 @@ class LoginController extends Controller
                         if ($this->userModel->setUser($data)) {
                         //TODO: redirect to "my account"
                             $this->msg->success("Compte créé", $this->getUrl());
+                            header('Location: ' . '?c=blog');
+                            exit;
                         } else {
                             $this->msg->error("Une erreur s'est produite", $this->getUrl());
                         }
+
                     //}
                     //var_dump($_SESSION['registerToken']);
                     //var_dump($_POST['registerToken']);

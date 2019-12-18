@@ -1,6 +1,6 @@
 <?php
 namespace Controllers;
-//use Models\Comments;
+use Models\Comment;
 use \Twig_Loader_Filesystem;
 use \Twig_Environment;
 use Models\Model;
@@ -20,7 +20,7 @@ class Controller
     protected $blogModel;
     protected $skillModel;
     protected $userModel;
-    protected $commentsModel;
+    protected $commentModel;
     protected $descriptionModel;
     protected $msg;
     function __construct()
@@ -47,7 +47,7 @@ class Controller
         $this->userModel = new User;
         $this->descriptionModel = new Description;
         $this->registerService = new Register;
-        //$this->commentsModel = new Comments;
+        $this->commentModel = new Comment;
     }
     // Redirect to the 404 error page
     protected function redirect404() {

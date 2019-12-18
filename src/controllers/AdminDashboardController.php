@@ -3,15 +3,45 @@ namespace Controllers;
 class AdminDashboardController extends AdminController
 {
     /*
-     * Show the dashboard
+     * Show the dashboard with posts
      */
     public function index() {
-        $config = $this->model->getConfig();
-        $users = $this->userModel->getAllUsers();
+        //$config = $this->model->getConfig();
+        //$users = $this->userModel->getAllUsers();
+        $posts = $this->blogModel->getAllPostsWithUsers();
         echo $this->twig->render('admin/dashboard/index.html.twig', [
-            'config'    => $config,
+            //'config'    => $config,
             'message'   => $this->msg,
-            'users'     => $users
+            //'users'     => $users,
+            'posts'     => $posts
+        ]);
+    }
+    /*
+     * Show the dashboard with users
+     */
+    public function users() {
+        //$config = $this->model->getConfig();
+        $users = $this->userModel->getAllUsers();
+        //$posts = $this->blogModel->getAllPostsWithUsers();
+        echo $this->twig->render('admin/dashboard/users.html.twig', [
+            //'config'    => $config,
+            'message'   => $this->msg,
+            'users'     => $users,
+            //'posts'     => $posts
+        ]);
+    }
+    /*
+     * Show the dashboard with users
+     */
+    public function comments() {
+        //$config = $this->model->getConfig();
+        $comments = $this->commentModel->getAllComments();
+        //$posts = $this->blogModel->getAllPostsWithUsers();
+        echo $this->twig->render('admin/dashboard/comments.html.twig', [
+            //'config'    => $config,
+            'message'   => $this->msg,
+            'comments'     => $comments,
+            //'posts'     => $posts
         ]);
     }
     /**
@@ -76,6 +106,82 @@ class AdminDashboardController extends AdminController
             }
         } else {
             $this->msg->error("Erreur lors de l'envoie des données", $this->getUrl(true));
+        }
+    }
+
+    public function addPost() {
+        $title = htmlspecialchars($_POST['title']);
+        $content =  htmlspecialchars($_POST['content'], ENT_HTML5);
+        $user_id = $_SESSION['admin']['id'];
+        $data = [
+                    'title'         => $title,
+                    'content'       => $content,
+                    'user_id'       => $user_id,
+                    'published'     => 1
+                ];
+        $this->blogModel->setPost($data);
+        header('Location: ' . '?c=adminDashboard');
+        exit;
+        /*if ($this->blogModel->setPost($data)) {
+            $this->msg->success('L\'article a bien été ajouté !', $this->getUrl());
+        } else {
+            $this->msg->error('L\'article n\'a pas pu être ajouté.', $this->getUrl());
+        }*/
+    }
+
+    public function deletePost() {
+        // if method is "post" and if the blog post exist => remove the blog post + comment + image
+        // TODO: remove comments
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if (isset($_POST['postId']) && $post = $this->blogModel->getPostById($_POST['postId'])) {
+
+                //$image = $post['image'];
+                //$path = 'assets/img/uploads/';
+
+                // remove image
+                //$this->removeImage($image, $path);
+
+                if ($this->blogModel->deletePost($post['id'])) {
+                    $this->msg->success("L'article a bien été supprimé", $this->getUrl());
+                } else {
+                    $this->msg->error("L'article n'a pas pu être supprimé", $this->getUrl());
+                }
+            } else {
+                //redirect to the list of blog posts
+                $this->msg->error("L'article n'existe pas", $this->getUrl());
+            }
+        } else {
+            //redirect to the list of blog posts
+            header('Location: ?c=adminDashboard');
+            exit;
+        }
+    }
+
+    public function deleteUser() {
+        // if method is "post" and if the blog post exist => remove the blog post + comment + image
+        // TODO: remove comments
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if (isset($_POST['userId']) && $post = $this->userModel->getUserById($_POST['postId'])) {
+
+                //$image = $post['image'];
+                //$path = 'assets/img/uploads/';
+
+                // remove image
+                //$this->removeImage($image, $path);
+
+                if ($this->userModel->deleteUser($user['id'])) {
+                    $this->msg->success("Le membre a bien été supprimé", $this->getUrl());
+                } else {
+                    $this->msg->error("Le membre n'a pas pu être supprimé", $this->getUrl());
+                }
+            } else {
+                //redirect to the list of blog posts
+                $this->msg->error("Le membre n'existe pas", $this->getUrl());
+            }
+        } else {
+            //redirect to the list of blog posts
+            header('Location: ?c=adminDashboard&t=users');
+            exit;
         }
     }
 }

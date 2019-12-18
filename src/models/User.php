@@ -71,4 +71,29 @@ class User extends Model
         $req->execute();
         return $req->rowCount();
     }
+
+    /**
+     * @param $id
+     * @return mixed
+     *
+     * get user based on his id
+     */
+    public function getUserById ($id) {
+        $req = $this->db->prepare('SELECT * FROM user WHERE id = :id LIMIT 1');
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * @param int $id
+     * @return bool
+     *
+     * delete a user
+     */
+    public function deleteUser(int $id) {
+        $req = $this->db->prepare('DELETE FROM user WHERE id = :id LIMIT 1');
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
+        return $req->execute();
+    }
 }

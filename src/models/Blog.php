@@ -10,14 +10,12 @@ class Blog extends Model
      */
     public function setPost($data) {
         $req = $this->db->prepare('
-            INSERT INTO posts (title, subtitle, content, date_add, image, active, id_user)
-            VALUES (:title, :subtitle, :content, NOW(), :image, :active, :id_user)');
+            INSERT INTO posts (title, content, created_at, user_id, published)
+            VALUES (:title, :content, NOW(), :user_id, :published)');
         $req->bindValue(':title', $data['title'], \PDO::PARAM_STR);
-        $req->bindValue(':subtitle', $data['subtitle'], \PDO::PARAM_STR);
         $req->bindValue(':content', $data['content'], \PDO::PARAM_LOB);
-        $req->bindValue(':image', $data['image'], \PDO::PARAM_STR);
-        $req->bindValue(':active', $data['active'], \PDO::PARAM_BOOL);
-        $req->bindValue(':id_user', $data['id_user'], \PDO::PARAM_INT);
+        $req->bindValue(':user_id', $data['user_id'], \PDO::PARAM_INT);
+        $req->bindValue(':published', $data['published'], \PDO::PARAM_INT);
         return $req->execute();
     }
     /**
@@ -28,8 +26,8 @@ class Blog extends Model
      */
     public function getPostById($id) {
         $req = $this->db->prepare('
-                          SELECT p.id, p.title, p.subtitle, p.content, p.image, p.active, p.date_add, p.date_update, u.name as author
-                          FROM posts p INNER JOIN users u on p.id_user = u.id
+                          SELECT p.id, p.title, p.content, p.published, p.created_at, u.username as author
+                          FROM posts p INNER JOIN user u on p.user_id = u.id
                           WHERE p.id = :id');
         $req->bindValue(':id', $id, \PDO::PARAM_INT);
         $req->execute();
@@ -71,8 +69,10 @@ class Blog extends Model
      */
     public function getPostsPagination($this_page_first_result, $results_per_page) {
         $req = $this->db->prepare('
-                          SELECT p.id, p.title, /*p.subtitle,*/ p.content, /*p.image,*/ p.published, p.created_at, /*p.date_update,*/ u.username as author
-                          FROM posts p INNER JOIN user u on p.user_id = u.id
+                          SELECT p.id, p.title, p.content, p.published, p.created_at, u.username as author, i.url as image
+                          FROM posts p
+                          INNER JOIN user u on p.user_id = u.id
+                          INNER JOIN image i on p.img_id = i.id
                           LIMIT :first_page, :results_per_page');
         $req->bindParam(':first_page', $this_page_first_result, \PDO::PARAM_INT);
         $req->bindParam(':results_per_page', $results_per_page, \PDO::PARAM_INT);
@@ -81,8 +81,11 @@ class Blog extends Model
     }
     public function getAllPostsWithUsers() {
         $req = $this->db->prepare('
-                          SELECT p.id, p.title, /*p.subtitle,*/ p.content, /*p.image,*/ p.published, p.created_at, /*p.date_update,*/ u.username as author
-                          FROM posts p INNER JOIN user u on p.user_id = u.id');
+                          SELECT p.id, p.title, p.content, p.published, p.created_at, u.username as author, i.url as image
+                          FROM posts p
+                          INNER JOIN user u on p.user_id = u.id
+                          INNER JOIN image i on p.img_id = i.id
+                          ');
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
