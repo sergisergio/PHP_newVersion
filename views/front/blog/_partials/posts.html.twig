@@ -1,0 +1,63 @@
+<div class="container inner">
+    <div class="blog list-view row">
+        <div class="col-md-8 col-sm-12 content">
+            <div class="blog-posts">
+                <div class="box" style="margin-bottom: 50px;">
+                    <div class="count">
+                        <h3> {{ number }} articles</h3>
+                    </div>
+                </div>
+                <!-- début boucle -->
+                {% for post in posts %}
+                <div class="post box">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <figure class="frame"><a href="#">
+                                    <div class="text-overlay">
+                                        <div class="info"><span>Voir plus</span></div>
+                                    </div>
+                                    <img src="img/b1-1.jpg" alt="" />
+                                </a></figure>
+                        </div>
+                        <!-- /column -->
+                        <div class="col-sm-7 post-content">
+                            <div class="meta">
+                                <span class="category">
+                                    Boucle catégories- Afficher catégorie
+                                </span>
+                                <span class="date">Date</span>
+                                <span class="comments"><a href="#">Nombre de commentaires <i class="icon-chat-1"></i></a></span>
+                            </div>
+                            <h2 class="post-title"><a href="">{{ post.title|e }}</a></h2>
+                            {{ post.content|slice(0,100)|raw }}
+                        </div>
+                        <!-- /column -->
+                    </div>
+                    <!-- /.row -->
+                </div>
+                {% endfor %}
+                <!-- fin boucle -->
+            </div>
+            <!-- /.blog-posts -->
+            <div class="pagination box">
+                <ul>
+                    <li><a href="#" class="btn">Prev</a></li>
+                    <li class="active"><a href="#" class="btn"><span>1</span></a></li>
+                    <li><a href="#" class="btn"><span>2</span></a></li>
+                    <li><a href="#" class="btn"><span>3</span></a></li>
+                    <li><a href="#" class="btn">Next</a></li>
+                </ul>
+            </div>
+            <!-- /.pagination -->
+            <div class="pagination box">
+                <div class="navigation">
+                    Pagination
+                </div>
+            </div>
+        </div>
+        <!-- /.content -->
+        {{ include('front/blog/_partials/aside.html.twig')}}
+        <!-- /column .sidebar -->
+    </div>
+    <!-- /.blog -->
+</div>

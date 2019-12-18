@@ -1,0 +1,14 @@
+/config/Config.php
+/config/Db.php
+
+/vendor/
+
+/build/
+/data/
+/var/
+
+.php_cs.cache
+.idea/
+.DS_Store
+
+.behat.yml

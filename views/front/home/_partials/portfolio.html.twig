@@ -1,0 +1,34 @@
+<section id="portfolio" class="portfolio">
+    <div class="box">
+        <h2 class="section-title pull-left">Projets</h2>
+        <div id="filters-container" class="cbp-l-filters-alignRight pull-right">
+            <div data-filter="*" class="cbp-filter-item-custom-active cbp-filter-item-custom btn">Tous</div>
+            {% for category in categories %}
+            <div data-filter=".{{ category.name }}" class="cbp-filter-item-custom btn">{{ category.name }}</div>
+            {% endfor %}
+            <!--<div data-filter=".integration" class="cbp-filter-item-custom btn">Maquettes</div>-->
+        </div>
+        <!-- /#filters-container -->
+        <div class="clearfix"></div>
+        <div id="grid-container" class="cbp-l-grid-masonry">
+            <ul>
+                {% for project in projects %}
+                <li class="cbp-item frame {{ project.name }}"> <a class="cbp-caption cbp-singlePage" href="{{ project.link}}">
+                        <div class="cbp-caption-defaultWrap"> <img src="{{ project.url}}" alt="" style="{{ project.style  }}"> </div>
+                        <div class="cbp-caption-activeWrap">
+                            <div class="cbp-l-caption-alignCenter">
+                                <div class="cbp-l-caption-body">
+                                    <div class="cbp-l-caption-title">{{ project.title }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- /.cbp-l-grid-masonry -->
+        <div class="cbp-l-loadMore-button"> <a href="front/home/_partials/more/port1-more.html.twig" class="cbp-l-loadMore-button-link btn">VOIR PLUS</a> </div>
+    </div>
+    <!-- /.box -->
+</section>

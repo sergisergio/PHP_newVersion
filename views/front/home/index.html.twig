@@ -1,0 +1,23 @@
+{% extends "./base.html.twig" %}
+
+{% block header %}{{ include('front/home/_partials/header.html.twig') }}{% endblock %}
+
+{# Main content #}
+{% block main %}
+
+    <!-- About Portfolio -->
+    {% include 'front/home/_partials/portfolio.html.twig' %}
+
+    <!-- About Section -->
+    {% include 'front/home/_partials/about.html.twig' %}
+
+    <!-- About Skills -->
+    {% include 'front/home/_partials/skills.html.twig' %}
+
+    <!-- Contact Section -->
+    {% include 'front/home/_partials/contact.html.twig' %}
+
+{% endblock %}
+
+{% block js %}
+{% endblock %}

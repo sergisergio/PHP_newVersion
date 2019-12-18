@@ -1,0 +1,27 @@
+# On suit les liens symboliques
+Options +FollowSymlinks -MultiViews
+
+
+<IfModule mod_rewrite.c>
+# Activation du mod rewrite d'Apache
+RewriteEngine On
+RewriteBase /newVersion/
+
+# Options -Indexes
+
+# ErrorDocument 404 /views/404.html
+
+
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Réécriture de l'URL principale
+RewriteRule ^index.php/accueil$ index.php [QSA,L]
+# Réécriture de l'URL du blog
+RewriteRule ^blog$ index.php?c=blog [QSA,L]
+# Réécriture de l'URL de la partie admin
+RewriteRule ^admin$ index.php?c=admin [QSA,L]
+
+</IfModule>
+

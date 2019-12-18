@@ -1,0 +1,11 @@
+<?php
+namespace Config;
+final class Config
+{
+    // Identifiants Database
+    const
+        DB_HOST = 'localhost',
+        DB_NAME = 'PORTFOLIO',
+        DB_USR = 'root',
+        DB_PWD = 'root';
+}
