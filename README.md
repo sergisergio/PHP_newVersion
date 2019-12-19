@@ -1,1 +1,1 @@
-# newVersion
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/sergisergio/newVersion/badges/quality-score.png?b=master&s=172ec20cb176a088de4f3b7a6d3ec60390113093)](https://scrutinizer-ci.com/g/sergisergio/newVersion/?branch=master)
