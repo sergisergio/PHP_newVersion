@@ -1,51 +1,64 @@
 <?php
+
 namespace Controllers;
+
+/**
+ * CLASSE GERANT LA PARTIE ADMIN
+ */
 class AdminDashboardController extends AdminController
 {
     /*
-     * Show the dashboard with posts
+     * AFFICHER LES ARTICLES
      */
     public function index() {
-        //$config = $this->model->getConfig();
-        //$users = $this->userModel->getAllUsers();
         $posts = $this->blogModel->getAllPostsWithUsers();
         echo $this->twig->render('admin/dashboard/index.html.twig', [
-            //'config'    => $config,
             'message'   => $this->msg,
-            //'users'     => $users,
             'posts'     => $posts
         ]);
     }
     /*
-     * Show the dashboard with users
+     * AFFICHER LES MEMBRES
      */
     public function users() {
-        //$config = $this->model->getConfig();
         $users = $this->userModel->getAllUsers();
-        //$posts = $this->blogModel->getAllPostsWithUsers();
         echo $this->twig->render('admin/dashboard/users.html.twig', [
-            //'config'    => $config,
             'message'   => $this->msg,
-            'users'     => $users,
-            //'posts'     => $posts
+            'users'     => $users
         ]);
     }
     /*
-     * Show the dashboard with users
+     * AFFICHER LES CATEGORIES
+     */
+    public function categories() {
+        $categories = $this->categoryModel->getAllCategories();
+        echo $this->twig->render('admin/dashboard/categories.html.twig', [
+            'message'   => $this->msg,
+            'categories'     => $categories
+        ]);
+    }
+    /*
+     * AFFICHER LES COMMENTAIRES
      */
     public function comments() {
-        //$config = $this->model->getConfig();
         $comments = $this->commentModel->getAllComments();
-        //$posts = $this->blogModel->getAllPostsWithUsers();
         echo $this->twig->render('admin/dashboard/comments.html.twig', [
-            //'config'    => $config,
             'message'   => $this->msg,
-            'comments'     => $comments,
-            //'posts'     => $posts
+            'comments'     => $comments
+        ]);
+    }
+    /*
+     * AFFICHER LES TAGS
+     */
+    public function tags() {
+        $tags = $this->tagModel->getAllTags();
+        echo $this->twig->render('admin/dashboard/tags.html.twig', [
+            'message'   => $this->msg,
+            'tags'     => $tags
         ]);
     }
     /**
-     * Update the config
+     * METTRE A JOUR LA CONFIGURATION
      */
     public function editConfig() {
         // if it's a post method & edit_config is submitted & ppp value is not empty, then update the config, else, redirect to a 404 error page
@@ -70,7 +83,7 @@ class AdminDashboardController extends AdminController
         }
     }
     /**
-     * Upgrade or downgrade user role
+     * METTRE A JOUR UN MEMBRE
      */
     public function updateUser() {
         // if it's a userDown post
@@ -95,20 +108,9 @@ class AdminDashboardController extends AdminController
             $this->msg->error("Erreur lors de l'envoie des données", $this->getUrl(true));
         }
     }
-    public function removeUser () {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['remove']) && !empty($_POST['remove'])) {
-            $userId = $_POST['remove'];
-            $user = $this->usersModel->getUserById($userId);
-            if ($this->usersModel->deleteUser($userId)) {
-                $this->msg->success("l'utilisateur ".$user['name']." a été supprimé", $this->getUrl(true));
-            } else {
-                $this->msg->error("l'utilisateur ".$user['name']." n'a pas pu être supprimé", $this->getUrl(true));
-            }
-        } else {
-            $this->msg->error("Erreur lors de l'envoie des données", $this->getUrl(true));
-        }
-    }
-
+    /**
+     * AJOUTER UN ARTICLE
+     */
     public function addPost() {
         $title = htmlspecialchars($_POST['title']);
         $content =  htmlspecialchars($_POST['content'], ENT_HTML5);
@@ -119,19 +121,22 @@ class AdminDashboardController extends AdminController
                     'user_id'       => $user_id,
                     'published'     => 1
                 ];
-        $this->blogModel->setPost($data);
-        header('Location: ' . '?c=adminDashboard');
-        exit;
-        /*if ($this->blogModel->setPost($data)) {
-            $this->msg->success('L\'article a bien été ajouté !', $this->getUrl());
+        //$this->blogModel->setPost($data);
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if ($this->blogModel->setPost($data)) {
+                $this->msg->success("L'article a bien été ajouté !", $this->getUrl());
+            } else {
+                $this->msg->error("L'article n'a pas pu être ajouté.", $this->getUrl());
+            }
         } else {
-            $this->msg->error('L\'article n\'a pas pu être ajouté.', $this->getUrl());
-        }*/
+            header('Location: ' . '?c=adminDashboard');
+            exit;
+        }
     }
-
+    /**
+     * SUPPRIMER UN ARTICLE
+     */
     public function deletePost() {
-        // if method is "post" and if the blog post exist => remove the blog post + comment + image
-        // TODO: remove comments
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (isset($_POST['postId']) && $post = $this->blogModel->getPostById($_POST['postId'])) {
 
@@ -156,10 +161,10 @@ class AdminDashboardController extends AdminController
             exit;
         }
     }
-
+    /**
+     * SUPPRIMER UN MEMBRE
+     */
     public function deleteUser() {
-        // if method is "post" and if the blog post exist => remove the blog post + comment + image
-        // TODO: remove comments
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (isset($_POST['userId']) && $post = $this->userModel->getUserById($_POST['postId'])) {
 

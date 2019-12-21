@@ -9,78 +9,75 @@
 
 {% block main %}
     <div class="container">
-                {% include 'admin/_partials/nav2.html.twig' %}
-                <h2 class="text-center">Gestion des articles</h2>
-                <div class="divide20"></div>
-                {{ message.display }}
-                <div class="post box">
-                    <h2>Ajouter un article</h2>
-                    <div class="form-container">
-                    <form action="index.php?c=adminDashboard&t=addPost" method="post" enctype="multipart/form-data">
-                        <div>
-                            <label for="title">Titre</label><br />
-                            <input type="text" id="title" name="title" value="" />
-                        </div>
-                        <div>
-                            <label for="textarea">Article</label><br />
-                            <textarea type="text" id="textarea" name="content" value=""></textarea>
-                        </div>
-                        <div class="divide20"></div>
-                        <div class="divide20"></div>
-
-                        <div class="divide40"></div>
-                        <div>
-                            <input class="btn btn-default" type="submit" style="width: 100px;display: block; margin: 0 auto;"/>
-                        </div>
-                        <!--<div>
-                            <input type="hidden" name="token" id="token" value="<?= $csrfAddPostToken; ?>" />
-                        </div>-->
-                    </form>
-                    </div>
-                </div>
-                <div class="divide20"></div>
-                <h2 class="text-center">Ajouter une catégorie</h2>
-                <div class="divide20"></div>
-                <div class="post box">
-
-                </div>
+      {% include 'admin/_partials/nav2.html.twig' %}
+      <h2 class="text-center">Gestion des articles</h2>
+      <div class="divide20"></div>
+        {{ message.display }}
+          <div class="post box">
+            <h2>Ajouter un article</h2>
+              <div class="form-container">
+                <form action="index.php?c=adminDashboard&t=addPost" method="post" enctype="multipart/form-data">
+                  <div>
+                    <label for="title">Titre</label><br />
+                    <input type="text" id="title" name="title" value="" />
+                  </div>
+                  <div>
+                    <label for="textarea">Article</label><br />
+                    <textarea type="text" id="textarea" name="content" value=""></textarea>
+                  </div>
+                  <div class="divide20"></div>
+                  <div class="divide20"></div>
+                  <div class="divide40"></div>
+                  <div>
+                    <input class="btn btn-default" type="submit" style="width: 100px;display: block; margin: 0 auto;"/>
+                  </div>
+                  <!--<div>
+                    <input type="hidden" name="token" id="token" value="<?= $csrfAddPostToken; ?>" />
+                  </div>-->
+                </form>
+              </div>
+            </div>
+            <div class="divide20"></div>
+              <h2 class="text-center">Ajouter une catégorie</h2>
+              <div class="divide20"></div>
+              <div class="post box"></div>
                 <div class="divide20"></div>
                 <h2 class="text-center">Modifier/Supprimer un article</h2>
                 <div class="divide20"></div>
                 <div class="post box">
-                    <table class="table table-striped table-dark">
-                          <thead>
-                            <tr>
-                              <th scope="col">id</th>
-                              <th scope="col">Titre</th>
-                              <th scope="col">Date</th>
-                              <th scope="col">Statut</th>
-                              <th scope="col">Auteur</th>
-                              <th scope="col">Modifier</th>
-                              <th scope="col">Supprimer</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {% for post in posts %}
-                            <tr>
-                              <th scope="row">{{ post.id }}</th>
-                              <td>{{ post.title }}</td>
-                              <td>{{ post.created_at }}</td>
-                              <td>{{ (post.published) ? 'Publié' : 'Non publié' }}</td>
-                              <td>{{ post.author }}</td>
-                              <td><i class="fa fa-pencil" aria-hidden="true"></i></td>
-                              <td>
-                                  <form method="post" action="?c=adminDashboard&t=deletePost" class="delete-form">
-                                        <input type="hidden" name="postId" value="{{ post.id }}">
-                                        <button type="submit" class="btn btn-danger" onclick="return confirm('Confirmer la suppression ?');"><i class="fa fa-trash-o"></i></button>
-                                </form>
-                              </td>
-                            </tr>
-                           {% endfor %}
-                          </tbody>
-                    </table>
+                  <table class="table table-striped table-dark">
+                    <thead>
+                      <tr>
+                        <th scope="col">id</th>
+                        <th scope="col">Titre</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Statut</th>
+                        <th scope="col">Auteur</th>
+                        <th scope="col">Modifier</th>
+                        <th scope="col">Supprimer</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for post in posts %}
+                        <tr>
+                          <th scope="row">{{ post.id }}</th>
+                          <td>{{ post.title }}</td>
+                          <td>{{ post.created_at }}</td>
+                          <td>{{ (post.published) ? 'Publié' : 'Non publié' }}</td>
+                          <td>{{ post.author }}</td>
+                          <td><i class="fa fa-pencil" aria-hidden="true"></i></td>
+                          <td>
+                            <form method="post" action="?c=adminDashboard&t=deletePost" class="delete-form">
+                              <input type="hidden" name="postId" value="{{ post.id }}">
+                                  <button type="submit" class="btn btn-danger" onclick="return confirm('Confirmer la suppression ?');"><i class="fa fa-trash-o"></i></button>
+                            </form>
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
                 </div>
-            </div>
+              </div>
             <div class="divide100"></div>
 {% endblock %}
 

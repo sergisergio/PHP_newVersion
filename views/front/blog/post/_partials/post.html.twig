@@ -1,0 +1,103 @@
+<div class="container inner">
+
+        <div class="single blog row">
+            <div class="col-md-8 col-sm-12 content">
+                <div class="blog-posts">
+                    <div class="post box">
+                        <div class="post-title">
+                            <h2>{{ post.title }}</h2>
+                            <h4 class="post-title">Auteur : {{ post.author }}</h4>
+                            <div class="meta">
+
+                            </div>
+                            <div class="divide30"></div>
+                            <img src="{{ post.image }}" class="img-responsive"  alt="imagepost"/>
+                            <div class="divide30"></div>
+                            <div class="divide40"></div>
+                            {{ post.content|raw }}
+                        </div>
+                        <div class="divide20"></div>
+                    </div>
+                </div>
+                <div class="divide20"></div>
+                <div class="divide20"></div>
+                <div class="blog-posts" id="comments">
+                    <div class="post box">
+                            {% if comments|length == 0 %}
+                            <h3><i class="budicon-comment-2"></i>&nbsp;&nbsp;Il n'a aucun commentaire pour l'instant.</h3>
+                            {% elseif comments|length == 1 %}
+                            <h3><i class="budicon-comment-2"></i>&nbsp;&nbsp;Un commentaire</h3>
+                            {% else %}
+                            <h3><i class="budicon-comment-2"></i>&nbsp;&nbsp;Commentaires ({{ comments|length }})</h3>
+                            {% endif %}
+                            {% for comment in comments %}
+                            <p>
+                            <div class="row">
+                                <div class="col-md-1 col-sm-1 col-xs-2">
+                                {% if comment.url %}
+                                    <img class="img-responsive img-circle" src="{{ comment.url }}" alt="imageavatar" />
+                                {% else %}
+                                    <img class="img-responsive img-circle" src="../assets/img/avatardefaut.png" alt="imageavatar" />
+                                {% endif %}
+
+                                </div>
+                                <div class="col-md-11 col-sm-11 col-xs-10">
+                                    <a href=""><strong>{{ comment.username }}</strong></a>
+                                    <em style="font-weight: 200">le
+                                        {{ comment.published_at|date()}}
+                                    </em>
+                                </div>
+                            </div>
+                            </p>
+                            <p>
+                                <div class="row">
+                                    <div class="col-md-1 col-sm-1 col-xs-2">
+                                    </div>
+                                    <div class="col-md-11 col-sm-11 col-xs-10">
+                                        <p style="margin: -10px 0 0px !important;font-weight: 700;">
+                                            {{ comment.content }}
+                                        </p>
+                                        {% if ((session.admin.username == comment.username) or (session.user.username == comment.username)or (session.admin != null)) %}
+                                            <a href="#"> (Modifier)</a>
+                                            <a href="?c=comment&t=deleteComment&id={{ comment.id }}&postId={{ comment.post_id }}" data-toggle='confirmation' id="important_action"> (Supprimer)</a>
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+                            </p>
+                            {% endfor %}
+                    </div>
+                </div>
+                <div class="divide20"></div>
+                <div class="blog-posts">
+                    <div class="post box">
+                        <h3>Ajouter un commentaire</h3>
+                        <div class="form-container">
+                            <div class="response alert"></div>
+                            {{ message.display }}
+                        <form action="index.php?c=comment&t=addComment&id=$postId" method="post">
+                            <input type="hidden" name="user_id" value="{% if session.admin %}{{ session.admin.id }}{% elseif session.user %}{{ session.user.id }}{% endif %}">
+                            <input type="hidden" name="post_id" value="{{ post.id }}">
+                            <div>
+                                <label for="content">Commentaire</label>
+                                <br />
+                                <textarea id="content" name="content"></textarea>
+                            </div>
+                            <p class="text-center">Votre commentaire sera publié dans les plus brefs délais après modération</p>
+                            <div class="text-center">
+                                <input class="btn btn-default validate" type="submit" />
+                            </div>
+                            <div>
+                                <input type="hidden" name="token" id="token" value="<?= $csrfAddCommentToken; ?>" />
+                            </div>
+                        </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="divide60"></div>
+            </div>
+                {{ include('front/blog/_partials/aside.html.twig')}}
+            </div>
+
+        </div>
+        <div class="divide100"></div>

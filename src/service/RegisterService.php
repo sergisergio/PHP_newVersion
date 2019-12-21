@@ -2,7 +2,7 @@
 
 namespace Service;
 
-class Register {
+class RegisterService {
 
   public function __construct() {
     $this->msg = new \Plasticbrain\FlashMessages\FlashMessages();

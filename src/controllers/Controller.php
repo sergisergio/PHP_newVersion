@@ -1,20 +1,33 @@
 <?php
+
 namespace Controllers;
+
 use Models\Comment;
 use \Twig_Loader_Filesystem;
 use \Twig_Environment;
 use Models\Model;
+use Models\Config;
 use Models\Blog;
 use Models\Project;
 use Models\Category;
+use Models\Tag;
 use Models\Skill;
 use Models\User;
 use Models\Description;
-use Service\Register;
+use Models\Security;
+use Service\SecurityService;
+use Service\RegisterService;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+/**
+ * CLASSE CONTROLLER
+ */
 class Controller
 {
     protected $twig;
     protected $model;
+    protected $configModel;
     protected $projectModel;
     protected $categoryModel;
     protected $blogModel;
@@ -23,7 +36,12 @@ class Controller
     protected $commentModel;
     protected $descriptionModel;
     protected $msg;
-    function __construct()
+    protected $mail;
+    protected $securityModel;
+    protected $securityService;
+    protected $registerService;
+
+    public function __construct()
     {
         //SESSION
         if (!session_id()) @session_start();
@@ -40,30 +58,35 @@ class Controller
         $this->twig->addGlobal('session', $_SESSION);
         // Models
         $this->model = new Model;
+        $this->configModel = new Config;
         $this->blogModel = new Blog;
         $this->projectModel = new Project;
         $this->categoryModel = new Category;
+        $this->tagModel = new Tag;
         $this->skillModel = new Skill;
         $this->userModel = new User;
         $this->descriptionModel = new Description;
-        $this->registerService = new Register;
+        $this->securityService = new SecurityService;
+        $this->registerService = new RegisterService;
+        $this->securityModel = new Security;
         $this->commentModel = new Comment;
+        $this->mail = new PHPMailer(true);;
     }
-    // Redirect to the 404 error page
+    // Redirection 404
     protected function redirect404() {
-        header('This is not the page you are looking for', true, 404);
+        header('Erreur 404', true, 404);
         include('views/404.html');
         exit();
     }
     // check if the image exist, then remove it
-    protected function removeImage($image, $path) {
+    /*protected function removeImage($image, $path) {
         if ($image != null) {
             if (file_exists($path . $image)){
                 unlink($path . $image);
             }
         }
-    }
-    // check if logged as admin
+    }*/
+    // session admin ?
     protected function isAdmin() {
         if (isset($_SESSION['admin']) && !empty($_SESSION['admin'])) {
             return true;
@@ -71,7 +94,7 @@ class Controller
             return false;
         }
     }
-    // check if logged as simple user
+    // session user ?
     protected function isUser() {
         if (isset($_SESSION['user']) && !empty($_SESSION['user'])) {
             return true;
@@ -79,7 +102,7 @@ class Controller
             return false;
         }
     }
-    // check if logged (admin or user)
+    // admin ou user connecté
     protected function isLogged() {
         if ($this->isAdmin()) {
             return true;
@@ -89,6 +112,7 @@ class Controller
             return false;
         }
     }
+    // récupération url courante
     protected function getUrl(bool $referer = false) {
         if ($referer == true) {
             return $_SERVER['HTTP_REFERER'];

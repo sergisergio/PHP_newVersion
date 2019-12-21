@@ -1,0 +1,54 @@
+    <div class="container inner">
+        <div class="blog classic-view row">
+            <div class="col-md-8 col-sm-12 content">
+                <div class="blog-posts">
+                    <div class="box" style="margin-bottom: 50px;">
+                        <div class="count">
+                            <h3>{{ number }} articles</h3>
+                        </div>
+                    </div>
+                    {% for post in posts %}
+                    <div class="post box">
+                        <figure class="frame main"><a href="index.php?c=blog&t=post&id={{ post.id }}">
+                                <div class="text-overlay">
+                                    <div class="info"><span>Voir plus</span></div>
+                                </div>
+                                <img src="{{ post.image }}" alt="" /></a></figure>
+                        <div class="meta">
+                            <span class="category">
+                                {{ post.category }}
+                            </span>
+                            <span class="date">{{ post.createdAt | date('d-m-Y') }}</span>
+                            <span class="comments"><a href="#">{{ post.comments | length }} <i class="icon-chat-1"></i></a></span>
+                        </div>
+                        <h2 class="post-title"><a href="">{{ post.title }}</a></h2>
+                        {{ post.content | slice(0, 100) | raw }}
+                    </div>
+                    {% endfor %}
+                </div>
+                <!-- /.blog-posts -->
+
+                <!--<div class="pagination box">
+                    <ul>
+                        <li><a href="#" class="btn">Prev</a></li>
+                        <li class="active"><a href="#" class="btn"><span>1</span></a></li>
+                        <li><a href="#" class="btn"><span>2</span></a></li>
+                        <li><a href="#" class="btn"><span>3</span></a></li>
+                        <li><a href="#" class="btn">Next</a></li>
+                    </ul>
+                </div>
+                 /.pagination -->
+                <div class="pagination box">
+                    <div class="navigation">
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.content -->
+
+            {{ include('front/blog/_partials/aside.html.twig')}}
+            <!-- /column .sidebar -->
+
+        </div>
+        <div class="divide100"></div>

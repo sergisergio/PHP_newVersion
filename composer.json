@@ -12,12 +12,14 @@
         "components/font-awesome": "^5.4",
         "ext-PDO": "^7.2",
         "plasticbrain/php-flash-messages": "^1.0",
-        "needim/noty": "^3.1"
+        "needim/noty": "^3.1",
+        "phpmailer/phpmailer": "^6.0"
     },
     "require-dev": {
         "phpstan/phpstan": "^0.11.2",
         "phpmetrics/phpmetrics": "^2.4",
-        "squizlabs/php_codesniffer": "3.*"
+        "squizlabs/php_codesniffer": "3.*",
+        "phpunit/phpunit": "^7.2"
     },
     "autoload": {
         "psr-4": {

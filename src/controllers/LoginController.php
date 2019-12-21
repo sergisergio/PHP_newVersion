@@ -1,50 +1,49 @@
 <?php
+
 namespace Controllers;
+
+/**
+ * CLASSE GERANT L'INSCRIPTION, LA CONNEXION ET LA DECONNEXION
+ */
 class LoginController extends Controller
 {
     /*
-     * Show the login page
+     * GERER LA CONNEXION
      */
     public function index() {
-        $loginToken = md5(time()*rand(1, 1000));
-
-        $_SESSION['loginToken'] = $loginToken;
-        //var_dump($loginToken);
-        //var_dump($_POST['loginToken']);
-        //die();
-        // if the user is loged, redirect to "my account"
-        // TODO: redirect to "my account"
-        if ( $this->isLogged())
+        if ($this->isLogged())
             header('Location: ?c=index');
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $username = strip_tags(htmlspecialchars($_POST['username']));
             $password = strip_tags(htmlspecialchars($_POST['password']));
             $userExist = $this->userModel->getUser($username, $password);
+            $ip = $_SERVER['REMOTE_ADDR'];
+            $ban = 1;
             // check if email & password are empty
             if (empty($username) || empty($password)) {
                 $this->msg->error("Tous les champs n'ont pas été remplis", $this->getUrl());
             // check if the user exist
             } elseif ( !$userExist) {
-                $this->msg->error("Identifiant ou mot de passe incorrect !", $this->getUrl());
+                $this->securityModel->registerAttempt($ip, $username);
+                $count = $this->securityModel->checkBruteForce($ip, $username);
+                if ($count < 2) {
+                    $this->msg->error("Identifiant ou mot de passe incorrect ! Il vous reste ".(3 - $count)." tentatives", $this->getUrl());
+                } elseif ($count == 2) {
+                    $this->msg->error("Identifiant ou mot de passe incorrect ! Il vous reste une tentative", $this->getUrl());
+                } else {
+                    $this->userModel->banUser($username);
+                    $this->msg->error("Nombre de tentatives atteintes! Vous pourrez essayer de vous reconnecter dans 24h.", $this->getUrl());
+                }
             } else {
-                // if role = 1, run admin session, else, run user session
-                //if (isset($_SESSION['loginToken']) AND isset($_POST['loginToken']) AND !empty($_SESSION['loginToken']) AND !empty($_POST['loginToken'])) {
-                    // On vérifie que les deux correspondent
-                    //if ($_SESSION['loginToken'] == $_POST['loginToken']) {
-                        if ($userExist && $userExist['roles'] == 1) {
-                            $_SESSION['admin'] = $userExist;
-                            header('Location: ' . '?c=adminDashboard');
-                            exit;
-                        } else {
-                            $_SESSION['user'] = $userExist;
-                            header('Location: ' . '?c=blog');
-                            exit;
-                        }
-                    //}
-                    //else {
-                        //$this->msg->error("Une erreur s'est produite", $this->getUrl());
-                    //}
-                //}
+                if ($userExist && $userExist['roles'] == 1) {
+                    $_SESSION['admin'] = $userExist;
+                    header('Location: ' . '?c=adminDashboard');
+                    exit;
+                } else {
+                    $_SESSION['user'] = $userExist;
+                    header('Location: ' . '?c=blog&t=view1');
+                    exit;
+                }
             }
         }
 
@@ -54,7 +53,7 @@ class LoginController extends Controller
         ]);
     }
     /*
-     * Show the registration page
+     * GERER L'INSCRIPTION
      */
     public function registration() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -64,6 +63,8 @@ class LoginController extends Controller
             $passwordCheck = strip_tags(htmlspecialchars($_POST['passwordCheck']));
             $mailExist = $this->userModel->checkUserByEmail($email);
             $userExist = $this->userModel->checkUserByUsername($username);
+            $token = $this->securityService->str_random(100);
+
             // check if fields are empty
             if (empty($email) || empty($username) || empty($password) || empty($passwordCheck)) {
                 $this->msg->error("Tous les champs n'ont pas été remplis", $this->getUrl());
@@ -86,12 +87,15 @@ class LoginController extends Controller
                 $this->msg->error("Votre mot de passe doit faire entre 6 et 50 caractères !");
             } else {
                 $data = [
-                    'name'      => $_POST['username'],
-                    'email'     => $_POST['email'],
-                    'password'  => sha1($_POST['password']),
-                    'roles'     => 0,
-                    'active'    => 1,
-                    'created_at' => (new \DateTime())->format('Y-m-d H:i:s')
+                    'username'   => $_POST['username'],
+                    'email'      => $_POST['email'],
+                    'password'   => sha1($_POST['password']),
+                    'roles'      => 0,
+                    'active'     => 1,
+                    'created_at' => (new \DateTime())->format('Y-m-d H:i:s'),
+                    'ip_address' => $_SERVER['REMOTE_ADDR'],
+                    'token'      => $token,
+                    'banned'     => 0,
                 ];
                 // create the user then redirect to "my account"
 
@@ -101,6 +105,21 @@ class LoginController extends Controller
                         if ($this->userModel->setUser($data)) {
                         //TODO: redirect to "my account"
                             $this->msg->success("Compte créé", $this->getUrl());
+                            try {
+                                $this->mail->setFrom('contact@philippetraon.com', 'Philippe Traon');
+                                $this->mail->addAddress($email, $pseudo);
+                                $this->mail->addReplyTo('contact@philippetraon.com', 'Information');
+                                $this->mail->isHTML(true);
+                                $this->mail->Subject = 'Message';
+                                $this->mail->Body = '<b>Blog de Philippe Traon : </b>';
+                                $this->mail->send();
+
+                                //$_SESSION['flash']['success'] = 'Un mail de confirmation vous a été envoyé pour valider votre compte';
+                                //$this->_logController->loginPage();
+                            }
+                            catch (Exception $e) {
+                            echo 'Un problème est survenu ! Le message n\'a pas pu être envoyé : ', $this->mail->ErrorInfo;
+                            }
                             header('Location: ' . '?c=blog');
                             exit;
                         } else {
@@ -124,7 +143,7 @@ class LoginController extends Controller
         ]);
     }
     /*
-     * log out the user then redirect to the home page
+     * GERER LA DECONNEXION
      */
     public function logout() {
         if ($this->isLogged()) {

@@ -1,7 +1,15 @@
 <?php
+
 namespace Models;
+
+/**
+ * CLASSE GERANT LA DESCRIPTION
+ */
 class Description extends Model
 {
+    /**
+     * RECUPERER LA DESCRIPTION
+     */
     public function getDescription() {
         $req = $this->db->prepare('
                           SELECT *
