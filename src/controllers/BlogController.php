@@ -17,28 +17,23 @@ class BlogController extends Controller
         $number_of_posts = $this->blogModel->getNumberOfPosts();
         // determine number of total pages available
         $number_of_pages = ceil($number_of_posts/$results_per_page);
-
         $url = $this->getUrl();
-        //var_dump($url);die();
-
-        // Minimum 1 page
-        if ($number_of_pages == 0)
-            $number_of_pages = 1;
-        // determine which page number visitor is currently on
-        if (!isset($_GET['page'])) {
-            $page = 1;
+        if (isset($_GET['page']) AND !empty($_GET['page']) AND ($_GET['page'] > 0 ) AND ($_GET['page'] <= $number_of_pages)) {
+            $_GET['page'] = intval($_GET['page']);
+            $currentPage = $_GET['page'];
         } else {
-            $page = $_GET['page'];
+            $currentPage = 1;
         }
         // check if the page exist
-        if ($page > $number_of_pages || $page == 0) {
+        if ($currentPage > $number_of_pages) {
             $this->redirect404();
         }
-        // determine the sql LIMIT starting number for the results on the displaying page
-        $this_page_first_result = ($page-1)*$results_per_page;
-        // retrieve selected results from database and display them on page
-        $posts = $this->blogModel->getPostsPagination($this_page_first_result, $results_per_page);
 
+        // determine the sql LIMIT starting number for the results on the displaying page
+        $start = ($currentPage-1)*(int)$results_per_page;
+        // retrieve selected results from database and display them on page
+        $posts = $this->blogModel->getPostsPagination($start, $results_per_page);
+        $populars = $this->blogModel->getMostSeens();
         $categories = $this->categoryModel->getAllCategories();
         $tags = $this->tagModel->getAllTags();
         //$mostSeens = $this->blogModel->getMostSeenPosts();
@@ -49,7 +44,7 @@ class BlogController extends Controller
             'categories'    => $categories,
             'tags'          => $tags,
             'url'           => $url,
-            //'populars'      => $mostSeens,
+            'populars'      => $populars
         ]);
     }
     /*
@@ -63,17 +58,18 @@ class BlogController extends Controller
                     $comments = $this->commentModel->getVerifiedCommentsByPostId($post['id']);
                     $categories = $this->categoryModel->getAllCategories();
                     $tags = $this->tagModel->getAllTags();
+                    $populars = $this->blogModel->getMostSeens();
                 } else {
                     $comments = null;
                 }
                 echo $this->twig->render('front/blog/post/index.html.twig', [
-                    'post'      => $post,
-                    'comments'  => $comments,
-                    'message'   => $this->msg,
-                    'maxLength' => $this->configModel->getConfig()['characters'],
-                    'categories'    => $categories,
-                    'tags'          => $tags,
-
+                    'post'       => $post,
+                    'comments'   => $comments,
+                    'message'    => $this->msg,
+                    'maxLength'  => $this->configModel->getConfig()['characters'],
+                    'categories' => $categories,
+                    'tags'       => $tags,
+                    'populars'      => $populars
                 ]);
             } else {
                 $this->redirect404();
@@ -86,33 +82,23 @@ class BlogController extends Controller
      * AFFICHAGE NUMERO 2
      */
     public function view2() {
-        // define how many results you want per page
         $results_per_page = $this->configModel->getConfig()['ppp'];
-        // find out the number of results stored in database
         $number_of_posts = $this->blogModel->getNumberOfPosts();
-        // determine number of total pages available
         $number_of_pages = ceil($number_of_posts/$results_per_page);
         $url = $this->getUrl();
-        // Minimum 1 page
-        if ($number_of_pages == 0)
-            $number_of_pages = 1;
-        // determine which page number visitor is currently on
-        if (!isset($_GET['page'])) {
-            $page = 1;
+        if (isset($_GET['page']) AND !empty($_GET['page']) AND ($_GET['page'] > 0 ) AND ($_GET['page'] <= $number_of_pages)) {
+            $_GET['page'] = intval($_GET['page']);
+            $currentPage = $_GET['page'];
         } else {
-            $page = $_GET['page'];
+            $currentPage = 1;
         }
-        // check if the page exist
-        if ($page > $number_of_pages || $page == 0) {
+        if ($currentPage > $number_of_pages) {
             $this->redirect404();
         }
-        // determine the sql LIMIT starting number for the results on the displaying page
-        $this_page_first_result = ($page-1)*$results_per_page;
-        // retrieve selected results from database and display them on page
-        $posts = $this->blogModel->getPostsPagination($this_page_first_result, $results_per_page);
-
+        $start = ($currentPage-1)*(int)$results_per_page;
+        $posts = $this->blogModel->getPostsPagination($start, $results_per_page);
+        $populars = $this->blogModel->getMostSeens();
         $categories = $this->categoryModel->getAllCategories();
-
         $tags = $this->tagModel->getAllTags();
         echo $this->twig->render('front/blog/index2.html.twig', [
             'posts'         => $posts,
@@ -121,39 +107,30 @@ class BlogController extends Controller
             'categories'    => $categories,
             'tags'          => $tags,
             'url'           => $url,
+            'populars'      => $populars
         ]);
     }
     /**
      * AFFICHAGE NUMERO 3
      */
     public function view3() {
-        // define how many results you want per page
         $results_per_page = $this->configModel->getConfig()['ppp'];
-        // find out the number of results stored in database
         $number_of_posts = $this->blogModel->getNumberOfPosts();
-        // determine number of total pages available
         $number_of_pages = ceil($number_of_posts/$results_per_page);
         $url = $this->getUrl();
-        // Minimum 1 page
-        if ($number_of_pages == 0)
-            $number_of_pages = 1;
-        // determine which page number visitor is currently on
-        if (!isset($_GET['page'])) {
-            $page = 1;
+        if (isset($_GET['page']) AND !empty($_GET['page']) AND ($_GET['page'] > 0 ) AND ($_GET['page'] <= $number_of_pages)) {
+            $_GET['page'] = intval($_GET['page']);
+            $currentPage = $_GET['page'];
         } else {
-            $page = $_GET['page'];
+            $currentPage = 1;
         }
-        // check if the page exist
-        if ($page > $number_of_pages || $page == 0) {
+        /*if ($page > $number_of_pages) {
             $this->redirect404();
-        }
-        // determine the sql LIMIT starting number for the results on the displaying page
-        $this_page_first_result = ($page-1)*$results_per_page;
-        // retrieve selected results from database and display them on page
-        $posts = $this->blogModel->getPostsPagination($this_page_first_result, $results_per_page);
-
+        }*/
+        $start = ($currentPage-1)*(int)$results_per_page;
+        $posts = $this->blogModel->getPostsPagination($start, $results_per_page);
+        $populars = $this->blogModel->getMostSeens();
         $categories = $this->categoryModel->getAllCategories();
-
         $tags = $this->tagModel->getAllTags();
         echo $this->twig->render('front/blog/index3.html.twig', [
             'posts'         => $posts,
@@ -162,6 +139,7 @@ class BlogController extends Controller
             'categories'    => $categories,
             'tags'          => $tags,
             'url'           => $url,
+            'populars'      => $populars
         ]);
     }
 }

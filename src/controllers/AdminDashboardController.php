@@ -57,6 +57,16 @@ class AdminDashboardController extends AdminController
             'tags'     => $tags
         ]);
     }
+    /*
+     * AFFICHER LES PROJETS
+     */
+    public function projects() {
+        $projects = $this->projectModel->getAllProjects();
+        echo $this->twig->render('admin/dashboard/projects.html.twig', [
+            'message'   => $this->msg,
+            'projects'  => $projects
+        ]);
+    }
     /**
      * METTRE A JOUR LA CONFIGURATION
      */
@@ -89,7 +99,7 @@ class AdminDashboardController extends AdminController
         // if it's a userDown post
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userDown']) && !empty($_POST['userDown'])) {
             $userId = $_POST['userDown'];
-            $user = $this->usersModel->getUserById($userId);
+            $user = $this->userModel->getUserById($userId);
             if ($this->usersModel->updateRoleUser(0, $userId)) {
                 $this->msg->success($user['name']." est passé au rang de simple utilisateur", $this->getUrl(true));
             } else {
@@ -119,7 +129,8 @@ class AdminDashboardController extends AdminController
                     'title'         => $title,
                     'content'       => $content,
                     'user_id'       => $user_id,
-                    'published'     => 1
+                    'published'     => 1,
+                    'numberComments' => 0
                 ];
         //$this->blogModel->setPost($data);
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -186,6 +197,97 @@ class AdminDashboardController extends AdminController
         } else {
             //redirect to the list of blog posts
             header('Location: ?c=adminDashboard&t=users');
+            exit;
+        }
+    }
+    /**
+     * AJOUTER UNE CATEGORIE
+     */
+    public function addCategory() {
+        $name = htmlspecialchars($_POST['name']);
+        $data = [
+                    'name'         => $name,
+                ];
+        //$this->blogModel->setPost($data);
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if ($this->categoryModel->setCategory($data)) {
+                $this->msg->success("La catégorie a bien été ajoutée !", $this->getUrl());
+            } else {
+                $this->msg->error("La catégorie n'a pas pu être ajoutée.", $this->getUrl());
+            }
+        } else {
+            header('Location: ' . '?c=adminDashboard&t=categories');
+            exit;
+        }
+    }
+    /**
+     * SUPPRIMER UNE CATEGORIE
+     */
+    public function deleteCategory() {
+        $category['id'] = $_GET['id'];
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                if ($this->categoryModel->deleteCategory($category['id'])) {
+                    $this->msg->success("La catégorie a bien été supprimée", $this->getUrl());
+                } else {
+                    $this->msg->error("La catégorie n'a pas pu être supprimée", $this->getUrl());
+                }
+        } else {
+            //redirect to the list of blog posts
+            header('Location: ?c=adminDashboard&t=categories');
+            exit;
+        }
+    }
+    /**
+     * SUPPRIMER UN COMMENTAIRE
+     */
+    public function deleteComment() {
+        $comment['id'] = $_GET['id'];
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                if ($this->commentModel->deleteComment($comment['id'])) {
+                    $this->msg->success("Le commentaire a bien été supprimé", $this->getUrl());
+                } else {
+                    $this->msg->error("Le commentaire n'a pas pu être supprimé", $this->getUrl());
+                }
+        } else {
+            //redirect to the list of blog posts
+            header('Location: ?c=adminDashboard&t=comments');
+            exit;
+        }
+    }
+    /**
+     * AJOUTER UNE ETIQUETTE
+     */
+    public function addTag() {
+        $name = htmlspecialchars($_POST['name']);
+        $data = [
+                    'name' => $name,
+                ];
+        //$this->blogModel->setPost($data);
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if ($this->tagModel->setTag($data)) {
+                $this->msg->success("Le tag a bien été ajouté !", $this->getUrl());
+            } else {
+                $this->msg->error("Le tag n'a pas pu être ajouté.", $this->getUrl());
+            }
+        } else {
+            header('Location: ' . '?c=adminDashboard&t=tags');
+            exit;
+        }
+    }
+    /**
+     * SUPPRIMER UNE ETIQUETTE
+     */
+    public function deleteTag() {
+        $tag['id'] = $_GET['id'];
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                if ($this->tagModel->deleteTag($tag['id'])) {
+                    $this->msg->success("Le tag a bien été supprimé", $this->getUrl());
+                } else {
+                    $this->msg->error("Le tag n'a pas pu être supprimé", $this->getUrl());
+                }
+        } else {
+            //redirect to the list of blog posts
+            header('Location: ?c=adminDashboard&t=tags');
             exit;
         }
     }

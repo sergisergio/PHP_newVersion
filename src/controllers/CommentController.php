@@ -13,7 +13,7 @@ class CommentController extends Controller
     public function addComment() {
         // if user or admin is logged
         if ($this->isLogged()) {
-            $config = $this->model->getConfig();
+            $config = $this->configModel->getConfig();
             $maxLength = $config['characters'];
             /*
              * if the user or the admin submit a comment and if fields are not empty, add the comment
@@ -34,6 +34,7 @@ class CommentController extends Controller
                         'validated' => 1
                     ];
                     if ($this->commentModel->addComment($data)) {
+                        $this->blogModel->addNumberComment($data['post_id']);
                         $this->msg->warning("Commentaire en attente de validation", $this->getUrl(true));
                     } else {
                         $this->msg->error("Le commentaire n'a pas pu être ajouté", $this->getUrl(true));
@@ -52,10 +53,8 @@ class CommentController extends Controller
      */
     public function deleteComment() {
         if ($_SERVER['REQUEST_METHOD'] == 'GET' && !empty($_GET['id']) && $comment = $this->commentModel->getCommentById($_GET['id'], $_GET['postId'])) {
-            //echo '<pre>';
-            //var_dump($comment);die();
-            //echo '</pre>';
             $this->commentModel->deleteComment($comment[0]['id']);
+            $this->blogModel->minusNumberComment($_GET['postId']);
             $this->msg->success('Le commentaire a été supprimé !', $this->getUrl(true).'#comments');
         } else {
             $this->msg->error('Le commentaire n\'a pas pu été supprimé.', $this->getUrl(true));

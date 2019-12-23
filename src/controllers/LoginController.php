@@ -18,7 +18,6 @@ class LoginController extends Controller
             $password = strip_tags(htmlspecialchars($_POST['password']));
             $userExist = $this->userModel->getUser($username, $password);
             $ip = $_SERVER['REMOTE_ADDR'];
-            $ban = 1;
             // check if email & password are empty
             if (empty($username) || empty($password)) {
                 $this->msg->error("Tous les champs n'ont pas été remplis", $this->getUrl());
@@ -49,7 +48,7 @@ class LoginController extends Controller
 
         echo $this->twig->render('front/login/index.html.twig', [
             'message'   => $this->msg,
-            'token'     => $loginToken
+            //'token'     => $loginToken
         ]);
     }
     /*

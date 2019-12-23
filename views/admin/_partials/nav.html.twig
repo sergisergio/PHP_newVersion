@@ -10,6 +10,9 @@
             <li class="current"><a href="index.php">Accueil</a></li>
             <li><a href="index.php?c=adminDashboard">Posts</a></li>
             <li><a href="index.php?c=blog&t=view1">Blog</a></li>
+            {% if session.admin != null %}
+            <li><a href="index.php?c=adminDashboard">Admin</a></li>
+            {% endif %}
             {% if session.user != null or session.admin != null %}
             <li><a href="index.php?c=login&t=logout">Déconnexion</a></li>
             {% else %}

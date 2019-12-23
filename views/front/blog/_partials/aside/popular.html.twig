@@ -1,30 +1,24 @@
 <div class="sidebox box widget">
-    <h3 class="widget-title section-title">Articles les plus vus</h3>
+    <h3 class="widget-title section-title">Articles les plus commentés</h3>
     <ul class="post-list">
+        {% for popular in populars %}
         <li>
             <figure class="frame pull-left">
-                <div class="icon-overlay"><a href="blog-post.html"><img src="style/images/art/a1.jpg" alt="" /> </a></div>
-            </figure>
-            <div class="meta"> <em><span class="date">3 Oct 2012</span><span class="comments"><a href="#">8 <i class="icon-chat-1"></i></a></span></em>
-                <h5><a href="blog-post.html">Magna Mollis Ultricies</a></h5>
+                <div class="icon-overlay"><a href="index.php?c=blog&t=post&id={{ popular.id }}">
+                    <img src="{{ popular.image}}" class="img-fluid img-thumbnail" style="vertical-align: middle;width:20%;" alt="" />
+                    <div class="meta" style="margin-bottom: 16px;margin-top: -57px;">
+                        <em><span class="date">{{ popular.created_at|date}}</span>
+                            <span class="comments">
+                                <a href="#">{{ popular.numberComments }}<i class="icon-chat-1"></i></a>
+                            </span>
+                        </em>
+                        <h5>{{ popular.title }}</h5>
+                    </div>
+                </a>
             </div>
-        </li>
-        <li>
-            <figure class="frame pull-left">
-                <div class="icon-overlay"><a href="blog-post.html"><img src="style/images/art/a2.jpg" alt="" /> </a></div>
             </figure>
-            <div class="meta"> <em><span class="date">28 Sep 2012</span><span class="comments"><a href="#">5 <i class="icon-chat-1"></i></a></span></em>
-                <h5><a href="blog-post.html">Ornare Nullam Risus</a></h5>
-            </div>
         </li>
-        <li>
-            <figure class="frame pull-left">
-                <div class="icon-overlay"><a href="blog-post.html"><img src="style/images/art/a3.jpg" alt="" /> </a></div>
-            </figure>
-            <div class="meta"> <em><span class="date">15 Aug 2012</span><span class="comments"><a href="#">9 <i class="icon-chat-1"></i></a></span></em>
-                <h5><a href="blog-post.html">Euismod Nullam</a></h5>
-            </div>
-        </li>
+        {% endfor %}
     </ul>
     <!-- /.post-list -->
 </div>

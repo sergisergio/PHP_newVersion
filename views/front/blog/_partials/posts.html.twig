@@ -2,11 +2,18 @@
     <div class="blog list-view row">
         <div class="col-md-8 col-sm-12 content">
             <div class="blog-posts">
-                <div class="box" style="margin-bottom: 50px;">
-                    <div class="count">
-                        <h3> {{ number }} articles</h3>
-                    </div>
+                <div class="pagination box">
+                    <ul>
+                        <li><a href="?c=blog&t=view1&page={{ _get.page - 1 }}" class="btn {% if _get.page == null or _get.page == 1 %}disabled{% endif %}">Prev</a></li>
+                        {% for i in 1..numberOfPages %}
+                        <li class="btn {% if _get.page == i %}active{% endif %}"><a href="?c=blog&t=view1&page={{ i }}" style="border:none;">{{ i }}</a></li>
+                        {% endfor %}
+                        <li><a href="?c=blog&t=view1&page={% if _get.page == null %}2{% else %}{{ _get.page + 1 }}{% endif %}" class="btn {% if _get.page == numberOfPages %}disabled{% endif %}">Next</a></li>
+                        <li class="pull-right">{{ number }} articles</li>
+                    </ul>
                 </div>
+                <div class="divide40"></div>
+
                 <!-- début boucle -->
                 {% for post in posts %}
                 <div class="post box">
@@ -26,7 +33,7 @@
                                         {{ post.category }}
                                 </span>
                                 <span class="date">{{ post.created_at|date}}</span>
-                                <span class="comments"><a href="#">Nombre de commentaires <i class="icon-chat-1"></i></a></span>
+                                <span class="comments"><a href="#">{{ post.numberComments }} <i class="icon-chat-1"></i></a></span>
                             </div>
                             <h2 class="post-title"><a href="">{{ post.title|e }}</a></h2>
                             {{ post.content|slice(0,200)|raw }}
@@ -41,18 +48,12 @@
             <!-- /.blog-posts -->
             <div class="pagination box">
                 <ul>
-                    <li><a href="#" class="btn">Prev</a></li>
-                    <li class="active"><a href="#" class="btn"><span>1</span></a></li>
-                    <li><a href="#" class="btn"><span>2</span></a></li>
-                    <li><a href="#" class="btn"><span>3</span></a></li>
-                    <li><a href="#" class="btn">Next</a></li>
+                    <li><a href="?c=blog&t=view1&page={{ _get.page - 1 }}" class="btn {% if _get.page == null or _get.page == 1 %}disabled{% endif %}">Prev</a></li>
+                    {% for i in 1..numberOfPages %}
+                    <li class="btn {% if _get.page == i %}active{% endif %}"><a href="?c=blog&t=view1&page={{ i }}" style="border:none;">{{ i }}</a></li>
+                    {% endfor %}
+                    <li><a href="?c=blog&t=view1&page={% if _get.page == null %}2{% else %}{{ _get.page + 1 }}{% endif %}" class="btn {% if _get.page == numberOfPages %}disabled{% endif %}">Next</a></li>
                 </ul>
-            </div>
-            <!-- /.pagination -->
-            <div class="pagination box">
-                <div class="navigation">
-                    Pagination
-                </div>
             </div>
         </div>
         <!-- /.content -->

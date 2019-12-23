@@ -10,13 +10,13 @@
 {% block main %}
     <div class="container">
       {% include 'admin/_partials/nav2.html.twig' %}
-      <h2 class="text-center">Gestion des tags</h2>
+      <h2 class="text-center">Gestion des projets</h2>
       <div class="divide20"></div>
         {{ message.display }}
         <div class="post box">
-            <h2>Ajouter une étiquette</h2>
+            <h2>Ajouter un projet</h2>
               <div class="form-container">
-                <form action="index.php?c=adminDashboard&t=addTag" method="post" enctype="multipart/form-data">
+                <form action="#" method="post" enctype="multipart/form-data">
                   <div>
                     <label for="name">Nom</label><br />
                     <input type="text" id="name" name="name" placeholder="nom" />
@@ -25,9 +25,6 @@
                   <div>
                     <input class="btn btn-default" type="submit" style="width: 100px;display: block; margin: 0 auto;"/>
                   </div>
-                  <!--<div>
-                    <input type="hidden" name="token" id="token" value="<?= $csrfAddPostToken; ?>" />
-                  </div>-->
                 </form>
               </div>
             </div>
@@ -36,19 +33,21 @@
           <thead>
             <tr>
               <th scope="col">id</th>
+              <th scope="col">Image</th>
               <th scope="col">Nom</th>
               <th scope="col">Modifier</th>
               <th scope="col">Supprimer</th>
             </tr>
           </thead>
           <tbody>
-            {% for tag in tags %}
+            {% for project in projects %}
               <tr>
-                <th scope="row">{{ tag.id }}</th>
-                <td>{{ tag.name }}</td>
+                <th scope="row">{{ project.id }}</th>
+                <td style="width:10%;"><img src="{{ project.url }}" style="width:100%;{{ project.style }}"></td>
+                <td>{{ project.title }}</td>
                 <td><i class="fa fa-pencil" aria-hidden="true"></i></td>
                 <td>
-                  <form method="post" action="?c=adminDashboard&t=deleteTag&id={{ tag.id }}" class="delete-form">
+                  <form method="post" action="#" class="delete-form">
                     <button type="submit" class="btn btn-danger" onclick="return confirm('Confirmer la suppression ?');"><i class="fa fa-trash-o"></i></button>
                   </form>
                 </td>

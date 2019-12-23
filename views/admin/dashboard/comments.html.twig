@@ -19,13 +19,21 @@
               <tr>
                 <th scope="col">id</th>
                 <th scope="col">Contenu</th>
+                <th scope="col">Modifier</th>
+                <th scope="col">Supprimer</th>
               </tr>
             </thead>
             <tbody>
               {% for comment in comments %}
               <tr>
                 <th scope="row">{{ comment.id }}</th>
-                <td>{{ comment.content|raw }}</td>
+                <td>{{ comment.content|slice(0,50)|raw }}</td>
+                <td><i class="fa fa-pencil" aria-hidden="true"></i></td>
+                <td>
+                  <form method="post" action="?c=adminDashboard&t=deleteComment&id={{ comment.id }}" class="delete-form">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Confirmer la suppression ?');"><i class="fa fa-trash-o"></i></button>
+                  </form>
+                </td>
               </tr>
               {% endfor %}
             </tbody>

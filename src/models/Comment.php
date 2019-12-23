@@ -68,4 +68,18 @@ class Comment extends Model
         $req->bindParam(':id', $commentId, \PDO::PARAM_INT);
         return $req->execute();
     }
+    /**
+     * @return mixed
+     *
+     * RECUPERER LE NOMBRE DE COMMENTAIRES PAR ARTICLES
+     */
+    public function getNumberOfComments($postId) {
+        $req = $this->db->prepare('SELECT COUNT(*) FROM comment c
+            INNER JOIN posts p
+            ON p.id = c.post_id
+            WHERE p.id = : post_id');
+        $req->bindParam(':post_id', $postId, \PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetchColumn();
+    }
 }
