@@ -15,11 +15,12 @@ class Blog extends Model
      */
     public function setPost($data) {
         $req = $this->db->prepare('
-            INSERT INTO posts (title, content, created_at, user_id, published, numberComments)
-            VALUES (:title, :content, NOW(), :user_id, :published, :numberComments)');
+            INSERT INTO posts (title, content, created_at, user_id, img_id, published, numberComments)
+            VALUES (:title, :content, NOW(), :user_id, :img_id, :published, :numberComments)');
         $req->bindValue(':title', $data['title'], \PDO::PARAM_STR);
         $req->bindValue(':content', $data['content'], \PDO::PARAM_LOB);
         $req->bindValue(':user_id', $data['user_id'], \PDO::PARAM_INT);
+        $req->bindValue(':img_id', $data['img_id'], \PDO::PARAM_INT);
         $req->bindValue(':published', $data['published'], \PDO::PARAM_INT);
         $req->bindValue(':numberComments', $data['numberComments'], \PDO::PARAM_INT);
         return $req->execute();
@@ -33,14 +34,25 @@ class Blog extends Model
      */
     public function getPostById($id) {
         $req = $this->db->prepare('
-                          SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image
+                          SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.id as img_id, i.url as image, c.category_id as category
                           FROM posts p
                           INNER JOIN user u on p.user_id = u.id
                           INNER JOIN image i on p.img_id = i.id
+                          INNER JOIN category_posts c on p.id = c.posts_id
                           WHERE p.id = :id');
         $req->bindValue(':id', $id, \PDO::PARAM_INT);
         $req->execute();
         return $req->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * @param $id
+     * @return mixed
+     *
+     * RECUPERE UN ARTICLE AVEC SON ID
+     */
+    public function getLastId() {
+        return $this->db->lastInsertId();
     }
 
     /**
@@ -81,13 +93,12 @@ class Blog extends Model
      */
     public function getPostsPagination($start, $results_per_page) {
         $req = $this->db->prepare('
-                          SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image/*, o.content as comment/*, c.name as category*/
+                          SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, c.name as category
                           FROM posts p
                           INNER JOIN user u on p.user_id = u.id
                           INNER JOIN image i on p.img_id = i.id
-                          /*LEFT JOIN comment o on p.id = o.post_id*/
-                          /*INNER JOIN category_posts x on p.id = x.posts_id
-                          LEFT JOIN category c on x.category_id = c.id*/
+                          INNER JOIN category_posts x on p.id = x.posts_id
+                          LEFT JOIN category c on x.category_id = c.id
                           LIMIT :start, :results_per_page');
         $req->bindParam(':start', $start, \PDO::PARAM_INT);
         $req->bindParam(':results_per_page', $results_per_page, \PDO::PARAM_INT);

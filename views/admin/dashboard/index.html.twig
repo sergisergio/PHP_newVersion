@@ -26,6 +26,21 @@
                     <textarea type="text" id="textarea" name="content" value=""></textarea>
                   </div>
                   <div class="divide20"></div>
+                  <div>
+                    <label>
+                      Choisir une catégorie<br />
+                      <select name="category">
+                          {% for category in categories %}
+                          <option value="{{ category.id }}">{{ category.name }}</option>
+                          {% endfor %}
+                      </select>
+                    </label>
+                  </div>
+                  <div>
+                      <label style="display: block;text-align: center;margin: 0 auto;" for="content">Ajouter une image (facultatif) </label><br />
+                       <input style="text-align: center;margin: 0 auto;" type="file" name="file_extension" />
+                  </div>
+                  <div class="divide20"></div>
                   <div class="divide20"></div>
                   <div class="divide40"></div>
                   <div>

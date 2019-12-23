@@ -43,7 +43,7 @@
             {% for project in projects %}
               <tr>
                 <th scope="row">{{ project.id }}</th>
-                <td style="width:10%;"><img src="{{ project.url }}" style="width:100%;{{ project.style }}"></td>
+                <td style="width:10%;"><img src="../assets/img/{{ project.url }}" style="width:100%;{{ project.style }}"></td>
                 <td>{{ project.title }}</td>
                 <td><i class="fa fa-pencil" aria-hidden="true"></i></td>
                 <td>

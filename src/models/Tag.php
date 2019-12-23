@@ -24,9 +24,10 @@ class Tag extends Model
      */
     public function setTag($data) {
         $req = $this->db->prepare('
-            INSERT INTO tag (name)
-            VALUES (:name)');
+            INSERT INTO tag (name, numberPosts)
+            VALUES (:name, :numberPosts)');
         $req->bindValue(':name', $data['name'], \PDO::PARAM_STR);
+        $req->bindValue(':numberPosts', $data['numberPosts'], \PDO::PARAM_STR);
         return $req->execute();
     }
     /**

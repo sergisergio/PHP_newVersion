@@ -2,7 +2,7 @@
     <h3 class="widget-title section-title">Categories</h3>
     <ul class="circled">
         {% for category in categories %}
-        <li><a href="#">{{ category.name }} (nombre d'article avec cette catégorie)</a></li>
+        <li><a href="#">{{ category.name }} ({{ category.numberPosts }})</a></li>
         {% endfor %}
     </ul>
 </div>

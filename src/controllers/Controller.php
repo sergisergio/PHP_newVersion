@@ -19,6 +19,7 @@ use Service\SecurityService;
 use Service\RegisterService;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use Models\Image;
 
 /**
  * CLASSE CONTROLLER
@@ -35,6 +36,7 @@ class Controller
     protected $userModel;
     protected $commentModel;
     protected $descriptionModel;
+    protected $imageModel;
     protected $msg;
     protected $mail;
     protected $securityModel;
@@ -66,6 +68,7 @@ class Controller
         $this->skillModel = new Skill;
         $this->userModel = new User;
         $this->descriptionModel = new Description;
+        $this->imageModel = new Image;
         $this->securityService = new SecurityService;
         $this->registerService = new RegisterService;
         $this->securityModel = new Security;

@@ -11,7 +11,10 @@ class User extends Model
      * RECUPERER TOUS LES UTILISATEURS
      */
     public function getAllUsers() {
-        $req = $this->db->prepare('SELECT * FROM user');
+        $req = $this->db->prepare('
+            SELECT u.id, u.email, u.roles, u.username, u.active, u.banned, u.created_at, i.url as image
+            FROM user u
+            INNER JOIN image i ON u.avatar_id = i.id');
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }

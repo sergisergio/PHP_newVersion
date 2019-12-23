@@ -12,9 +12,11 @@ class AdminDashboardController extends AdminController
      */
     public function index() {
         $posts = $this->blogModel->getAllPostsWithUsers();
+        $categories = $this->categoryModel->getAllCategories();
         echo $this->twig->render('admin/dashboard/index.html.twig', [
             'message'   => $this->msg,
-            'posts'     => $posts
+            'posts'     => $posts,
+            'categories'     => $categories
         ]);
     }
     /*
@@ -124,17 +126,47 @@ class AdminDashboardController extends AdminController
     public function addPost() {
         $title = htmlspecialchars($_POST['title']);
         $content =  htmlspecialchars($_POST['content'], ENT_HTML5);
+        $category = htmlspecialchars($_POST['category']);
+        $image = htmlspecialchars($_FILES['file_extension']['name']);
         $user_id = $_SESSION['admin']['id'];
-        $data = [
+        $file_extension = $_FILES['file_extension'];
+        $file_extension_error = $_FILES['file_extension']['error'];
+        $file_extension_size = $_FILES['file_extension']['size'];
+        $file_extension_tmp = $_FILES['file_extension']['tmp_name'];
+
+        //$this->blogModel->setPost($data);
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if (isset($file_extension) AND $file_extension_error == 0) {
+                if ($file_extension_size <= 1000000) {
+                    $infosfichier = pathinfo($image);
+                    $extension_upload = $infosfichier['extension'];
+                    $extensions_access = array('jpg', 'jpeg', 'gif', 'png');
+                    if (in_array($extension_upload, $extensions_access)) {
+                        move_uploaded_file(
+                            $file_extension_tmp,
+                            'assets/img/' . basename($image));
+                        $this->imageModel->setImage($image);
+                        $imageId = $this->imageModel->getId($image);
+                        $imageId = $imageId['id'];
+                    }
+                }
+            }
+            else {
+                $imageId = 14;
+            }
+            $data = [
                     'title'         => $title,
                     'content'       => $content,
                     'user_id'       => $user_id,
+                    'img_id'        => $imageId,
                     'published'     => 1,
                     'numberComments' => 0
                 ];
-        //$this->blogModel->setPost($data);
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
             if ($this->blogModel->setPost($data)) {
+                $last_id = $this->blogModel->getLastId();
+                $this->categoryModel->addCategoryToPost($category, $last_id);
+                $this->categoryModel->plusNumberPosts($category);
                 $this->msg->success("L'article a bien été ajouté !", $this->getUrl());
             } else {
                 $this->msg->error("L'article n'a pas pu être ajouté.", $this->getUrl());
@@ -149,15 +181,14 @@ class AdminDashboardController extends AdminController
      */
     public function deletePost() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if (isset($_POST['postId']) && $post = $this->blogModel->getPostById($_POST['postId'])) {
-
-                //$image = $post['image'];
-                //$path = 'assets/img/uploads/';
-
-                // remove image
-                //$this->removeImage($image, $path);
+            $postId = $_POST['postId'];
+            if (isset($postId) && $post = $this->blogModel->getPostById($_POST['postId'])) {
+                $category = $post['category'];
+                $imageId = $post['img_id'];
 
                 if ($this->blogModel->deletePost($post['id'])) {
+                    $this->imageModel->deleteImage($imageId);
+                    $this->categoryModel->minusNumberPosts($category);
                     $this->msg->success("L'article a bien été supprimé", $this->getUrl());
                 } else {
                     $this->msg->error("L'article n'a pas pu être supprimé", $this->getUrl());
@@ -207,6 +238,7 @@ class AdminDashboardController extends AdminController
         $name = htmlspecialchars($_POST['name']);
         $data = [
                     'name'         => $name,
+                    'numberPosts'  => 0
                 ];
         //$this->blogModel->setPost($data);
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -261,6 +293,7 @@ class AdminDashboardController extends AdminController
         $name = htmlspecialchars($_POST['name']);
         $data = [
                     'name' => $name,
+                    'numberPosts'  => 0
                 ];
         //$this->blogModel->setPost($data);
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
