@@ -180,4 +180,45 @@ class Blog extends Model
         $req->execute();
         return $req->fetchColumn();
     }
+
+    public function searchRequest($search) {
+        $req = $this->db->prepare("SELECT * FROM posts
+             WHERE content
+             LIKE '%$search%'
+             ORDER BY id DESC");
+        //$req->bindValue(':search', $search, \PDO::PARAM_STR);
+        $req->execute();
+        return $req->fetchAll(\PDO::FETCH_ASSOC);
+    }
+    public function countSearchRequest($search) {
+        $req = $this->db->prepare("SELECT COUNT(*) FROM posts
+             WHERE content
+             LIKE '%$search%'");
+        //$req->bindValue(':search', $search, \PDO::PARAM_STR);
+        $req->execute();
+        return $req->fetchColumn();
+    }
+    /**
+     * @param $this_page_first_result
+     * @param $results_per_page
+     * @return array
+     *
+     * RECUPERER DES ARTICLES SELON LA RECHERCHE LA PAGINATION
+     */
+    public function getSearchPagination($search, $start, $results_per_page) {
+        $req = $this->db->prepare("
+                          SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, c.name as category
+                          FROM posts p
+                          INNER JOIN user u on p.user_id = u.id
+                          INNER JOIN image i on p.img_id = i.id
+                          INNER JOIN category_posts x on p.id = x.posts_id
+                          LEFT JOIN category c on x.category_id = c.id
+                          WHERE p.content
+                          LIKE '%$search%'
+                          LIMIT :start, :results_per_page");
+        $req->bindParam(':start', $start, \PDO::PARAM_INT);
+        $req->bindParam(':results_per_page', $results_per_page, \PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }

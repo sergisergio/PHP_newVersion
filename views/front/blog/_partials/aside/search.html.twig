@@ -1,5 +1,6 @@
 <div class="sidebox box widget">
-    <form class="searchform" method="get">
-        <input type="text" id="s2" name="s" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
+    <form class="searchform" method="get" action="?c=search">
+        <input type="hidden" name="c" value="search">
+        <input type="text" id="search" name="q" placeholder="Rechercher" onfocus="this.value=''" onblur="this.placeholder='Rechercher'" />
     </form>
 </div>
