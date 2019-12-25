@@ -47,10 +47,7 @@
                 <td><i class="fa fa-pencil" aria-hidden="true"></i></td>
                 <td>
                   {% if (user.username != session.admin.username) %}
-                    <form method="post" action="?c=adminDashboard&t=deleteUser" class="delete-form">
-                      <input type="hidden" name="userId" value="{{ user.id }}">
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('Confirmer la suppression ?');"><i class="fa fa-trash-o"></i></button>
-                    </form>
+                    {% include('admin/_forms/userDelete.html.twig') %}
                   {% endif %}
                 </td>
               </tr>

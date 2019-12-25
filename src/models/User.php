@@ -50,8 +50,8 @@ class User extends Model
      */
     public function setUser($data) {
         $req = $this->db->prepare('
-            INSERT INTO user (username, email, password, roles, active, banned, created_at, ip_address, token)
-            VALUES (:username, :email, :password, :roles, :active, :banned, :created_at, :ip_address, :token)');
+            INSERT INTO user (username, email, password, roles, active, banned, created_at, ip_address, token, avatar_id)
+            VALUES (:username, :email, :password, :roles, :active, :banned, :created_at, :ip_address, :token, :avatar_id)');
         $req->bindValue(':username', $data['username'], \PDO::PARAM_STR);
         $req->bindValue(':email', $data['email'], \PDO::PARAM_STR);
         $req->bindValue(':password', $data['password'], \PDO::PARAM_STR);
@@ -60,6 +60,7 @@ class User extends Model
         $req->bindValue(':banned', $data['banned'], \PDO::PARAM_INT);
         $req->bindValue(':created_at', $data['created_at']);
         $req->bindValue(':ip_address', $data['ip_address']);
+        $req->bindValue(':avatar_id', $data['avatar_id'], \PDO::PARAM_INT);
         $req->bindValue(':token', $data['token']);
         return $req->execute();
     }

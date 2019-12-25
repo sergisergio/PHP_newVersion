@@ -1,0 +1,28 @@
+<form class="m-t" role="form" action="?c=login" method="post" novalidate>
+    <fieldset>
+        <div class="row">
+            {{ message.display }}
+            <div class="col-md-offset-3 col-md-6 col-sm-12">
+                <div class="form-row text-input-row name-field">
+                    <label>Pseudo</label>
+                    <input type="text" name="username" value="" placeholder="pseudo" class="text-input defaultText required"/>
+                </div>
+                <div class="form-row text-input-row subject-field">
+                    <label>Mot de passe</label><a class="pull-right" href="#"> (Mot de passe oublié ?)</a>
+                    <input type="password" name="password" class="text-input defaultText" placeholder="Mot de passe" />
+                </div>
+            </div>
+            <div class="col-sm-6 col-xs-6">
+                <div class="button-row pull-right">
+                    <input type="submit" value="Envoyer" name="submit" class="btn btn-submit bm0" />
+                </div>
+            </div>
+            <div class="col-sm-6 col-xs-6 lp5">
+                <div class="button-row pull-left">
+                    <input type="reset" value="Effacer" name="reset" class="btn btn-submit bm0" />
+                </div>
+                <input type="hidden" name="loginToken" id="token" value="{{ token }}" />
+            </div>
+        </div>
+    </fieldset>
+</form>

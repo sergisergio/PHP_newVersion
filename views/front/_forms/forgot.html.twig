@@ -1,0 +1,22 @@
+
+            {{ form_start(form) }}
+            <fieldset>
+                <div class="row">
+                    <div class="col-md-offset-3 col-md-6 col-sm-12">
+                        <div class="form-row text-input-row email-field">
+                            {{ form_row(form.email, {'label': 'Adresse email *', 'attr': {'placeholder': 'email'}}) }}
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xs-6">
+                        <div class="button-row pull-right">
+                            <input type="submit" value="Envoyer" name="submit" class="btn btn-submit bm0" />
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xs-6 lp5">
+                        <div class="button-row pull-left">
+                            <input type="reset" value="Effacer" name="reset" class="btn btn-submit bm0" />
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            {{ form_end(form) }}

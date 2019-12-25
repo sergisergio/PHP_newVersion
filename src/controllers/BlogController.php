@@ -54,22 +54,26 @@ class BlogController extends Controller
         if (isset($_GET['id']) && $post = $this->blogModel->getPostById($_GET['id'])) {
             if ($post['published'] || $this->isAdmin()) {
                 $post['content'] = htmlspecialchars_decode($post['content'], ENT_HTML5);
+                $categories = $this->categoryModel->getAllCategories();
+                $tags = $this->tagModel->getAllTags();
+                $populars = $this->blogModel->getMostSeens();
                 if ($this->isLogged()) {
                     $comments = $this->commentModel->getVerifiedCommentsByPostId($post['id']);
-                    $categories = $this->categoryModel->getAllCategories();
-                    $tags = $this->tagModel->getAllTags();
-                    $populars = $this->blogModel->getMostSeens();
+
+                    $subcomments = $this->commentModel->getCommentById($_GET['id'], $post['id']);
+
                 } else {
                     $comments = null;
                 }
                 echo $this->twig->render('front/blog/post/index.html.twig', [
-                    'post'       => $post,
-                    'comments'   => $comments,
-                    'message'    => $this->msg,
-                    'maxLength'  => $this->configModel->getConfig()['characters'],
-                    'categories' => $categories,
-                    'tags'       => $tags,
-                    'populars'      => $populars
+                    'post'        => $post,
+                    'comments'    => $comments,
+                    'message'     => $this->msg,
+                    'maxLength'   => $this->configModel->getConfig()['characters'],
+                    'categories'  => $categories,
+                    'tags'        => $tags,
+                    'populars'    => $populars,
+                    'subcomments' => $subcomments,
                 ]);
             } else {
                 $this->redirect404();

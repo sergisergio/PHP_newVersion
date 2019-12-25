@@ -95,6 +95,7 @@ class LoginController extends Controller
                     'ip_address' => $_SERVER['REMOTE_ADDR'],
                     'token'      => $token,
                     'banned'     => 0,
+                    'avatar_id'  => 10
                 ];
                 // create the user then redirect to "my account"
 

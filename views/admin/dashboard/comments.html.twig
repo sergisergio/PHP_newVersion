@@ -30,9 +30,7 @@
                 <td>{{ comment.content|slice(0,50)|raw }}</td>
                 <td><i class="fa fa-pencil" aria-hidden="true"></i></td>
                 <td>
-                  <form method="post" action="?c=adminDashboard&t=deleteComment&id={{ comment.id }}" class="delete-form">
-                    <button type="submit" class="btn btn-danger" onclick="return confirm('Confirmer la suppression ?');"><i class="fa fa-trash-o"></i></button>
-                  </form>
+                  {% include('admin/_forms/commentDelete.html.twig') %}
                 </td>
               </tr>
               {% endfor %}

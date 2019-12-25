@@ -16,19 +16,7 @@
         <div class="post box">
             <h2>Ajouter une étiquette</h2>
               <div class="form-container">
-                <form action="index.php?c=adminDashboard&t=addTag" method="post" enctype="multipart/form-data">
-                  <div>
-                    <label for="name">Nom</label><br />
-                    <input type="text" id="name" name="name" placeholder="nom" />
-                  </div>
-                  <div class="divide40"></div>
-                  <div>
-                    <input class="btn btn-default" type="submit" style="width: 100px;display: block; margin: 0 auto;"/>
-                  </div>
-                  <!--<div>
-                    <input type="hidden" name="token" id="token" value="<?= $csrfAddPostToken; ?>" />
-                  </div>-->
-                </form>
+                {% include('admin/_forms/tagAdd.html.twig') %}
               </div>
             </div>
       <div class="post box">
@@ -48,9 +36,7 @@
                 <td>{{ tag.name }}</td>
                 <td><i class="fa fa-pencil" aria-hidden="true"></i></td>
                 <td>
-                  <form method="post" action="?c=adminDashboard&t=deleteTag&id={{ tag.id }}" class="delete-form">
-                    <button type="submit" class="btn btn-danger" onclick="return confirm('Confirmer la suppression ?');"><i class="fa fa-trash-o"></i></button>
-                  </form>
+                  {% include('admin/_forms/tagDelete.html.twig') %}
                 </td>
               </tr>
             {% endfor %}

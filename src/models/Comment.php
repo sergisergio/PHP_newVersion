@@ -50,10 +50,11 @@ class Comment extends Model
      */
     public function getCommentById($id, $postId) {
         $req = $this->db->prepare('
-            SELECT *
-            FROM comment
-            WHERE id = :id
-            AND post_id = :post_id');
+            SELECT c.id, c.content, c.post_id, c.published_at, c.validated, s.id as sub_id, s.content as sub_content, s.published_at as sub_published_at, s.validated as sub_validated, s.post_id as sub_post_id
+            FROM comment c
+            INNER JOIN subcomment s ON c.id = s.comment_id
+            WHERE c.id = :id
+            AND c.post_id = :post_id');
         $req->bindValue(':id', $id, \PDO::PARAM_INT);
         $req->bindValue(':post_id', $postId, \PDO::PARAM_INT);
         $req->execute();
@@ -77,9 +78,37 @@ class Comment extends Model
         $req = $this->db->prepare('SELECT COUNT(*) FROM comment c
             INNER JOIN posts p
             ON p.id = c.post_id
-            WHERE p.id = : post_id');
+            WHERE p.id = :post_id');
         $req->bindParam(':post_id', $postId, \PDO::PARAM_INT);
         $req->execute();
         return $req->fetchColumn();
+    }
+
+    /**
+     *  AJOUTER UN SOUS-COMMENTAIRE
+     */
+    public function addSubComment($data) {
+        $req = $this->db->prepare('
+            INSERT INTO subcomment (post_id, content, author_id, comment_id, published_at, validated)
+            VALUES (:post_id, :content, :user_id, :comment_id, NOW(), :validated)');
+        $req->bindValue(':post_id', $data['post_id'], \PDO::PARAM_STR);
+        $req->bindValue(':content', $data['content'], \PDO::PARAM_LOB);
+        $req->bindValue(':user_id', $data['user_id'], \PDO::PARAM_INT);
+        $req->bindValue(':comment_id', $data['comment_id'], \PDO::PARAM_INT);
+        $req->bindValue(':validated', $data['validated'], \PDO::PARAM_INT);
+        return $req->execute();
+    }
+
+    public function getSubCommentsByCommentId($commentId) {
+        $req = $this->db->prepare('
+            SELECT s.id, s.content, s.post_id, s.published_at, s.validated, u.username as author, i.url as image
+            FROM subcomment s
+            INNER JOIN user u ON s.author_id = u.id
+            INNER JOIN comment c ON s.comment_id = c.id
+            INNER JOIN image i ON u.avatar_id = i.id
+            WHERE s.comment_id = :comment_id');
+        $req->bindValue(':comment_id', $commentId, \PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

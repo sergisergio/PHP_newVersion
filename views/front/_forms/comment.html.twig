@@ -1,0 +1,16 @@
+<form action="index.php?c=comment&t=addComment&id={{ post.id }}" method="post">
+    <input type="hidden" name="user_id" value="{% if session.admin %}{{ session.admin.id }}{% elseif session.user %}{{ session.user.id }}{% endif %}">
+    <input type="hidden" name="post_id" value="{{ post.id }}">
+    <div>
+    <label for="content">Commentaire</label>
+    <br />
+    <textarea id="content" name="content"></textarea>
+    </div>
+    <p class="text-center">Votre commentaire sera publié dans les plus brefs délais après modération</p>
+    <div class="text-center">
+    <input class="btn btn-default validate" type="submit" />
+    </div>
+    <div>
+    <input type="hidden" name="token" id="token" value="<?= $csrfAddCommentToken; ?>" />
+    </div>
+</form>
