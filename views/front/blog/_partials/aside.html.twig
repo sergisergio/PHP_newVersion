@@ -1,4 +1,9 @@
 <aside class="col-md-4 col-sm-12 sidebar">
+    {% if session.admin != null %}
+    <!-- /.widget -->
+    {{ include('front/blog/_partials/aside/admin.html.twig')}}
+    {% endif %}
+    <!-- /.widget -->
     {{ include('front/blog/_partials/aside/view.html.twig')}}
     <!-- /.widget -->
     {{ include('front/blog/_partials/aside/search.html.twig')}}

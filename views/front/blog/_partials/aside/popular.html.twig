@@ -4,7 +4,7 @@
         {% for popular in populars %}
         <li>
             <figure class="frame pull-left">
-                <div class="icon-overlay"><a href="index.php?c=blog&t=post&id={{ popular.id }}">
+                <div class="icon-overlay"><a href="index.php?c=blog&t=post&id={{ popular.id }}&page=1">
                     <img src="./assets/img/{{ popular.image}}" class="img-fluid img-thumbnail" style="vertical-align: middle;width:20%;" alt="" />
                     <div class="meta" style="margin-bottom: 16px;margin-top: -57px;">
                         <em><span class="date">{{ popular.created_at|date}}</span>

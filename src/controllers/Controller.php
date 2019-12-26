@@ -60,6 +60,7 @@ class Controller
         $this->twig->addExtension(new \Twig_Extension_Debug());
         $this->twig->addGlobal('_get', $_GET);
         $this->twig->addGlobal('session', $_SESSION);
+        $this->twig->getExtension(\Twig\Extension\CoreExtension::class)->setTimezone('Europe/Paris');
         // Models
         $this->model = new Model;
         $this->configModel = new Config;

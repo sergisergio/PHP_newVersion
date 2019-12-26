@@ -26,9 +26,6 @@ class SearchController extends Controller
             $number = $this->blogModel->countSearchRequest($search);
             $number = (int)$number;
             $number_of_pages = ceil($number/$results_per_page);
-            //echo '<pre>';
-            //var_dump($number);die();
-            //echo '</pre>';
             if ($number > 0)
             {
               if (isset($_GET['page']) AND !empty($_GET['page']) AND ($_GET['page'] > 0 ) AND ($_GET['page'] <= $number_of_pages)) {
@@ -45,16 +42,9 @@ class SearchController extends Controller
               $start = ($currentPage-1)*(int)$results_per_page;
               // retrieve selected results from database and display them on page
               $posts = $this->blogModel->getSearchPagination($search, $start, $results_per_page);
-              //echo '<pre>';
-              //var_dump($posts);die();
-              //echo '</pre>';
             } else {
               $posts = [];
             }
-
-            //echo '<pre>';
-            //var_dump($search);die();
-            //echo '</pre>';
             echo $this->twig->render('front/blog/search/index.html.twig', [
             'posts'         => $posts,
             'number'        => $number,

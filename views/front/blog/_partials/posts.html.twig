@@ -4,9 +4,9 @@
             <div class="blog-posts">
                 <div class="pagination box">
                     <ul>
-                        <li><a href="?c=blog&t=view1&page={{ _get.page - 1 }}" class="btn {% if _get.page == null or _get.page == 1 %}disabled{% endif %}">Prev</a></li>
+                        <li><a href="?c=blog&t=view1&page={{ _get.page - 1 }}" class="btn {% if _get.page == 1  %}disabled{% endif %}">Prev</a></li>
                         {% for i in 1..numberOfPages %}
-                        <li class="btn {% if _get.page == i %}active{% endif %}"><a href="?c=blog&t=view1&page={{ i }}" style="border:none;">{{ i }}</a></li>
+                        <li class="btn {% if (_get.page == i) %}active{% endif %}"><a href="?c=blog&t=view1&page={{ i }}" style="border:none;">{{ i }}</a></li>
                         {% endfor %}
                         <li><a href="?c=blog&t=view1&page={% if _get.page == null %}2{% else %}{{ _get.page + 1 }}{% endif %}" class="btn {% if _get.page == numberOfPages %}disabled{% endif %}">Next</a></li>
                         <li class="pull-right">{{ number }} articles</li>
@@ -32,7 +32,7 @@
                                 <span class="category">
                                         {{ post.category }}
                                 </span>
-                                <span class="date">{{ post.created_at|date}}</span>
+                                <span class="date">{{ post.created_at|date("d/m/Y") }}</span>
                                 <span class="comments"><a href="#">{{ post.numberComments }} <i class="icon-chat-1"></i></a></span>
                             </div>
                             <h2 class="post-title"><a href="">{{ post.title|e }}</a></h2>

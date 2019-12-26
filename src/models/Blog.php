@@ -95,9 +95,9 @@ class Blog extends Model
         $req = $this->db->prepare('
                           SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, c.name as category
                           FROM posts p
-                          INNER JOIN user u on p.user_id = u.id
-                          INNER JOIN image i on p.img_id = i.id
-                          INNER JOIN category_posts x on p.id = x.posts_id
+                          LEFT JOIN user u on p.user_id = u.id
+                          LEFT JOIN image i on p.img_id = i.id
+                          LEFT JOIN category_posts x on p.id = x.posts_id
                           LEFT JOIN category c on x.category_id = c.id
                           LIMIT :start, :results_per_page');
         $req->bindParam(':start', $start, \PDO::PARAM_INT);
@@ -221,4 +221,87 @@ class Blog extends Model
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    public function searchByCategory($category) {
+        $req = $this->db->prepare("
+                          SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, c.name as category
+                          FROM posts p
+                          INNER JOIN user u on p.user_id = u.id
+                          INNER JOIN image i on p.img_id = i.id
+                          INNER JOIN category_posts x on p.id = x.posts_id
+                          LEFT JOIN category c on x.category_id = c.id
+                          WHERE c.name = :category");
+        $req->bindParam(':category', $category, \PDO::PARAM_STR);
+        $req->execute();
+        return $req->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getCategoryPagination($category, $start, $results_per_page) {
+        $req = $this->db->prepare("
+                          SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, c.name as category
+                          FROM posts p
+                          INNER JOIN user u on p.user_id = u.id
+                          INNER JOIN image i on p.img_id = i.id
+                          INNER JOIN category_posts x on p.id = x.posts_id
+                          LEFT JOIN category c on x.category_id = c.id
+                          WHERE c.name = :category
+                          LIMIT :start, :results_per_page");
+        $req->bindParam(':category', $category, \PDO::PARAM_STR);
+        $req->bindParam(':start', $start, \PDO::PARAM_INT);
+        $req->bindParam(':results_per_page', $results_per_page, \PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function countSearchByCategoryRequest($category) {
+        $req = $this->db->prepare("SELECT COUNT(*) FROM posts p
+            INNER JOIN category_posts x on p.id = x.posts_id
+            LEFT JOIN category c on x.category_id = c.id
+             WHERE c.name = :category");
+        $req->bindParam(':category', $category, \PDO::PARAM_STR);
+        $req->execute();
+        return $req->fetchColumn();
+    }
+
+    public function searchByTag($tag) {
+        $req = $this->db->prepare("
+                          SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, x.name as tag
+                          FROM posts p
+                          INNER JOIN user u on p.user_id = u.id
+                          INNER JOIN image i on p.img_id = i.id
+                          INNER JOIN tag_posts t on p.id = t.posts_id
+                          LEFT JOIN tag x on x.id = t.tag_id
+                          WHERE x.name = :tag");
+        $req->bindParam(':tag', $tag, \PDO::PARAM_STR);
+        $req->execute();
+        return $req->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getTagPagination($tag, $start, $results_per_page) {
+        $req = $this->db->prepare("
+                          SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, x.name as tag
+                          FROM posts p
+                          INNER JOIN user u on p.user_id = u.id
+                          INNER JOIN image i on p.img_id = i.id
+                          INNER JOIN tag_posts t on p.id = t.posts_id
+                          LEFT JOIN tag x on x.id = t.tag_id
+                          WHERE x.name = :tag
+                          LIMIT :start, :results_per_page");
+        $req->bindParam(':tag', $tag, \PDO::PARAM_STR);
+        $req->bindParam(':start', $start, \PDO::PARAM_INT);
+        $req->bindParam(':results_per_page', $results_per_page, \PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function countSearchByTagRequest($tag) {
+        $req = $this->db->prepare("SELECT COUNT(*) FROM posts p
+            INNER JOIN tag_posts x on p.id = x.posts_id
+            LEFT JOIN tag t on x.tag_id = t.id
+             WHERE t.name = :tag");
+        $req->bindParam(':tag', $tag, \PDO::PARAM_STR);
+        $req->execute();
+        return $req->fetchColumn();
+    }
+
 }
