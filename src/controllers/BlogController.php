@@ -36,6 +36,8 @@ class BlogController extends Controller
         $populars = $this->blogModel->getMostSeens();
         $categories = $this->categoryModel->getAllCategories();
         $tags = $this->tagModel->getAllTags();
+        $links = $this->linkModel->getAllLinks();
+        $sublinks = $this->linkModel->getAllSublinks();
         //$mostSeens = $this->blogModel->getMostSeenPosts();
         echo $this->twig->render('front/blog/index.html.twig', [
             'posts'         => $posts,
@@ -44,7 +46,9 @@ class BlogController extends Controller
             'categories'    => $categories,
             'tags'          => $tags,
             'url'           => $url,
-            'populars'      => $populars
+            'populars'      => $populars,
+            'links'         => $links,
+            'sublinks'      => $sublinks,
         ]);
     }
     /*
@@ -59,8 +63,15 @@ class BlogController extends Controller
                 $populars = $this->blogModel->getMostSeens();
                 if ($this->isLogged()) {
                     $comments = $this->commentModel->getVerifiedCommentsByPostId($post['id']);
+                    //foreach ($comments as $comment) {
+                        //echo '<p style="margin-top:50px"></p><p></p><p></p>';
+                        //echo '<pre>';
+                        //var_dump($comment['id']);
+                        //echo '</pre>';
+                        //foreach ($comment['id'] as )
 
-                    $subcomments = $this->commentModel->getCommentById($_GET['id'], $post['id']);
+                    //}
+                    //$subcomments = $this->commentModel->getCommentById($_GET['id']);
 
                 } else {
                     $comments = null;

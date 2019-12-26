@@ -71,19 +71,18 @@
                                     <button id="show"><i class="icon-reply"></i> Répondre </button>&nbsp;&nbsp;&nbsp;&nbsp;
                                     <a href=""> Réponses (2) </a>&nbsp;&nbsp;&nbsp;&nbsp;
                                     <a href=""> <i class="budicon-alert"></i> Signaler</a>&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <a href=""><i class="icon-thumbs-up"></i> 21</a>
-                                    <a href=""><i class="icon-thumbs-down"></i> 2</a>
+                                    <a href="?c=comment&t=likes"><i class="icon-thumbs-up"></i> {{ comment.likes }}</a>&nbsp;&nbsp;&nbsp;
+                                    <a href=""><i class="icon-thumbs-down"></i> {{ comment.dislikes }}</a>
                                 </div>
                             </div>
                             <div class="row" style="display: none;" id="answer">
-                                <div class="col-md-1 col-sm-1 col-xs-2">
+                                <div class="col-md-2 col-sm-2 col-xs-4">
                                 </div>
-                                <div class="col-md-11 col-sm-11 col-xs-10">
+                                <div class="col-md-10 col-sm-10 col-xs-8">
                                     {% if session.user != null or session.admin != null %}
-                                        {% for subcomment in subcomments %}
                                             <div class="row">
                                                 <div class="col-md-1 col-sm-1 col-xs-2">
-                                                {% if subcomment.image %}
+                                                {% if comment.image %}
                                                     <img class="img-responsive img-circle" src="..assets/img/{{ subcomment.image }}" alt="imageavatar" />
                                                 {% else %}
                                                     <img class="img-responsive img-circle" src="../assets/img/avatardefaut.png" alt="imageavatar" />
@@ -91,9 +90,9 @@
 
                                                 </div>
                                                 <div class="col-md-11 col-sm-11 col-xs-10">
-                                                    <a href=""><strong>{{ subcomment.author }}</strong></a>
+                                                    <a href=""><strong>Auteur</strong></a>
                                                     <em style="font-weight: 200">le
-                                                        {{ subcomment.published_at|date() }}
+                                                        {# subcomment.published_at|date() #}
                                                     </em>&nbsp;&nbsp;&nbsp;&nbsp;
                                                         {% if ((session.admin.username == subcomment.username) or (session.user.username == comment.username)or (session.admin != null)) %}
                                                             <a href="#"> <i class="icon-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -101,16 +100,18 @@
                                                         {% endif %}
                                                 </div>
                                             </div>
+                                            {% for subcomment in comments.sub_content %}
                                             <div class="row">
-                                                <div class="col-md-1 col-sm-1 col-xs-2">
+                                                <div class="col-md-2 col-sm-2 col-xs-4">
                                                 </div>
-                                                <div class="col-md-11 col-sm-11 col-xs-10">
+                                                <div class="col-md-10 col-sm-10 col-xs-8">
                                                     <p style="margin: -10px 0 0px !important;font-weight: 700;">
                                                         {{ subcomment.content }}
                                                     </p>
                                                 </div>
                                             </div>
-                                        {% endfor %}
+                                            {% endfor %}
+                                        {# endfor #}
                                         {% include('front/_forms/subComment.html.twig') %}
                                     {% else %}
                                     <p>Connectez-vous pour publier une réponse.</p>
@@ -118,6 +119,7 @@
                                 </div>
                             </div>
                             <hr style="border-bottom: 2px solid rgba(255,255,255,0.2);">
+
                             {% endfor %}
                     </div>
                 </div>

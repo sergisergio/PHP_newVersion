@@ -23,8 +23,11 @@
     <link href="../assets/css/prettify.css" rel="stylesheet">
     <link href="../assets/css/style.css" rel="stylesheet">
     <link href="../assets/css/green.css" rel="stylesheet">
+    <!--<link rel="stylesheet" href="../assets/css/component.css" />
+    <link rel="stylesheet" href="../assets/css/content.css" />-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/noty@3.2.0-beta/lib/noty.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/noty@3.2.0-beta/lib/themes/nest.css">
+    <!--<script src="../assets/js/modernizr.custom.js"></script>-->
     {% block stylesheet %}{% endblock %}
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -33,24 +36,24 @@
       <![endif]-->
     <style>
         .tooltip{
-  position:relative;
-  float:right;
-}
-.tooltip > .tooltip-inner {background-color: #eebf3f; padding:3px 15px; color:rgb(23,44,66); font-weight:bold; font-size:13px;}
-.popOver + .tooltip > .tooltip-arrow {  border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid #eebf3f;}
+          position:relative;
+          float:right;
+        }
+        .tooltip > .tooltip-inner {background-color: #eebf3f; padding:3px 15px; color:rgb(23,44,66); font-weight:bold; font-size:13px;}
+        .popOver + .tooltip > .tooltip-arrow {  border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid #eebf3f;}
 
 
-.progress{
-  border-radius:0;
-  overflow:visible;
-  border: 1px solid #9cbc68;
-  background : #000;
-}
-.progress-bar{
-   background-color: #9cbc68 !important;
-  -webkit-transition: width 1.5s ease-in-out !important;
-  transition: width 1.5s ease-in-out !important;
-}
+        .progress{
+          border-radius:0;
+          overflow:visible;
+          border: 1px solid #9cbc68;
+          background : #000;
+        }
+        .progress-bar{
+           background-color: #9cbc68 !important;
+          -webkit-transition: width 1.5s ease-in-out !important;
+          transition: width 1.5s ease-in-out !important;
+        }
     </style>
 
 </head>
@@ -79,7 +82,8 @@
     <script src="../assets/js/classie.js"></script>
     <script src="../assets/js/plugins.js"></script>
     <script src="../assets/js/scripts.js"></script>
-
+    <!--<script src="../assets/js/classie2.js"></script>
+    <script src="../assets/js/uiMorphingButton_fixed.js"></script>-->
     <script>
     $.backstretch(["../assets/img/react2.png"]);
     </script>
@@ -135,6 +139,74 @@
           closeWith: ['click', 'button']
         }).show();
     </script>
+    <!--<script>
+            (function() {
+                var docElem = window.document.documentElement, didScroll, scrollPosition;
+
+                // trick to prevent scrolling when opening/closing button
+                function noScrollFn() {
+                    window.scrollTo( scrollPosition ? scrollPosition.x : 0, scrollPosition ? scrollPosition.y : 0 );
+                }
+
+                function noScroll() {
+                    window.removeEventListener( 'scroll', scrollHandler );
+                    window.addEventListener( 'scroll', noScrollFn );
+                }
+
+                function scrollFn() {
+                    window.addEventListener( 'scroll', scrollHandler );
+                }
+
+                function canScroll() {
+                    window.removeEventListener( 'scroll', noScrollFn );
+                    scrollFn();
+                }
+
+                function scrollHandler() {
+                    if( !didScroll ) {
+                        didScroll = true;
+                        setTimeout( function() { scrollPage(); }, 60 );
+                    }
+                };
+
+                function scrollPage() {
+                    scrollPosition = { x : window.pageXOffset || docElem.scrollLeft, y : window.pageYOffset || docElem.scrollTop };
+                    didScroll = false;
+                };
+
+                scrollFn();
+
+                var el = document.querySelector( '.morph-button' );
+
+                new UIMorphingButton( el, {
+                    closeEl : '.icon-close',
+                    onBeforeOpen : function() {
+                        // don't allow to scroll
+                        noScroll();
+                    },
+                    onAfterOpen : function() {
+                        // can scroll again
+                        canScroll();
+                        // add class "noscroll" to body
+                        classie.addClass( document.body, 'noscroll' );
+                        // add scroll class to main el
+                        classie.addClass( el, 'scroll' );
+                    },
+                    onBeforeClose : function() {
+                        // remove class "noscroll" to body
+                        classie.removeClass( document.body, 'noscroll' );
+                        // remove scroll class from main el
+                        classie.removeClass( el, 'scroll' );
+                        // don't allow to scroll
+                        noScroll();
+                    },
+                    onAfterClose : function() {
+                        // can scroll again
+                        canScroll();
+                    }
+                } );
+            })();
+        </script>-->
     {% endif %}
     {% block js %}{% endblock %}
 </body>

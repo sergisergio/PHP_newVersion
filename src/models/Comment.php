@@ -21,7 +21,7 @@ class Comment extends Model
      */
     public function getVerifiedCommentsByPostId($id) {
         $req = $this->db->prepare('
-            SELECT c.id, c.content, c.post_id, c.published_at, c.validated, u.username as author, i.url as image
+            SELECT c.id, c.content, c.post_id, c.published_at, c.validated, c.likes, c.dislikes, u.username as author, i.url as image
             FROM comment c
             INNER JOIN user u ON c.author_id = u.id
             INNER JOIN image i ON u.avatar_id = i.id
@@ -48,15 +48,13 @@ class Comment extends Model
     /**
      * RECUPERER UN COMMENTAIRE AVEC SON ID
      */
-    public function getCommentById($id, $postId) {
+    public function getCommentById($id) {
         $req = $this->db->prepare('
             SELECT c.id, c.content, c.post_id, c.published_at, c.validated, s.id as sub_id, s.content as sub_content, s.published_at as sub_published_at, s.validated as sub_validated, s.post_id as sub_post_id
             FROM comment c
             INNER JOIN subcomment s ON c.id = s.comment_id
-            WHERE c.id = :id
-            AND c.post_id = :post_id');
+            WHERE c.id = :id');
         $req->bindValue(':id', $id, \PDO::PARAM_INT);
-        $req->bindValue(':post_id', $postId, \PDO::PARAM_INT);
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -110,5 +108,21 @@ class Comment extends Model
         $req->bindValue(':comment_id', $commentId, \PDO::PARAM_INT);
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function plusLikes($commentId) {
+        $req = $this->db->prepare('UPDATE comment
+            SET likes = likes + 1
+            WHERE id = :id');
+        $req->bindParam(':id', $commentId, \PDO::PARAM_INT);
+        return $req->execute();
+    }
+
+    public function minusLikes($commentId) {
+        $req = $this->db->prepare('UPDATE comment
+            SET likes = likes - 1
+            WHERE id = :id');
+        $req->bindParam(':id', $commentId, \PDO::PARAM_INT);
+        return $req->execute();
     }
 }

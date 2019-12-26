@@ -26,9 +26,9 @@
                     {% for skill2 in skills2 %}
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h4 class="panel-title"> <a data-toggle="collapse" class="panel-toggle {{ skill2.active }}" data-parent="#accordion" href="#{{ skill2.collapse}}"> {{ skill2.name }}</a> </h4>
+                            <h4 class="panel-title"> <a data-toggle="collapse" class="panel-toggle {{ skill2.active }}" data-parent="#accordion" href="#collapse{{ skill2.id }}"> {{ skill2.name }}</a> </h4>
                         </div>
-                        <div id="{{ skill2.collapse }}" class="panel-collapse collapse {{ skill2.class }} ">
+                        <div id="collapse{{ skill2.id }}" class="panel-collapse collapse {{ skill2.class }} ">
                             <div class="panel-body"> {{ skill2.content|raw }}
                             </div>
                         </div>

@@ -15,6 +15,7 @@ use Models\Skill;
 use Models\User;
 use Models\Description;
 use Models\Security;
+use Models\Link;
 use Service\SecurityService;
 use Service\RegisterService;
 use PHPMailer\PHPMailer\PHPMailer;
@@ -37,6 +38,7 @@ class Controller
     protected $commentModel;
     protected $descriptionModel;
     protected $imageModel;
+    protected $linkModel;
     protected $msg;
     protected $mail;
     protected $securityModel;
@@ -73,6 +75,7 @@ class Controller
         $this->registerService = new RegisterService;
         $this->securityModel = new Security;
         $this->commentModel = new Comment;
+        $this->linkModel = new Link;
         $this->mail = new PHPMailer(true);;
     }
     // Redirection 404

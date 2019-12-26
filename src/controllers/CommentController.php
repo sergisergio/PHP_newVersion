@@ -94,4 +94,20 @@ class CommentController extends Controller
             $this->redirect404();
         }
     }
+
+    public function likes() {
+        if ($this->isLogged()) {
+            $this->commentModel->plusLikes() {
+
+            }
+        }
+    }
+
+    public function dislikes() {
+        if ($this->isLogged()) {
+            $this->commentModel->minusLikes() {
+
+            }
+        }
+    }
 }
