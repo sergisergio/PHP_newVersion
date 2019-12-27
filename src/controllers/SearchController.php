@@ -12,10 +12,6 @@ class SearchController extends Controller
   public function index($search)
     {
         $search = isset($_GET['q']) ? $_GET['q'] : '';
-        //$_SESSION['csrfSearchToken'] = $csrfSearchToken;
-        //echo '<pre>';
-        //var_dump($search);die();
-        //echo '</pre>';
         if (isset($search) && $search != null) {
             $results_per_page = $this->configModel->getConfig()['ppp'];
             $populars = $this->blogModel->getMostSeens();
@@ -34,13 +30,10 @@ class SearchController extends Controller
               } else {
                   $currentPage = 1;
               }
-              // check if the page exist
               if ($currentPage > $number_of_pages) {
                   $this->redirect404();
               }
-              // determine the sql LIMIT starting number for the results on the displaying page
               $start = ($currentPage-1)*(int)$results_per_page;
-              // retrieve selected results from database and display them on page
               $posts = $this->blogModel->getSearchPagination($search, $start, $results_per_page);
             } else {
               $posts = [];

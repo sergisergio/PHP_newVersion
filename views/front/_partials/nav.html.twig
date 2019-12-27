@@ -11,9 +11,9 @@
             <li><a href="#about">A propos</a></li>
             <li><a href="#skills">Compétences</a></li>
             <li><a href="#contact">Contact</a></li>
-            <li><a href="index.php?c=blog&t=view1&page=1">Blog</a></li>
+            <li><a href="index.php?c=blog&v=view1&page=1">Blog</a></li>
             {% if session.admin != null %}
-            <li><a href="index.php?c=adminDashboard">Admin</a></li>
+                <li><a href="index.php?c=adminDashboard">Admin</a></li>
             {% endif %}
             {% if session.user != null or session.admin != null %}
             <li><a href="index.php?c=login&t=logout">Déconnexion</a></li>
@@ -21,6 +21,11 @@
             <li><a href="index.php?c=login">Connexion</a></li>
             <li><a href="index.php?c=login&t=registration">Inscription</a></li>
             {% endif %}
+            {% if session.user != null%}
+            <li><a href=""><img src="../assets/img/{{ session.user.image }}" alt="" class="img-responsive img-circle" style="width: 15%;margin-top: -15px;"></a></li>
+            {% elseif session.admin != null %}
+            <li><a href=""><img src="../assets/img/{{ session.admin.image }}" class="img-responsive img-circle" style="width: 15%;margin-top: -15px;" alt=""></a></li>
+            {% endif%}
             <!--<li><a href="style/pdf/CV_TRAON_2019.pdf" class="hint--right" data-hint="CV"><i class="budicon-note-9"></i><span>CV</span></a></li>-->
         </ul>
         <!-- /.navbar-nav -->

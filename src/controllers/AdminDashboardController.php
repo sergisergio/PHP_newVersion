@@ -73,19 +73,14 @@ class AdminDashboardController extends AdminController
      * METTRE A JOUR LA CONFIGURATION
      */
     public function editConfig() {
-        // if it's a post method & edit_config is submitted & ppp value is not empty, then update the config, else, redirect to a 404 error page
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['edit_config'])) {
             if (empty($_POST['ppp']) || empty($_POST['cpc'])) {
                 $this->msg->error("Tous les champs n'ont pas été remplis", $this->getUrl(true));
             } else {
-                // post per page
                 $ppp = $_POST['ppp'];
-                // characters per comment
                 $cpc = $_POST['cpc'];
-                //if it works, redirect to the dashboard and show success message
                 if ($this->model->updateConfig($ppp, $cpc)) {
                     $this->msg->success("La configuration a bien été modifié", $this->getUrl(true));
-                // if it doesn't works, redirect to the dashboard and show error message
                 } else {
                     $this->msg->error("Une erreur s'est produite", $this->getUrl(true));
                 }
@@ -98,7 +93,6 @@ class AdminDashboardController extends AdminController
      * METTRE A JOUR UN MEMBRE
      */
     public function updateUser() {
-        // if it's a userDown post
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userDown']) && !empty($_POST['userDown'])) {
             $userId = $_POST['userDown'];
             $user = $this->userModel->getUserById($userId);
@@ -107,7 +101,6 @@ class AdminDashboardController extends AdminController
             } else {
                 $this->msg->error("Une erreur s'est produite", $this->getUrl(true));
             }
-        // if it's a userUp post
         } elseif ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userUp']) && !empty($_POST['userUp'])) {
             $userId = $_POST['userUp'];
             $user = $this->usersModel->getUserById($userId);
@@ -194,11 +187,9 @@ class AdminDashboardController extends AdminController
                     $this->msg->error("L'article n'a pas pu être supprimé", $this->getUrl());
                 }
             } else {
-                //redirect to the list of blog posts
                 $this->msg->error("L'article n'existe pas", $this->getUrl());
             }
         } else {
-            //redirect to the list of blog posts
             header('Location: ?c=adminDashboard');
             exit;
         }
@@ -209,24 +200,15 @@ class AdminDashboardController extends AdminController
     public function deleteUser() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (isset($_POST['userId']) && $post = $this->userModel->getUserById($_POST['postId'])) {
-
-                //$image = $post['image'];
-                //$path = 'assets/img/uploads/';
-
-                // remove image
-                //$this->removeImage($image, $path);
-
                 if ($this->userModel->deleteUser($user['id'])) {
                     $this->msg->success("Le membre a bien été supprimé", $this->getUrl());
                 } else {
                     $this->msg->error("Le membre n'a pas pu être supprimé", $this->getUrl());
                 }
             } else {
-                //redirect to the list of blog posts
                 $this->msg->error("Le membre n'existe pas", $this->getUrl());
             }
         } else {
-            //redirect to the list of blog posts
             header('Location: ?c=adminDashboard&t=users');
             exit;
         }
@@ -240,7 +222,6 @@ class AdminDashboardController extends AdminController
                     'name'         => $name,
                     'numberPosts'  => 0
                 ];
-        //$this->blogModel->setPost($data);
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($this->categoryModel->setCategory($data)) {
                 $this->msg->success("La catégorie a bien été ajoutée !", $this->getUrl());
@@ -264,7 +245,6 @@ class AdminDashboardController extends AdminController
                     $this->msg->error("La catégorie n'a pas pu être supprimée", $this->getUrl());
                 }
         } else {
-            //redirect to the list of blog posts
             header('Location: ?c=adminDashboard&t=categories');
             exit;
         }
@@ -281,7 +261,6 @@ class AdminDashboardController extends AdminController
                     $this->msg->error("Le commentaire n'a pas pu être supprimé", $this->getUrl());
                 }
         } else {
-            //redirect to the list of blog posts
             header('Location: ?c=adminDashboard&t=comments');
             exit;
         }
@@ -295,7 +274,6 @@ class AdminDashboardController extends AdminController
                     'name' => $name,
                     'numberPosts'  => 0
                 ];
-        //$this->blogModel->setPost($data);
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($this->tagModel->setTag($data)) {
                 $this->msg->success("Le tag a bien été ajouté !", $this->getUrl());
@@ -319,7 +297,6 @@ class AdminDashboardController extends AdminController
                     $this->msg->error("Le tag n'a pas pu être supprimé", $this->getUrl());
                 }
         } else {
-            //redirect to the list of blog posts
             header('Location: ?c=adminDashboard&t=tags');
             exit;
         }

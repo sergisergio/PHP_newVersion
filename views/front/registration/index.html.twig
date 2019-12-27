@@ -1,15 +1,12 @@
 {% extends "./base.html.twig" %}
 
-{% block stylesheet %}{% endblock %}
-
-{% block nav %}{% endblock %}
-
 {% block main %}
     <div class="container inner">
-        <div class="box" style="margin-top: 50px;">
+        <div class="box" style="margin-top: 150px;">
             <h1 class="text-center">Inscription</h1>
                 {% include('front/_forms/registration.html.twig') %}
-            <div class="text-center" style="margin-top:50px;">Déjà inscrit? <a href="?c=login">Connectez-vous</a></div>
+            <div class="text-center" style="margin-top:20px;">Déjà inscrit? <a href="?c=login">Connectez-vous</a></div>
+            <div class="text-center" style="margin-top:20px;"><a href="index.php">Retourner à l'accueil</a></div>
         </div>
     </div>
 {% endblock %}

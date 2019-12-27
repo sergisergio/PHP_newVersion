@@ -26,18 +26,13 @@ class User extends Model
      *
      * RECUPERER UN UTILISATEUR EN FONCTION DE SON PSEUDO ET DE SON MDP
      */
-    public function getUser($username, $password) {
-        $data = [
-            'username'     => $username,
-            'password'  => sha1($password) // encode the password
-        ];
+    public function getUser($username) {
         $req = $this->db->prepare('
-            SELECT username, id, roles
-            FROM user
-            WHERE username = :username
-            AND password = :password');
+            SELECT *
+            FROM user u
+            LEFT JOIN image i ON i.id = u.avatar_id
+            WHERE u.username = :username');
         $req->bindValue(':username', $data['username'], \PDO::PARAM_STR);
-        $req->bindValue(':password', $data['password'], \PDO::PARAM_STR);
         $req->execute();
         return $req->fetch(\PDO::FETCH_ASSOC);
     }
@@ -119,6 +114,22 @@ class User extends Model
         return $req->fetch(\PDO::FETCH_ASSOC);
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     *
+     * RECUPERER UN MEMBRE EN FONCTION DE SON ID
+     */
+    public function getUserByUsernameOrEmail ($username) {
+        $req = $this->db->prepare('SELECT u.id, u.email, u.password, u.roles, u.username, u.active, u.banned, u.created_at, i.url as image FROM user u
+            INNER JOIN image i ON u.avatar_id = i.id
+            WHERE username = :username
+            OR email = :username
+            LIMIT 1');
+        $req->bindParam(':username', $username, \PDO::PARAM_STR);
+        $req->execute();
+        return $req->fetch(\PDO::FETCH_ASSOC);
+    }
     /**
      * @param int $id
      * @return bool

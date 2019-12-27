@@ -255,7 +255,7 @@ class Blog extends Model
 
     public function countSearchByCategoryRequest($category) {
         $req = $this->db->prepare("SELECT COUNT(*) FROM posts p
-            INNER JOIN category_posts x on p.id = x.posts_id
+            LEFT JOIN category_posts x on p.id = x.posts_id
             LEFT JOIN category c on x.category_id = c.id
              WHERE c.name = :category");
         $req->bindParam(':category', $category, \PDO::PARAM_STR);

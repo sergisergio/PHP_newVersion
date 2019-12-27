@@ -11,18 +11,18 @@ class LoginController extends Controller
      * GERER LA CONNEXION
      */
     public function index() {
-        if ($this->isLogged())
+        if ($this->isLogged()) {
             header('Location: ?c=index');
+        }
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $username = strip_tags(htmlspecialchars($_POST['username']));
             $password = strip_tags(htmlspecialchars($_POST['password']));
-            $userExist = $this->userModel->getUser($username, $password);
+            $checkUser = $this->userModel->getUserByUsernameOrEmail($username);
+            $checkPassword = password_verify($password, $checkUser['password']);
             $ip = $_SERVER['REMOTE_ADDR'];
-            // check if email & password are empty
             if (empty($username) || empty($password)) {
                 $this->msg->error("Tous les champs n'ont pas été remplis", $this->getUrl());
-            // check if the user exist
-            } elseif ( !$userExist) {
+            } elseif ( !$checkUser) {
                 $this->securityModel->registerAttempt($ip, $username);
                 $count = $this->securityModel->checkBruteForce($ip, $username);
                 if ($count < 2) {
@@ -34,20 +34,25 @@ class LoginController extends Controller
                     $this->msg->error("Nombre de tentatives atteintes! Vous pourrez essayer de vous reconnecter dans 24h.", $this->getUrl());
                 }
             } else {
-                if ($userExist && $userExist['roles'] == 1) {
-                    $_SESSION['admin'] = $userExist;
-                    header('Location: ' . '?c=adminDashboard');
-                    exit;
-                } else {
-                    $_SESSION['user'] = $userExist;
-                    header('Location: ' . '?c=blog&t=view1');
-                    exit;
+                if ($checkPassword) {
+                    if ($checkUser['roles'] == 1) {
+                        $_SESSION['admin'] = $checkUser;
+                        header('Location: ' . '?c=adminDashboard');
+                        exit;
+                    } else {
+                        $_SESSION['user'] = $checkUser;
+                        header('Location: ' . '?c=blog&v=view1&page=1');
+                        exit;
+                    }
                 }
+
             }
         }
 
         echo $this->twig->render('front/login/index.html.twig', [
-            'message'   => $this->msg,
+            'message'       => $this->msg,
+            'session_admin' => $_SESSION['admin'],
+            'session_user'  => $_SESSION['user'],
             //'token'     => $loginToken
         ]);
     }
@@ -63,7 +68,6 @@ class LoginController extends Controller
             $mailExist = $this->userModel->checkUserByEmail($email);
             $userExist = $this->userModel->checkUserByUsername($username);
             $token = $this->securityService->str_random(100);
-
             // check if fields are empty
             if (empty($email) || empty($username) || empty($password) || empty($passwordCheck)) {
                 $this->msg->error("Tous les champs n'ont pas été remplis", $this->getUrl());
@@ -85,10 +89,12 @@ class LoginController extends Controller
             } elseif (strlen($password) < 6 || strlen($password) > 50) {
                 $this->msg->error("Votre mot de passe doit faire entre 6 et 50 caractères !");
             } else {
+
+                $password = password_hash($password, PASSWORD_ARGON2I);
                 $data = [
-                    'username'   => $_POST['username'],
-                    'email'      => $_POST['email'],
-                    'password'   => sha1($_POST['password']),
+                    'username'   => $username,
+                    'email'      => $email,
+                    'password'   => $password,
                     'roles'      => 0,
                     'active'     => 1,
                     'created_at' => (new \DateTime())->format('Y-m-d H:i:s'),
@@ -97,44 +103,25 @@ class LoginController extends Controller
                     'banned'     => 0,
                     'avatar_id'  => 10
                 ];
-                // create the user then redirect to "my account"
-
-                //if (isset($_SESSION['registerToken']) AND isset($_POST['registerToken']) AND !empty($_SESSION['registerToken']) AND !empty($_POST['registerToken'])) {
-                    // On vérifie que les deux correspondent
-                    //if ($_SESSION['registerToken'] == $_POST['registerToken']) {
-                        if ($this->userModel->setUser($data)) {
-                        //TODO: redirect to "my account"
-                            $this->msg->success("Compte créé", $this->getUrl());
-                            try {
-                                $this->mail->setFrom('contact@philippetraon.com', 'Philippe Traon');
-                                $this->mail->addAddress($email, $pseudo);
-                                $this->mail->addReplyTo('contact@philippetraon.com', 'Information');
-                                $this->mail->isHTML(true);
-                                $this->mail->Subject = 'Message';
-                                $this->mail->Body = '<b>Blog de Philippe Traon : </b>';
-                                $this->mail->send();
-
-                                //$_SESSION['flash']['success'] = 'Un mail de confirmation vous a été envoyé pour valider votre compte';
-                                //$this->_logController->loginPage();
-                            }
-                            catch (Exception $e) {
-                            echo 'Un problème est survenu ! Le message n\'a pas pu être envoyé : ', $this->mail->ErrorInfo;
-                            }
-                            header('Location: ' . '?c=blog');
-                            exit;
-                        } else {
-                            $this->msg->error("Une erreur s'est produite", $this->getUrl());
-                        }
-
-                    //}
-                    //var_dump($_SESSION['registerToken']);
-                    //var_dump($_POST['registerToken']);
-                    //die();
-
-                //}
-                //else {
-                //    $this->msg->error("Une erreur s'est produite", $this->getUrl());
-                //}
+                if ($this->userModel->setUser($data)) {
+                    header('Location: ' . '?c=login');
+                    $this->msg->success("Compte créé", $this->getUrl());
+                    try {
+                        $this->mail->setFrom('contact@philippetraon.com', 'Philippe Traon');
+                        $this->mail->addAddress($email, $pseudo);
+                        $this->mail->addReplyTo('contact@philippetraon.com', 'Information');
+                        $this->mail->isHTML(true);
+                        $this->mail->Subject = 'Message';
+                        $this->mail->Body = '<b>Blog de Philippe Traon : </b>';
+                        $this->mail->send();
+                    } catch (Exception $e) {
+                        echo 'Un problème est survenu ! Le message n\'a pas pu être envoyé : ', $this->mail->ErrorInfo;
+                    }
+                    header('Location: ' . '?c=blog');
+                    exit;
+                } else {
+                    $this->msg->error("Une erreur s'est produite", $this->getUrl());
+                }
             }
         }
         echo $this->twig->render('front/registration/index.html.twig', [

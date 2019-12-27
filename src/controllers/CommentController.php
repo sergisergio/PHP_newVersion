@@ -11,14 +11,9 @@ class CommentController extends Controller
      * AJOUTER UN COMMENTAIRE
      */
     public function addComment() {
-        // if user or admin is logged
         if ($this->isLogged()) {
             $config = $this->configModel->getConfig();
             $maxLength = $config['characters'];
-            /*
-             * if the user or the admin submit a comment and if fields are not empty, add the comment
-             * else, redirect 404
-             */
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if (empty($_POST['content']) || empty($_POST['user_id']) || empty($_POST['post_id'])) {
                     $this->msg->error("Tous les champs n'ont pas été remplis", $this->getUrl(true) .'#comments-notification');
@@ -47,7 +42,6 @@ class CommentController extends Controller
             $this->redirect404();
         }
     }
-
     /**
      * SUPPRIMER UN COMMENTAIRE
      */
@@ -60,7 +54,9 @@ class CommentController extends Controller
             $this->msg->error('Le commentaire n\'a pas pu été supprimé.', $this->getUrl(true));
         }
     }
-
+    /**
+     * AJOUTER UN SOUS-COMMENTAIRE
+     */
     public function addSubComment() {
         if ($this->isLogged()) {
             $config = $this->configModel->getConfig();
@@ -94,19 +90,21 @@ class CommentController extends Controller
             $this->redirect404();
         }
     }
-
+    /**
+     * AJOUTER UN LIKE A UN COMMENTAIRE
+     */
     public function likes() {
         if ($this->isLogged()) {
             $this->commentModel->plusLikes() {
-
             }
         }
     }
-
+    /**
+     * AJOUTER UN DISLIKE A UN COMMENTAIRE
+     */
     public function dislikes() {
         if ($this->isLogged()) {
             $this->commentModel->minusLikes() {
-
             }
         }
     }

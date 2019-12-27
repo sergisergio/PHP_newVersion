@@ -18,6 +18,8 @@ use Models\Security;
 use Models\Link;
 use Service\SecurityService;
 use Service\RegisterService;
+use Service\PaginationService;
+use Service\DebugService;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use Models\Image;
@@ -44,14 +46,16 @@ class Controller
     protected $securityModel;
     protected $securityService;
     protected $registerService;
+    protected $paginationService;
+    protected $debugService;
 
     public function __construct()
     {
-        //SESSION
+        // sémarrage session
         if (!session_id()) @session_start();
-        // Flash messages
+        // messages Flash
         $this->msg = new \Plasticbrain\FlashMessages\FlashMessages();
-        // Twig Configuration
+        // Configuration Twig
         $loader = new Twig_Loader_Filesystem('./views/');
         $this->twig = new Twig_Environment($loader, array(
             'cache' => false,
@@ -74,25 +78,21 @@ class Controller
         $this->imageModel = new Image;
         $this->securityService = new SecurityService;
         $this->registerService = new RegisterService;
+        $this->debugService = new DebugService;
+        $this->paginationService = new PaginationService;
         $this->securityModel = new Security;
         $this->commentModel = new Comment;
         $this->linkModel = new Link;
         $this->mail = new PHPMailer(true);;
     }
+
     // Redirection 404
     protected function redirect404() {
         header('Erreur 404', true, 404);
         include('views/404.html');
         exit();
     }
-    // check if the image exist, then remove it
-    /*protected function removeImage($image, $path) {
-        if ($image != null) {
-            if (file_exists($path . $image)){
-                unlink($path . $image);
-            }
-        }
-    }*/
+
     // session admin ?
     protected function isAdmin() {
         if (isset($_SESSION['admin']) && !empty($_SESSION['admin'])) {
@@ -101,6 +101,7 @@ class Controller
             return false;
         }
     }
+
     // session user ?
     protected function isUser() {
         if (isset($_SESSION['user']) && !empty($_SESSION['user'])) {
@@ -109,6 +110,7 @@ class Controller
             return false;
         }
     }
+
     // admin ou user connecté
     protected function isLogged() {
         if ($this->isAdmin()) {
@@ -119,6 +121,7 @@ class Controller
             return false;
         }
     }
+
     // récupération url courante
     protected function getUrl(bool $referer = false) {
         if ($referer == true) {

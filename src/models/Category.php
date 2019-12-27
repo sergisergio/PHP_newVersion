@@ -13,9 +13,22 @@ class Category extends Model
     public function getAllCategories() {
         $req = $this->db->prepare('
                           SELECT *
-                          FROM category');
+                          FROM category c
+                          ');
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
+    }
+    public function getNumberOfPosts($category) {
+        $req = $this->db->prepare('SELECT COUNT(*) FROM (
+            SELECT c.id, c.name, p.title
+                          FROM category c
+                          LEFT JOIN category_posts x ON c.id = x.category_id
+                          LEFT JOIN posts p ON p.id = x.posts_id
+                          WHERE c.name = :category
+            ) as get_posts');
+        $req->bindParam(':category', $category, \PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetchColumn();
     }
 
     /**

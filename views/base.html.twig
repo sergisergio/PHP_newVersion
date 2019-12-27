@@ -23,11 +23,11 @@
     <link href="../assets/css/prettify.css" rel="stylesheet">
     <link href="../assets/css/style.css" rel="stylesheet">
     <link href="../assets/css/green.css" rel="stylesheet">
-    <!--<link rel="stylesheet" href="../assets/css/component.css" />
-    <link rel="stylesheet" href="../assets/css/content.css" />-->
+    <link rel="stylesheet" href="../assets/css/component.css" />
+    <link rel="stylesheet" href="../assets/css/content.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/noty@3.2.0-beta/lib/noty.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/noty@3.2.0-beta/lib/themes/nest.css">
-    <!--<script src="../assets/js/modernizr.custom.js"></script>-->
+    <script src="../assets/js/modernizr.custom.js"></script>
     {% block stylesheet %}{% endblock %}
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -72,18 +72,15 @@
             {% block footer %}{% include('front/_partials/footer.html.twig') %}{% endblock %}
         </div>
     </div>
-    <!-- Contenu -->
-
-    <!-- Footer -->
     <script src="https://cdn.jsdelivr.net/npm/noty@3.2.0-beta/lib/noty.min.js"></script>
     <script src="../assets/js/jquery.min.js"></script>
     <script src="../assets/js/bootstrap.min.js"></script>
     <script src="../assets/js/jquery.themepunch.tools.min.js"></script>
     <script src="../assets/js/classie.js"></script>
     <script src="../assets/js/plugins.js"></script>
-    <script src="../assets/js/scripts.js"></script>
-    <!--<script src="../assets/js/classie2.js"></script>
-    <script src="../assets/js/uiMorphingButton_fixed.js"></script>-->
+    <script src="../assets/js/scripts.js"></script>-->
+    <script src="../assets/js/classie2.js"></script>
+    <script src="../assets/js/uiMorphingButton_fixed.js"></script>
     <script>
     $.backstretch(["../assets/img/react2.png"]);
     </script>
@@ -139,7 +136,7 @@
           closeWith: ['click', 'button']
         }).show();
     </script>
-    <!--<script>
+    <script>
             (function() {
                 var docElem = window.document.documentElement, didScroll, scrollPosition;
 
@@ -206,7 +203,7 @@
                     }
                 } );
             })();
-        </script>-->
+        </script>
     {% endif %}
     {% block js %}{% endblock %}
 </body>
