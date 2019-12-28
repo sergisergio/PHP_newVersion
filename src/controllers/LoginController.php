@@ -11,6 +11,7 @@ class LoginController extends Controller
      * GERER LA CONNEXION
      */
     public function index() {
+
         if ($this->isLogged()) {
             header('Location: ?c=index');
             exit();
@@ -21,7 +22,7 @@ class LoginController extends Controller
             $this->msg->success("Votre compte est activé !", 'index.php?c=login');
         } elseif (((isset($_GET['g'])) && $_GET['g'] == 'notvalid') && (isset($_GET['user']))) {
             $username = $_GET['user'];
-            $this->msg->success('Ce lien a expiré ! <a href="?login&t=resend&user='.$username.'">Renvoyer un lien</a>', 'index.php?c=login');
+            $this->msg->success('Ce lien a expiré ! <a href="?c=login&t=resend&user='.$username.'">Renvoyer un lien</a>', 'index.php?c=login');
         }
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $username = strip_tags(htmlspecialchars($_POST['username']));
@@ -99,7 +100,7 @@ class LoginController extends Controller
             } elseif (strlen($password) < 6 || strlen($password) > 50) {
                 $this->msg->error("Votre mot de passe doit faire entre 6 et 50 caractères !");
             } else {
-
+                date_default_timezone_set('Europe/Paris');
                 $password = password_hash($password, PASSWORD_ARGON2I);
                 $data = [
                     'username'   => $username,
@@ -206,12 +207,10 @@ class LoginController extends Controller
         $username = strip_tags(htmlspecialchars($_GET['username']));
         $token = strip_tags(htmlspecialchars($_GET['token']));
         $getUser = $this->userModel->getUserByUsernameOrEmail($username);
-        // echo '<pre>';
-        // var_dump($username);
-        // var_dump($token);
-        // var_dump($getUser);
-        // echo '</pre>';
-        if (($token == $getUser['token']) && (new \DateTime())->format('Y-m-d H:i:s') < $getUser['token_expire_date']) {
+        date_default_timezone_set('Europe/Paris');
+        $now = strtotime(date("Y-m-d H:i:s"));
+        $expireDate = strtotime($getUser['token_expire_date']);
+        if (($token == $getUser['token']) && (($now - $expireDate) < 0)) {
             $this->userModel->setUserActive($username);
         } else {
             header('Location: ?c=login&g=notvalid&user='.$username);
@@ -222,10 +221,14 @@ class LoginController extends Controller
     }
 
     public function resend() {
-        $username = strip_tags(htmlspecialchars($_GET['username']));
+        $username = strip_tags(htmlspecialchars($_GET['user']));
         $getUser = $this->userModel->getUserByUsernameOrEmail($username);
+        $email = $getUser['email'];
+        //var_dump($username);
+        //var_dump($getUser['email']);
+        //die();
         $token = $this->securityService->str_random(100);
-        $this->userModel->setUserActive($username, $token);
+        $this->userModel->updateToken($username, $token);
         try {
             $this->mail->SMTPDebug = 3;
             $this->mail->SMTPOptions = [
@@ -244,7 +247,7 @@ class LoginController extends Controller
             $this->mail->addAddress($email, explode('@', $email)[0]);
             $this->mail->isHTML(true);
             $this->mail->Subject = 'Vérification de votre adresse mail';
-            $this->mail->Body = '<a href="?login&t=confirm&username='.$username.'&token='.$token.'">Lien</a>';
+            $this->mail->Body = '<a href="http://localhost:8003/index.php?c=login&t=confirm&username='.$username.'&token='.$token.'">Lien</a>';
             $this->mail->AltBody = 'Version text sans html';
             ob_start();
             $this->mail->send();
