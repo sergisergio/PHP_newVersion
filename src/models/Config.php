@@ -13,7 +13,10 @@ class Config extends Model
      * RECUPERER LA CONFIGURATION
      */
     public function getConfig() {
-        $req = $this->db->prepare('SELECT * FROM config WHERE id = 1');
+        $req = $this->db->prepare('
+            SELECT *
+            FROM config
+            WHERE id = 1');
         $req->execute();
         return $req->fetch(\PDO::FETCH_ASSOC);
     }
@@ -25,7 +28,10 @@ class Config extends Model
      * METTRE A JOUR LA CONFIGURATION
      */
     public function updateConfig(int $ppp, int $cpc) {
-        $req = $this->db->prepare("UPDATE config SET ppp = :ppp, characters = :cpc WHERE id = 1");
+        $req = $this->db->prepare("
+            UPDATE config
+            SET ppp = :ppp, characters = :cpc
+            WHERE id = 1");
         $req->bindValue(':ppp', $ppp, \PDO::PARAM_INT);
         $req->bindValue(':cpc', $cpc, \PDO::PARAM_INT);
         return $req->execute();

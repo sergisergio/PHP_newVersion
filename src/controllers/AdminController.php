@@ -12,7 +12,7 @@ class AdminController extends Controller
     /**
      * Constructeur
      *
-     * REDIFRIGE VERS LE FORMULAIRE DE CONNEXION SI LE MEMBRE N'EST PAS ADMINISTRATEUR
+     * REDIRIGE VERS LE FORMULAIRE DE CONNEXION SI LE MEMBRE N'EST PAS ADMINISTRATEUR
      */
     public function __construct()
     {

@@ -17,11 +17,12 @@ class IndexController extends Controller
         $skills2 = $this->skillModel->getAllSkills2();
         $description = $this->descriptionModel->getDescription();
         echo $this->twig->render('front/home/index.html.twig', [
-            'projects' => $projects,
-            'categories' => $categories,
-            'skills' => $skills,
-            'skills2' => $skills2,
+            'projects'    => $projects,
+            'categories'  => $categories,
+            'skills'      => $skills,
+            'skills2'     => $skills2,
             'description' => $description,
+            'message'     => $this->msg,
         ]);
     }
 }

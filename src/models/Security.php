@@ -35,7 +35,9 @@ class Security extends Model
      */
     public function registerAttempt($ip, $username)
     {
-        $req = $this->db->prepare('INSERT INTO connexion(ip, username) VALUES(:ip, :username)');
+        $req = $this->db->prepare('
+            INSERT INTO connexion(ip, username)
+            VALUES(:ip, :username)');
         $req->bindParam(':ip', $ip);
         $req->bindParam(':username', $username);
         $req->execute();

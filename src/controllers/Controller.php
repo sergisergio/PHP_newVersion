@@ -19,6 +19,7 @@ use Models\Link;
 use Service\SecurityService;
 use Service\RegisterService;
 use Service\PaginationService;
+use Service\MailService;
 use Service\DebugService;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -80,10 +81,11 @@ class Controller
         $this->registerService = new RegisterService;
         $this->debugService = new DebugService;
         $this->paginationService = new PaginationService;
+        $this->mailService = new MailService;
         $this->securityModel = new Security;
         $this->commentModel = new Comment;
         $this->linkModel = new Link;
-        $this->mail = new PHPMailer(true);;
+        $this->mail = new PHPMailer(true);
     }
 
     // Redirection 404

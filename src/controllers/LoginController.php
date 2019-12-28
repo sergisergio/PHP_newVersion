@@ -115,20 +115,6 @@ class LoginController extends Controller
                     'avatar_id'  => 10
                 ];
                 if ($this->userModel->setUser($data)) {
-                    /*try {
-                        $this->mail->setFrom('contact@philippetraon.com', 'Philippe Traon');
-                        $this->mail->addAddress($email, $pseudo);
-                        $this->mail->addReplyTo('contact@philippetraon.com', 'Information');
-                        $this->mail->isHTML(true);
-                        $this->mail->Subject = 'Message';
-                        $this->mail->Body = '<b>Blog de Philippe Traon : </b>';
-                        $this->mail->send();
-                    } catch (Exception $e) {
-                        echo 'Un problème est survenu ! Le message n\'a pas pu être envoyé : ', $this->mail->ErrorInfo;
-                    }*/
-
-                    // Utilisation de PHPMailer pour l'envoie du mail
-                    //$this->mail = new PHPMailer();
 
                     // On active la visibilité des erreurs SMTP
                     try {

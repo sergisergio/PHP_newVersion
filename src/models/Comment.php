@@ -11,7 +11,9 @@ class Comment extends Model
      * RECUPERER TOUS LES COMMENTAIRES
      */
     public function getAllComments() {
-        $req = $this->db->prepare('SELECT * FROM comment');
+        $req = $this->db->prepare('
+            SELECT *
+            FROM comment');
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -63,7 +65,11 @@ class Comment extends Model
      * SUPPRIMER UN COMMENTAIRE
      */
     public function deleteComment($commentId) {
-        $req = $this->db->prepare('DELETE FROM comment WHERE id = :id LIMIT 1');
+        $req = $this->db->prepare('
+            DELETE
+            FROM comment
+            WHERE id = :id
+            LIMIT 1');
         $req->bindParam(':id', $commentId, \PDO::PARAM_INT);
         return $req->execute();
     }
@@ -73,7 +79,9 @@ class Comment extends Model
      * RECUPERER LE NOMBRE DE COMMENTAIRES PAR ARTICLES
      */
     public function getNumberOfComments($postId) {
-        $req = $this->db->prepare('SELECT COUNT(*) FROM comment c
+        $req = $this->db->prepare('
+            SELECT COUNT(*)
+            FROM comment c
             INNER JOIN posts p
             ON p.id = c.post_id
             WHERE p.id = :post_id');

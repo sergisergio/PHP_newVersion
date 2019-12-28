@@ -15,7 +15,6 @@ class PaginationService {
     $this->blogModel = new Blog;
   }
   public function paginate($currentPage, $number_of_pages, $results_per_page) {
-
     if (isset($currentPage) AND !empty($currentPage) AND ($currentPage > 0 ) AND ($currentPage <= $number_of_pages)) {
       $start = ($currentPage-1)*(int)$results_per_page;
       $posts = $this->blogModel->getPostsPagination($start, $results_per_page);

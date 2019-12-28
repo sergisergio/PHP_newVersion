@@ -34,12 +34,13 @@ class Blog extends Model
      */
     public function getPostById($id) {
         $req = $this->db->prepare('
-                          SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.id as img_id, i.url as image, c.category_id as category
-                          FROM posts p
-                          INNER JOIN user u on p.user_id = u.id
-                          INNER JOIN image i on p.img_id = i.id
-                          INNER JOIN category_posts c on p.id = c.posts_id
-                          WHERE p.id = :id');
+            SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author,
+            i.id as img_id, i.url as image, c.category_id as category
+            FROM posts p
+            INNER JOIN user u on p.user_id = u.id
+            INNER JOIN image i on p.img_id = i.id
+            INNER JOIN category_posts c on p.id = c.posts_id
+            WHERE p.id = :id');
         $req->bindValue(':id', $id, \PDO::PARAM_INT);
         $req->execute();
         return $req->fetch(\PDO::FETCH_ASSOC);
@@ -63,7 +64,11 @@ class Blog extends Model
      * METTRE A JOUR UN ARTICLE AVEC SON ID
      */
     public function updatePost($data, $postId) {
-        $req = $this->db->prepare('UPDATE posts SET title = :title, subtitle = :subtitle, content = :content, image = :image, active = :active, date_update = NOW() WHERE id = :id LIMIT 1');
+        $req = $this->db->prepare('
+            UPDATE posts
+            SET title = :title, subtitle = :subtitle, content = :content, image = :image, active = :active, date_update = NOW()
+            WHERE id = :id
+            LIMIT 1');
         $req->bindValue(':id', $postId, \PDO::PARAM_INT);
         $req->bindValue(':title', $data['title'], \PDO::PARAM_STR);
         $req->bindValue(':subtitle', $data['subtitle'], \PDO::PARAM_STR);
@@ -79,7 +84,10 @@ class Blog extends Model
      * RECUPERER LE NOMBRE D'ARTICLES
      */
     public function getNumberOfPosts() {
-        $req = $this->db->prepare('SELECT COUNT(*) FROM posts WHERE published = 1');
+        $req = $this->db->prepare('
+            SELECT COUNT(*)
+            FROM posts
+            WHERE published = 1');
         $req->execute();
         return $req->fetchColumn();
     }
@@ -93,13 +101,13 @@ class Blog extends Model
      */
     public function getPostsPagination($start, $results_per_page) {
         $req = $this->db->prepare('
-                          SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, c.name as category
-                          FROM posts p
-                          LEFT JOIN user u on p.user_id = u.id
-                          LEFT JOIN image i on p.img_id = i.id
-                          LEFT JOIN category_posts x on p.id = x.posts_id
-                          LEFT JOIN category c on x.category_id = c.id
-                          LIMIT :start, :results_per_page');
+            SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, c.name as category
+            FROM posts p
+            LEFT JOIN user u on p.user_id = u.id
+            LEFT JOIN image i on p.img_id = i.id
+            LEFT JOIN category_posts x on p.id = x.posts_id
+            LEFT JOIN category c on x.category_id = c.id
+            LIMIT :start, :results_per_page');
         $req->bindParam(':start', $start, \PDO::PARAM_INT);
         $req->bindParam(':results_per_page', $results_per_page, \PDO::PARAM_INT);
         $req->execute();
@@ -111,11 +119,10 @@ class Blog extends Model
      */
     public function getAllPostsWithUsers() {
         $req = $this->db->prepare('
-                          SELECT p.id, p.title, p.content, p.published, p.created_at, u.username as author, i.url as image
-                          FROM posts p
-                          INNER JOIN user u on p.user_id = u.id
-                          INNER JOIN image i on p.img_id = i.id
-                          ');
+            SELECT p.id, p.title, p.content, p.published, p.created_at, u.username as author, i.url as image
+            FROM posts p
+            INNER JOIN user u on p.user_id = u.id
+            INNER JOIN image i on p.img_id = i.id');
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -125,13 +132,12 @@ class Blog extends Model
      */
     public function getMostSeens() {
         $req = $this->db->prepare('
-                          SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image
-                          FROM posts p
-                          INNER JOIN user u on p.user_id = u.id
-                          INNER JOIN image i on p.img_id = i.id
-                          ORDER BY p.numberComments DESC
-                          LIMIT 3
-                          ');
+            SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image
+            FROM posts p
+            INNER JOIN user u on p.user_id = u.id
+            INNER JOIN image i on p.img_id = i.id
+            ORDER BY p.numberComments DESC
+            LIMIT 3');
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -143,13 +149,17 @@ class Blog extends Model
      * SUPPRIMER UN ARTICLE
      */
     public function deletePost(int $id) {
-        $req = $this->db->prepare('DELETE FROM posts WHERE id = :id LIMIT 1');
+        $req = $this->db->prepare('
+            DELETE FROM posts
+            WHERE id = :id
+            LIMIT 1');
         $req->bindParam(':id', $id, \PDO::PARAM_INT);
         return $req->execute();
     }
 
     public function addNumberComment($id) {
-        $req = $this->db->prepare('UPDATE posts
+        $req = $this->db->prepare('
+            UPDATE posts
             SET numberComments = numberComments + 1
             WHERE id = :id');
         $req->bindParam(':id', $id, \PDO::PARAM_INT);
@@ -158,7 +168,8 @@ class Blog extends Model
     }
 
     public function minusNumberComment($id) {
-        $req = $this->db->prepare('UPDATE posts
+        $req = $this->db->prepare('
+            UPDATE posts
             SET numberComments = numberComments - 1
             WHERE id = :id');
         $req->bindParam(':id', $id, \PDO::PARAM_INT);
@@ -171,29 +182,32 @@ class Blog extends Model
      * RECUPERER LE NOMBRE DE COMMENTAIRES PAR ARTICLES
      */
     public function getNumberOfComments() {
-        $req = $this->db->prepare('SELECT COUNT(*) FROM (
-            SELECT p.id, c.content as comment
-            FROM posts p
-            INNER JOIN comment c on p.id = c.post_id
-            WHERE p.id = c.post_id
+        $req = $this->db->prepare('
+            SELECT COUNT(*) FROM (
+                SELECT p.id, c.content as comment
+                FROM posts p
+                INNER JOIN comment c on p.id = c.post_id
+                WHERE p.id = c.post_id
             ) as get_posts');
         $req->execute();
         return $req->fetchColumn();
     }
 
     public function searchRequest($search) {
-        $req = $this->db->prepare("SELECT * FROM posts
-             WHERE content
-             LIKE '%$search%'
-             ORDER BY id DESC");
+        $req = $this->db->prepare("
+            SELECT * FROM posts
+            WHERE content
+            LIKE '%$search%'
+            ORDER BY id DESC");
         //$req->bindValue(':search', $search, \PDO::PARAM_STR);
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
     public function countSearchRequest($search) {
-        $req = $this->db->prepare("SELECT COUNT(*) FROM posts
-             WHERE content
-             LIKE '%$search%'");
+        $req = $this->db->prepare("
+            SELECT COUNT(*) FROM posts
+            WHERE content
+            LIKE '%$search%'");
         //$req->bindValue(':search', $search, \PDO::PARAM_STR);
         $req->execute();
         return $req->fetchColumn();
@@ -207,15 +221,15 @@ class Blog extends Model
      */
     public function getSearchPagination($search, $start, $results_per_page) {
         $req = $this->db->prepare("
-                          SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, c.name as category
-                          FROM posts p
-                          INNER JOIN user u on p.user_id = u.id
-                          INNER JOIN image i on p.img_id = i.id
-                          INNER JOIN category_posts x on p.id = x.posts_id
-                          LEFT JOIN category c on x.category_id = c.id
-                          WHERE p.content
-                          LIKE '%$search%'
-                          LIMIT :start, :results_per_page");
+            SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, c.name as category
+            FROM posts p
+            INNER JOIN user u on p.user_id = u.id
+            INNER JOIN image i on p.img_id = i.id
+            INNER JOIN category_posts x on p.id = x.posts_id
+            LEFT JOIN category c on x.category_id = c.id
+            WHERE p.content
+            LIKE '%$search%'
+            LIMIT :start, :results_per_page");
         $req->bindParam(':start', $start, \PDO::PARAM_INT);
         $req->bindParam(':results_per_page', $results_per_page, \PDO::PARAM_INT);
         $req->execute();
@@ -224,13 +238,13 @@ class Blog extends Model
 
     public function searchByCategory($category) {
         $req = $this->db->prepare("
-                          SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, c.name as category
-                          FROM posts p
-                          INNER JOIN user u on p.user_id = u.id
-                          INNER JOIN image i on p.img_id = i.id
-                          INNER JOIN category_posts x on p.id = x.posts_id
-                          LEFT JOIN category c on x.category_id = c.id
-                          WHERE c.name = :category");
+            SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, c.name as category
+            FROM posts p
+            INNER JOIN user u on p.user_id = u.id
+            INNER JOIN image i on p.img_id = i.id
+            INNER JOIN category_posts x on p.id = x.posts_id
+            LEFT JOIN category c on x.category_id = c.id
+            WHERE c.name = :category");
         $req->bindParam(':category', $category, \PDO::PARAM_STR);
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
@@ -238,14 +252,14 @@ class Blog extends Model
 
     public function getCategoryPagination($category, $start, $results_per_page) {
         $req = $this->db->prepare("
-                          SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, c.name as category
-                          FROM posts p
-                          INNER JOIN user u on p.user_id = u.id
-                          INNER JOIN image i on p.img_id = i.id
-                          INNER JOIN category_posts x on p.id = x.posts_id
-                          LEFT JOIN category c on x.category_id = c.id
-                          WHERE c.name = :category
-                          LIMIT :start, :results_per_page");
+            SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, c.name as category
+            FROM posts p
+            INNER JOIN user u on p.user_id = u.id
+            INNER JOIN image i on p.img_id = i.id
+            INNER JOIN category_posts x on p.id = x.posts_id
+            LEFT JOIN category c on x.category_id = c.id
+            WHERE c.name = :category
+            LIMIT :start, :results_per_page");
         $req->bindParam(':category', $category, \PDO::PARAM_STR);
         $req->bindParam(':start', $start, \PDO::PARAM_INT);
         $req->bindParam(':results_per_page', $results_per_page, \PDO::PARAM_INT);
@@ -254,10 +268,12 @@ class Blog extends Model
     }
 
     public function countSearchByCategoryRequest($category) {
-        $req = $this->db->prepare("SELECT COUNT(*) FROM posts p
+        $req = $this->db->prepare("
+            SELECT COUNT(*)
+            FROM posts p
             LEFT JOIN category_posts x on p.id = x.posts_id
             LEFT JOIN category c on x.category_id = c.id
-             WHERE c.name = :category");
+            WHERE c.name = :category");
         $req->bindParam(':category', $category, \PDO::PARAM_STR);
         $req->execute();
         return $req->fetchColumn();
@@ -265,13 +281,13 @@ class Blog extends Model
 
     public function searchByTag($tag) {
         $req = $this->db->prepare("
-                          SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, x.name as tag
-                          FROM posts p
-                          INNER JOIN user u on p.user_id = u.id
-                          INNER JOIN image i on p.img_id = i.id
-                          INNER JOIN tag_posts t on p.id = t.posts_id
-                          LEFT JOIN tag x on x.id = t.tag_id
-                          WHERE x.name = :tag");
+            SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, x.name as tag
+            FROM posts p
+            INNER JOIN user u on p.user_id = u.id
+            INNER JOIN image i on p.img_id = i.id
+            INNER JOIN tag_posts t on p.id = t.posts_id
+            LEFT JOIN tag x on x.id = t.tag_id
+            WHERE x.name = :tag");
         $req->bindParam(':tag', $tag, \PDO::PARAM_STR);
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
@@ -279,14 +295,14 @@ class Blog extends Model
 
     public function getTagPagination($tag, $start, $results_per_page) {
         $req = $this->db->prepare("
-                          SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, x.name as tag
-                          FROM posts p
-                          INNER JOIN user u on p.user_id = u.id
-                          INNER JOIN image i on p.img_id = i.id
-                          INNER JOIN tag_posts t on p.id = t.posts_id
-                          LEFT JOIN tag x on x.id = t.tag_id
-                          WHERE x.name = :tag
-                          LIMIT :start, :results_per_page");
+            SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, x.name as tag
+            FROM posts p
+            INNER JOIN user u on p.user_id = u.id
+            INNER JOIN image i on p.img_id = i.id
+            INNER JOIN tag_posts t on p.id = t.posts_id
+            LEFT JOIN tag x on x.id = t.tag_id
+            WHERE x.name = :tag
+            LIMIT :start, :results_per_page");
         $req->bindParam(':tag', $tag, \PDO::PARAM_STR);
         $req->bindParam(':start', $start, \PDO::PARAM_INT);
         $req->bindParam(':results_per_page', $results_per_page, \PDO::PARAM_INT);
@@ -295,10 +311,12 @@ class Blog extends Model
     }
 
     public function countSearchByTagRequest($tag) {
-        $req = $this->db->prepare("SELECT COUNT(*) FROM posts p
+        $req = $this->db->prepare("
+            SELECT COUNT(*)
+            FROM posts p
             INNER JOIN tag_posts x on p.id = x.posts_id
             LEFT JOIN tag t on x.tag_id = t.id
-             WHERE t.name = :tag");
+            WHERE t.name = :tag");
         $req->bindParam(':tag', $tag, \PDO::PARAM_STR);
         $req->execute();
         return $req->fetchColumn();

@@ -61,13 +61,19 @@ class User extends Model
     }
 
     public function setUserActive($username) {
-        $req = $this->db->prepare("UPDATE user SET active = 1, token = NULL, token_created_date = NULL, token_expire_date = NULL WHERE username = :username");
+        $req = $this->db->prepare("
+            UPDATE user
+            SET active = 1, token = NULL, token_created_date = NULL, token_expire_date = NULL
+            WHERE username = :username");
         $req->bindValue(':username', $username, \PDO::PARAM_STR);
         return $req->execute();
     }
 
     public function updateToken($username, $token) {
-        $req = $this->db->prepare("UPDATE user SET token = :token, token_created_date = NOW(), token_expire_date = NOW() + INTERVAL 1 DAY WHERE username = :username");
+        $req = $this->db->prepare("
+            UPDATE user
+            SET token = :token, token_created_date = NOW(), token_expire_date = NOW() + INTERVAL 1 DAY
+            WHERE username = :username");
         $req->bindValue(':username', $username, \PDO::PARAM_STR);
         $req->bindValue(':token', $token, \PDO::PARAM_STR);
         return $req->execute();
@@ -95,7 +101,11 @@ class User extends Model
      * VERIFIER SI UN MEMBRE EXISTE EN FONCTIO DE SON EMAIL
      */
     public function checkUserByEmail ($email) {
-        $req = $this->db->prepare('SELECT * FROM user WHERE email = :email LIMIT 1');
+        $req = $this->db->prepare('
+            SELECT *
+            FROM user
+            WHERE email = :email
+            LIMIT 1');
         $req->bindValue(':email', $email, \PDO::PARAM_STR);
         $req->execute();
         return $req->rowCount();
@@ -108,7 +118,11 @@ class User extends Model
      * VERIFIER SI UN MEMBRE EXISTE EN FONCTIO DE SON PSEUDO
      */
     public function checkUserByUsername ($username) {
-        $req = $this->db->prepare('SELECT * FROM user WHERE username = :username LIMIT 1');
+        $req = $this->db->prepare('
+            SELECT *
+            FROM user
+            WHERE username = :username
+            LIMIT 1');
         $req->bindValue(':username', $username, \PDO::PARAM_STR);
         $req->execute();
         return $req->rowCount();
@@ -121,7 +135,11 @@ class User extends Model
      * RECUPERER UN MEMBRE EN FONCTION DE SON ID
      */
     public function getUserById ($id) {
-        $req = $this->db->prepare('SELECT * FROM user WHERE id = :id LIMIT 1');
+        $req = $this->db->prepare('
+            SELECT *
+            FROM user
+            WHERE id = :id
+            LIMIT 1');
         $req->bindParam(':id', $id, \PDO::PARAM_INT);
         $req->execute();
         return $req->fetch(\PDO::FETCH_ASSOC);
@@ -134,7 +152,9 @@ class User extends Model
      * RECUPERER UN MEMBRE EN FONCTION DE SON ID
      */
     public function getUserByUsernameOrEmail ($username) {
-        $req = $this->db->prepare('SELECT u.id, u.email, u.password, u.roles, u.username, u.active, u.token, u.token_created_date, u.token_expire_date, u.banned, u.created_at, i.url as image FROM user u
+        $req = $this->db->prepare('
+            SELECT u.id, u.email, u.password, u.roles, u.username, u.active, u.token, u.token_created_date, u.token_expire_date, u.banned, u.created_at, i.url as image
+            FROM user u
             INNER JOIN image i ON u.avatar_id = i.id
             WHERE username = :username
             OR email = :username
@@ -150,7 +170,11 @@ class User extends Model
      * SUPPRIMER UN MEMBRE
      */
     public function deleteUser(int $id) {
-        $req = $this->db->prepare('DELETE FROM user WHERE id = :id LIMIT 1');
+        $req = $this->db->prepare('
+            DELETE
+            FROM user
+            WHERE id = :id
+            LIMIT 1');
         $req->bindParam(':id', $id, \PDO::PARAM_INT);
         return $req->execute();
     }

@@ -16,10 +16,9 @@ class Image extends Model
     }
     public function getId($image) {
         $req = $this->db->prepare('
-                          SELECT id
-                          FROM image
-                          WHERE url = :url
-                          ');
+            SELECT id
+            FROM image
+            WHERE url = :url');
         $req->bindValue(':url', $image, \PDO::PARAM_STR);
         $req->execute();
         return $req->fetch(\PDO::FETCH_ASSOC);

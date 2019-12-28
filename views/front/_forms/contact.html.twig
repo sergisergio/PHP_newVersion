@@ -1,4 +1,4 @@
-<form class="forms" action="?contact&t=send" method="post">
+<form class="forms" action="?c=contact&t=send" method="post">
     <fieldset>
         <div class="row">
             <div class="col-md-6 col-sm-12">
@@ -8,7 +8,7 @@
                 </div>
                 <div class="form-row text-input-row email-field">
                     <label>Email</label>
-                    <input type="text" name="email" class="text-input defaultText required email" />
+                    <input type="email" name="email" class="text-input defaultText required email" />
                 </div>
                 <div class="form-row text-input-row subject-field">
                     <label>Objet</label>
@@ -20,13 +20,13 @@
                     <label>Message</label>
                     <textarea name="message" class="text-area required"></textarea>
                 </div>
-                <div class="form-row hidden-row">
+                <!--<div class="form-row hidden-row">
                     <input type="hidden" name="hidden" value="" />
                 </div>
                 <div class="nocomment">
                     <label for="nocomment">Laisser le champ libre</label>
                     <input id="nocomment" value="" name="nocomment" />
-                </div>
+                </div>-->
             </div>
             <div class="col-sm-6">
                 <div class="button-row pull-right">
@@ -38,8 +38,8 @@
                     <input type="reset" value="Effacer" name="reset" class="btn btn-submit bm0" />
                 </div>
             </div>
-            <input type="hidden" name="v_error" id="v-error" value="Required" />
-            <input type="hidden" name="v_email" id="v-email" value="Enter a valid email" />
+            <!--<input type="hidden" name="v_error" id="v-error" value="Required" />
+            <input type="hidden" name="v_email" id="v-email" value="Enter a valid email" />-->
         </div>
     </fieldset>
 </form>

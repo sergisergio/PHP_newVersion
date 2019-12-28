@@ -12,19 +12,20 @@ class Category extends Model
      */
     public function getAllCategories() {
         $req = $this->db->prepare('
-                          SELECT *
-                          FROM category c
-                          ');
+            SELECT *
+            FROM category c');
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
     public function getNumberOfPosts($category) {
-        $req = $this->db->prepare('SELECT COUNT(*) FROM (
-            SELECT c.id, c.name, p.title
-                          FROM category c
-                          LEFT JOIN category_posts x ON c.id = x.category_id
-                          LEFT JOIN posts p ON p.id = x.posts_id
-                          WHERE c.name = :category
+        $req = $this->db->prepare('
+            SELECT COUNT(*)
+            FROM (
+                SELECT c.id, c.name, p.title
+                FROM category c
+                LEFT JOIN category_posts x ON c.id = x.category_id
+                LEFT JOIN posts p ON p.id = x.posts_id
+                WHERE c.name = :category
             ) as get_posts');
         $req->bindParam(':category', $category, \PDO::PARAM_INT);
         $req->execute();
@@ -53,7 +54,11 @@ class Category extends Model
      * SUPPRIMER UNE CATEGORIE
      */
     public function deletecategory(int $id) {
-        $req = $this->db->prepare('DELETE FROM category WHERE id = :id LIMIT 1');
+        $req = $this->db->prepare('
+            DELETE
+            FROM category
+            WHERE id = :id
+            LIMIT 1');
         $req->bindParam(':id', $id, \PDO::PARAM_INT);
         return $req->execute();
     }
@@ -74,7 +79,8 @@ class Category extends Model
         return $req->execute();
     }
     public function plusNumberPosts($category) {
-        $req = $this->db->prepare('UPDATE category
+        $req = $this->db->prepare('
+            UPDATE category
             SET numberPosts = numberPosts + 1
             WHERE id = :id');
         $req->bindParam(':id', $category, \PDO::PARAM_INT);
@@ -83,7 +89,8 @@ class Category extends Model
     }
 
     public function minusNumberPosts($category) {
-        $req = $this->db->prepare('UPDATE category
+        $req = $this->db->prepare('
+            UPDATE category
             SET numberPosts = numberPosts - 1
             WHERE id = :id');
         $req->bindParam(':id', $category, \PDO::PARAM_INT);
@@ -92,7 +99,11 @@ class Category extends Model
     }
 
     public function deleteFromCategoryPosts($category) {
-        $req = $this->db->prepare('DELETE FROM category_posts WHERE category_id = :category_id LIMIT 1');
+        $req = $this->db->prepare('
+            DELETE
+            FROM category_posts
+            WHERE category_id = :category_id
+            LIMIT 1');
         $req->bindParam(':category_id', $category, \PDO::PARAM_INT);
         return $req->execute();
     }

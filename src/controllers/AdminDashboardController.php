@@ -126,8 +126,6 @@ class AdminDashboardController extends AdminController
         $file_extension_error = $_FILES['file_extension']['error'];
         $file_extension_size = $_FILES['file_extension']['size'];
         $file_extension_tmp = $_FILES['file_extension']['tmp_name'];
-
-        //$this->blogModel->setPost($data);
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (isset($file_extension) AND $file_extension_error == 0) {
                 if ($file_extension_size <= 1000000) {

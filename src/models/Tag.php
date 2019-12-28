@@ -11,7 +11,9 @@ class Tag extends Model
      * RECUPERER TOUTES LES ETIQUETTES
      */
     public function getAllTags() {
-        $req = $this->db->prepare('SELECT * FROM tag');
+        $req = $this->db->prepare('
+            SELECT *
+            FROM tag');
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -37,7 +39,11 @@ class Tag extends Model
      * SUPPRIMER UNE ETIQUETTE
      */
     public function deleteTag(int $id) {
-        $req = $this->db->prepare('DELETE FROM tag WHERE id = :id LIMIT 1');
+        $req = $this->db->prepare('
+            DELETE
+            FROM tag
+            WHERE id = :id
+            LIMIT 1');
         $req->bindParam(':id', $id, \PDO::PARAM_INT);
         return $req->execute();
     }
