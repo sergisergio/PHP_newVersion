@@ -45,8 +45,8 @@ class User extends Model
      */
     public function setUser($data) {
         $req = $this->db->prepare('
-            INSERT INTO user (username, email, password, roles, active, banned, created_at, ip_address, token, avatar_id)
-            VALUES (:username, :email, :password, :roles, :active, :banned, :created_at, :ip_address, :token, :avatar_id)');
+            INSERT INTO user (username, email, password, roles, active, banned, created_at, ip_address, token, token_created_date, token_expire_date, avatar_id)
+            VALUES (:username, :email, :password, :roles, :active, :banned, :created_at, :ip_address, :token, NOW(), NOW() + INTERVAL 1 DAY, :avatar_id)');
         $req->bindValue(':username', $data['username'], \PDO::PARAM_STR);
         $req->bindValue(':email', $data['email'], \PDO::PARAM_STR);
         $req->bindValue(':password', $data['password'], \PDO::PARAM_STR);
@@ -57,6 +57,19 @@ class User extends Model
         $req->bindValue(':ip_address', $data['ip_address']);
         $req->bindValue(':avatar_id', $data['avatar_id'], \PDO::PARAM_INT);
         $req->bindValue(':token', $data['token']);
+        return $req->execute();
+    }
+
+    public function setUserActive($username) {
+        $req = $this->db->prepare("UPDATE user SET active = 1, token = NULL, token_created_date = NULL, token_expire_date = NULL WHERE username = :username");
+        $req->bindValue(':username', $username, \PDO::PARAM_STR);
+        return $req->execute();
+    }
+
+    public function updateToken($username, $token) {
+        $req = $this->db->prepare("UPDATE user SET token = :token, token_created_date = NOW(), token_expire_date = NOW() + INTERVAL 1 DAY WHERE username = :username");
+        $req->bindValue(':username', $username, \PDO::PARAM_STR);
+        $req->bindValue(':token', $token, \PDO::PARAM_STR);
         return $req->execute();
     }
 
@@ -121,7 +134,7 @@ class User extends Model
      * RECUPERER UN MEMBRE EN FONCTION DE SON ID
      */
     public function getUserByUsernameOrEmail ($username) {
-        $req = $this->db->prepare('SELECT u.id, u.email, u.password, u.roles, u.username, u.active, u.banned, u.created_at, i.url as image FROM user u
+        $req = $this->db->prepare('SELECT u.id, u.email, u.password, u.roles, u.username, u.active, u.token, u.token_created_date, u.token_expire_date, u.banned, u.created_at, i.url as image FROM user u
             INNER JOIN image i ON u.avatar_id = i.id
             WHERE username = :username
             OR email = :username

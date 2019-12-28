@@ -1,10 +1,11 @@
 
-            {{ form_start(form) }}
+<form action="?c=login&t=forgetPassword">
             <fieldset>
                 <div class="row">
                     <div class="col-md-offset-3 col-md-6 col-sm-12">
                         <div class="form-row text-input-row email-field">
-                            {{ form_row(form.email, {'label': 'Adresse email *', 'attr': {'placeholder': 'email'}}) }}
+                            <label>Pseudo ou Email</label>
+                            <input type="text" name="username" value="" placeholder="pseudo ou email" class="text-input defaultText required"/>
                         </div>
                     </div>
                     <div class="col-sm-6 col-xs-6">
@@ -19,4 +20,4 @@
                     </div>
                 </div>
             </fieldset>
-            {{ form_end(form) }}
+</form>

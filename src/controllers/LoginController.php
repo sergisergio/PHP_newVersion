@@ -13,6 +13,15 @@ class LoginController extends Controller
     public function index() {
         if ($this->isLogged()) {
             header('Location: ?c=index');
+            exit();
+        }
+        if ((isset($_GET['g'])) && $_GET['g'] == 'sentmail') {
+            $this->msg->success("Un lien de confirmation vous a été envoyé", 'index.php?c=login');
+        } elseif ((isset($_GET['g'])) && $_GET['g'] == 'confirm') {
+            $this->msg->success("Votre compte est activé !", 'index.php?c=login');
+        } elseif (((isset($_GET['g'])) && $_GET['g'] == 'notvalid') && (isset($_GET['user']))) {
+            $username = $_GET['user'];
+            $this->msg->success('Ce lien a expiré ! <a href="?login&t=resend&user='.$username.'">Renvoyer un lien</a>', 'index.php?c=login');
         }
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $username = strip_tags(htmlspecialchars($_POST['username']));
@@ -45,7 +54,6 @@ class LoginController extends Controller
                         exit;
                     }
                 }
-
             }
         }
 
@@ -58,6 +66,8 @@ class LoginController extends Controller
     }
     /*
      * GERER L'INSCRIPTION
+     *
+     * Metttre SMTP et port du FAI ds php.ini et utiliser PHPMailer
      */
     public function registration() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -96,7 +106,7 @@ class LoginController extends Controller
                     'email'      => $email,
                     'password'   => $password,
                     'roles'      => 0,
-                    'active'     => 1,
+                    'active'     => 0,
                     'created_at' => (new \DateTime())->format('Y-m-d H:i:s'),
                     'ip_address' => $_SERVER['REMOTE_ADDR'],
                     'token'      => $token,
@@ -104,9 +114,7 @@ class LoginController extends Controller
                     'avatar_id'  => 10
                 ];
                 if ($this->userModel->setUser($data)) {
-                    header('Location: ' . '?c=login');
-                    $this->msg->success("Compte créé", $this->getUrl());
-                    try {
+                    /*try {
                         $this->mail->setFrom('contact@philippetraon.com', 'Philippe Traon');
                         $this->mail->addAddress($email, $pseudo);
                         $this->mail->addReplyTo('contact@philippetraon.com', 'Information');
@@ -116,9 +124,62 @@ class LoginController extends Controller
                         $this->mail->send();
                     } catch (Exception $e) {
                         echo 'Un problème est survenu ! Le message n\'a pas pu être envoyé : ', $this->mail->ErrorInfo;
+                    }*/
+
+                    // Utilisation de PHPMailer pour l'envoie du mail
+                    //$this->mail = new PHPMailer();
+
+                    // On active la visibilité des erreurs SMTP
+                    try {
+                        $this->mail->SMTPDebug = 3;
+
+                        // On change certaines options du SSL
+                        $this->mail->SMTPOptions = [
+                            'ssl' => [
+                                'verify_peer' => false,
+                                'verify_peer_name' => false,
+                                'allow_self_signed' => true
+                            ]
+                        ];
+
+                        // On indique que l'on veut envoyer le mail via du SMTP
+                        $this->mail->isSMTP();
+
+                        // On indique notre serveur SMTP (local avec maildev)
+                        $this->mail->Host = 'smtp.free.fr';
+                        $this->mail->Port = 587;
+                        $this->mail->SMTPAuth = false;
+
+                        $this->mail->CharSet = 'UTF-8';
+
+                        // From
+                        $this->mail->setFrom('admin@free.fr', 'Admin du site');
+
+                        // To
+                        $this->mail->addAddress($email, explode('@', $email)[0]);
+
+                        // On défini notre mail en HTML
+                        $this->mail->isHTML(true);
+
+                        // Subject
+                        $this->mail->Subject = 'Vérification de votre adresse mail';
+
+                        // On va faire le rendu de notre mail mais on va
+                        // le stoquer pour le mettre dans le mail
+                        $this->mail->Body = '<a href="http://localhost:8003/index.php?c=login&t=confirm&username='.$username.'&token='.$token.'">Lien</a>';
+
+                        // On y mets la version sans html pour le mail texte
+                        $this->mail->AltBody = 'Version text sans html';
+
+                        // On envoie le mail
+                        ob_start();
+                        $this->mail->send();
+                        ob_end_clean();
+                        header('Location: ?c=login&g=sentmail');
+                    } catch (Exception $e) {
+                        $this->msg->error("Un problème est survenu ! Le message n\'a pas pu être envoyé... ");
                     }
-                    header('Location: ' . '?c=blog');
-                    exit;
+                    //exit();
                 } else {
                     $this->msg->error("Une erreur s'est produite", $this->getUrl());
                 }
@@ -139,5 +200,113 @@ class LoginController extends Controller
         }
         header('Location: ?c=index');
 
+    }
+
+    public function confirm() {
+        $username = strip_tags(htmlspecialchars($_GET['username']));
+        $token = strip_tags(htmlspecialchars($_GET['token']));
+        $getUser = $this->userModel->getUserByUsernameOrEmail($username);
+        // echo '<pre>';
+        // var_dump($username);
+        // var_dump($token);
+        // var_dump($getUser);
+        // echo '</pre>';
+        if (($token == $getUser['token']) && (new \DateTime())->format('Y-m-d H:i:s') < $getUser['token_expire_date']) {
+            $this->userModel->setUserActive($username);
+        } else {
+            header('Location: ?c=login&g=notvalid&user='.$username);
+            exit();
+        }
+        header('Location: ?c=login&g=confirm');
+        exit();
+    }
+
+    public function resend() {
+        $username = strip_tags(htmlspecialchars($_GET['username']));
+        $getUser = $this->userModel->getUserByUsernameOrEmail($username);
+        $token = $this->securityService->str_random(100);
+        $this->userModel->setUserActive($username, $token);
+        try {
+            $this->mail->SMTPDebug = 3;
+            $this->mail->SMTPOptions = [
+                'ssl' => [
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+                ]
+            ];
+            $this->mail->isSMTP();
+            $this->mail->Host = 'smtp.free.fr';
+            $this->mail->Port = 587;
+            $this->mail->SMTPAuth = false;
+            $this->mail->CharSet = 'UTF-8';
+            $this->mail->setFrom('admin@free.fr', 'Admin du site');
+            $this->mail->addAddress($email, explode('@', $email)[0]);
+            $this->mail->isHTML(true);
+            $this->mail->Subject = 'Vérification de votre adresse mail';
+            $this->mail->Body = '<a href="?login&t=confirm&username='.$username.'&token='.$token.'">Lien</a>';
+            $this->mail->AltBody = 'Version text sans html';
+            ob_start();
+            $this->mail->send();
+            ob_end_clean();
+            header('Location: ?c=login&g=sentmail');
+        } catch (Exception $e) {
+            $this->msg->error("Un problème est survenu ! Le message n\'a pas pu être envoyé... ");
+        }
+    }
+
+    public function forgetPassword() {
+        // Ajouter un token valable 24h pour réinitialiser le mot de passe
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $username = strip_tags(htmlspecialchars($_POST['username']));
+            $getUser = $this->userModel->getUserByUsernameOrEmail($username);
+
+            if (empty($username)) {
+                $this->msg->error("Veuillez remplir le champ", $this->getUrl());
+            } else {
+                try {
+                    $this->mail->SMTPDebug = 3;
+                    $this->mail->SMTPOptions = [
+                        'ssl' => [
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true
+                        ]
+                    ];
+                    $this->mail->isSMTP();
+                    $this->mail->Host = 'smtp.free.fr';
+                    $this->mail->Port = 587;
+                    $this->mail->SMTPAuth = false;
+                    $this->mail->CharSet = 'UTF-8';
+                    $this->mail->setFrom('admin@free.fr', 'Admin du site');
+                    $this->mail->addAddress($email, explode('@', $email)[0]);
+                    $this->mail->isHTML(true);
+                    $this->mail->Subject = 'Vérification de votre adresse mail';
+                    $this->mail->Body = '<a href="?login&t=reset&username='.$username.'">Réinitialiser mon mot de passe</a>';
+                    $this->mail->AltBody = 'Version text sans html';
+                    ob_start();
+                    $this->mail->send();
+                    ob_end_clean();
+                    $this->msg->error("Un lien de réinitialisation de votre mot de passe vous a été envoyé par mail");
+                } catch (Exception $e) {
+                    $this->msg->error("Un problème est survenu ! Le message n\'a pas pu être envoyé... ");
+                }
+                    }
+                }
+        echo $this->twig->render('front/forgot/index.html.twig', [
+            'message'       => $this->msg,
+            //'session_admin' => $_SESSION['admin'],
+            //'session_user'  => $_SESSION['user'],
+            //'token'     => $loginToken
+        ]);
+    }
+
+    public function reset() {
+        echo $this->twig->render('front/reset/index.html.twig', [
+            'message'       => $this->msg,
+            //'session_admin' => $_SESSION['admin'],
+            //'session_user'  => $_SESSION['user'],
+            //'token'     => $loginToken
+        ]);
     }
 }
