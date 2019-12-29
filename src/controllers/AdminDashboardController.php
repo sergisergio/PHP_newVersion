@@ -126,25 +126,9 @@ class AdminDashboardController extends AdminController
         $file_extension_error = $_FILES['file_extension']['error'];
         $file_extension_size = $_FILES['file_extension']['size'];
         $file_extension_tmp = $_FILES['file_extension']['tmp_name'];
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if (isset($file_extension) AND $file_extension_error == 0) {
-                if ($file_extension_size <= 1000000) {
-                    $infosfichier = pathinfo($image);
-                    $extension_upload = $infosfichier['extension'];
-                    $extensions_access = array('jpg', 'jpeg', 'gif', 'png');
-                    if (in_array($extension_upload, $extensions_access)) {
-                        move_uploaded_file(
-                            $file_extension_tmp,
-                            'assets/img/' . basename($image));
-                        $this->imageModel->setImage($image);
-                        $imageId = $this->imageModel->getId($image);
-                        $imageId = $imageId['id'];
-                    }
-                }
-            }
-            else {
-                $imageId = 14;
-            }
+            $imageId = $this->uploadService->upload($file_extension, $file_extension_error, $file_extension_size, $file_extension_tmp, $image);
             $data = [
                     'title'         => $title,
                     'content'       => $content,
@@ -178,7 +162,9 @@ class AdminDashboardController extends AdminController
                 $imageId = $post['img_id'];
 
                 if ($this->blogModel->deletePost($post['id'])) {
-                    $this->imageModel->deleteImage($imageId);
+                    if ($imageId != 14) {
+                        $this->imageModel->deleteImage($imageId);
+                    }
                     $this->categoryModel->minusNumberPosts($category);
                     $this->msg->success("L'article a bien été supprimé", $this->getUrl());
                 } else {

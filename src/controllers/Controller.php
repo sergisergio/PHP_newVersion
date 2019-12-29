@@ -21,6 +21,7 @@ use Service\RegisterService;
 use Service\PaginationService;
 use Service\MailService;
 use Service\DebugService;
+use Service\UploadService;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use Models\Image;
@@ -48,6 +49,7 @@ class Controller
     protected $securityService;
     protected $registerService;
     protected $paginationService;
+    protected $uploadService;
     protected $debugService;
 
     public function __construct()
@@ -82,6 +84,7 @@ class Controller
         $this->debugService = new DebugService;
         $this->paginationService = new PaginationService;
         $this->mailService = new MailService;
+        $this->uploadService = new UploadService;
         $this->securityModel = new Security;
         $this->commentModel = new Comment;
         $this->linkModel = new Link;

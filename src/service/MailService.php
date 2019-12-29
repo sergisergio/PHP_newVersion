@@ -9,7 +9,6 @@ use PHPMailer\PHPMailer\Exception;
  * CLASSE GERANT LES MAILS
  */
 class MailService {
-
     /**
      * ENVOI DE MESSAGE SUR MA BOITE MAIL
      */
