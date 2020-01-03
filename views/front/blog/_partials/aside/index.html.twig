@@ -1,0 +1,18 @@
+<aside class="col-md-4 col-sm-12 sidebar">
+    {% if session.admin != null %}
+    <!-- /.widget -->
+    {{ include('front/blog/_partials/aside/admin/admin.html.twig')}}
+    {% endif %}
+    <!-- /.widget -->
+    {{ include('front/blog/_partials/aside/views/index.html.twig')}}
+    <!-- /.widget -->
+    {{ include('front/blog/_partials/aside/search/search.html.twig')}}
+    <!-- /.widget -->
+    {{ include('front/blog/_partials/aside/popular/popular.html.twig')}}
+    <!-- /.widget -->
+    {{ include('front/blog/_partials/aside/categories/categories.html.twig')}}
+    <!-- /.widget -->
+    {{ include('front/blog/_partials/aside/tags/tags.html.twig')}}
+    <!-- /.widget -->
+    {{ include('front/blog/_partials/aside/links/links.html.twig')}}
+</aside>

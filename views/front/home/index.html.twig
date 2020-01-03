@@ -1,21 +1,21 @@
 {% extends "./base.html.twig" %}
 
-{% block header %}{{ include('front/home/_partials/header.html.twig') }}{% endblock %}
+{% block header %}{{ include('front/home/_partials/header/header.html.twig') }}{% endblock %}
 
 {# Main content #}
 {% block main %}
 
     <!-- About Portfolio -->
-    {% include 'front/home/_partials/portfolio.html.twig' %}
+    {% include 'front/home/_partials/portfolio/portfolio.html.twig' %}
 
     <!-- About Section -->
-    {% include 'front/home/_partials/about.html.twig' %}
+    {% include 'front/home/_partials/about/about.html.twig' %}
 
     <!-- About Skills -->
-    {% include 'front/home/_partials/skills.html.twig' %}
+    {% include 'front/home/_partials/skills/skills.html.twig' %}
 
     <!-- Contact Section -->
-    {% include 'front/home/_partials/contact.html.twig' %}
+    {% include 'front/home/_partials/contact/contact.html.twig' %}
 
 {% endblock %}
 

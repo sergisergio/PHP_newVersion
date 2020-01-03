@@ -38,7 +38,7 @@ class SearchController extends Controller
             } else {
               $posts = [];
             }
-            echo $this->twig->render('front/blog/search/index.html.twig', [
+            echo $this->twig->render('front/blog/_partials/search/index.html.twig', [
             'posts'         => $posts,
             'number'        => $number,
             'numberOfPages' => $number_of_pages,

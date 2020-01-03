@@ -1,0 +1,72 @@
+<div class="container inner">
+        <div class="blog grid-view row">
+            <div class="col-md-8 col-sm-12 content">
+                <div class="pagination box">
+                        <ul>
+                            <li><a href="?c=blog&v=view2&page={{ _get.page - 1 }}" class="btn {% if _get.page == null or _get.page == 1 %}disabled{% endif %}"><i class="icon-left-dir-1"></i></a></li>
+                            {% for i in 1..numberOfPages %}
+                            <li class="btn {% if _get.page == i %}active{% endif %}"><a href="?c=blog&v=view2&page={{ i }}" style="border:none;">{{ i }}</a></li>
+                            {% endfor %}
+                            <li><a href="?c=blog&v=view2&page={% if _get.page == null %}2{% else %}{{ _get.page + 1 }}{% endif %}" class="btn {% if _get.page == numberOfPages %}disabled{% endif %}"><i class="icon-right-dir-1"></i></a></li>
+                            <li class="pull-right">{{ number }} articles</li>
+                        </ul>
+                </div>
+                <div class="blog-posts">
+                    <div class="divide40"></div>
+                    {% for post in posts %}
+                    <div class="isotope row">
+                        {% if loop.index is odd %}
+                        <div class="" style="width: 49%;position: absolute;top: 0px;left: 0px;">
+                            <div class="post box">
+                                <figure class="frame main"><a href="index.php?c=blog&t=post&id={{ post.id }}">
+                                        <div class="text-overlay">
+                                            <div class="info"><span>Voir plus</span></div>
+                                        </div>
+                                        <img src="./assets/img/{{ post.image }}" alt="" /></a></figure>
+                                <div class="meta">
+                                    <span class="category">
+
+                                    </span>
+                                    <span class="date">{{ post.createdAt | date("d/m/Y") }}</span>
+                                    <span class="comments"><a href="#">{{ post.numberComments }} <i class="icon-chat-1"></i></a></span>
+                                </div>
+                                <h2 class="post-title"><a href="">{{ post.title }}</a></h2>
+                                {{ post.content | slice(0, 200) | raw }}
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="" style="width: 49%;position: absolute !important;top: 0px !important;left: 395px !important;">
+                            <div class="post box">
+                                <figure class="frame main"><a href="index.php?c=blog&t=post&id={{ post.id }}">
+                                        <div class="text-overlay">
+                                            <div class="info"><span>Voir plus</span></div>
+                                        </div>
+                                        <img src="./assets/img/{{ post.image }}" alt="" /></a></figure>
+                                <div class="meta">
+                                    <span class="category">
+
+                                    </span>
+                                    <span class="date">{{ post.createdAt | date('d-m-Y') }}</span>
+                                    <span class="comments"><a href="#">{{ post.numberComments }} <i class="icon-chat-1"></i></a></span>
+                                </div>
+                                <h2 class="post-title"><a href="">{{ post.title }}</a></h2>
+                                {{ post.content | slice(0, 200) | raw }}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="pagination box">
+                    <ul>
+                        <li><a href="?c=blog&v=view2&page={{ _get.page - 1 }}" class="btn {% if _get.page == null or _get.page == 1 %}disabled{% endif %}"><i class="icon-left-dir-1"></i></a></li>
+                        {% for i in 1..numberOfPages %}
+                        <li class="btn {% if _get.page == i %}active{% endif %}"><a href="?c=blog&v=view2&page={{ i }}" style="border:none;">{{ i }}</a></li>
+                        {% endfor %}
+                        <li><a href="?c=blog&v=view2&page={% if _get.page == null %}2{% else %}{{ _get.page + 1 }}{% endif %}" class="btn {% if _get.page == numberOfPages %}disabled{% endif %}"><i class="icon-right-dir-1"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+            {{ include('front/blog/_partials/aside/index.html.twig')}}
+        </div>
+        <div class="divide100"></div>

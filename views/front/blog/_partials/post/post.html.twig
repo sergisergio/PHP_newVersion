@@ -1,0 +1,142 @@
+<div class="container inner">
+        <div class="single blog row">
+            <div class="col-md-8 col-sm-12 content">
+                <div class="blog-posts">
+                    <div class="post box">
+                        <div class="post-title">
+                            <h2>{{ post.title }}</h2>
+                            <h4 class="post-title">Auteur : {{ post.author }}</h4>
+                            <div class="meta">
+                            </div>
+                            <div class="divide30"></div>
+                            {% if post.image %}
+                            <img src="../assets/img/{{ post.image }}" class="img-responsive"  alt="imagepost"/>
+                            {% else %}
+                            <img src="../assets/img/b1-1.jpg" class="img-responsive"  alt="imagepost"/>
+                            {% endif %}
+                            <div class="divide30"></div>
+                            <div class="divide40"></div>
+                            {{ post.content|raw }}
+                        </div>
+                        <div class="divide20"></div>
+                    </div>
+                </div>
+                <div class="divide20"></div>
+                <div class="divide20"></div>
+                <div class="blog-posts" id="comments">
+                    <div class="post box">
+                            {% if comments|length == 0 %}
+                            <h3><i class="budicon-comment-2"></i>&nbsp;&nbsp;Il n'a aucun commentaire pour l'instant.</h3>
+                            {% elseif comments|length == 1 %}
+                            <h3><i class="budicon-comment-2"></i>&nbsp;&nbsp;Un commentaire</h3>
+                            {% else %}
+                            <h3><i class="budicon-comment-2"></i>&nbsp;&nbsp;Commentaires ({{ comments|length }})</h3>
+                            {% endif %}
+                            {% for comment in comments %}
+                            <div class="row">
+                                <div class="col-md-1 col-sm-1 col-xs-2">
+                                {% if comment.url %}
+                                    <img class="img-responsive img-circle" src="{{ comment.url }}" alt="imageavatar" />
+                                {% else %}
+                                    <img class="img-responsive img-circle" src="../assets/img/avatardefaut.png" alt="imageavatar" />
+                                {% endif %}
+
+                                </div>
+                                <div class="col-md-11 col-sm-11 col-xs-10">
+                                    <a href=""><strong>{{ comment.author }}</strong></a>
+                                    <em style="font-weight: 200">le
+                                        {{ comment.published_at|date() }}
+                                    </em>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        {% if ((session.admin.username == comment.username) or (session.user.username == comment.username)or (session.admin != null)) %}
+                                            <a href="#"> <i class="icon-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <a href="?c=comment&t=deleteComment&id={{ comment.id }}&postId={{ comment.post_id }}" data-toggle='confirmation' id="important_action"> <i class="icon-trash"></i></a>
+                                        {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1 col-sm-1 col-xs-2">
+                                </div>
+                                <div class="col-md-11 col-sm-11 col-xs-10">
+                                    <p style="margin: -10px 0 0px !important;font-weight: 700;">
+                                        {{ comment.content }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1 col-sm-1 col-xs-2">
+                                </div>
+                                <div class="col-md-11 col-sm-11 col-xs-10">
+                                    <button id="show"><i class="icon-reply"></i> Répondre </button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a href=""> Réponses (2) </a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a href=""> <i class="budicon-alert"></i> Signaler</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a href="?c=comment&t=likes"><i class="icon-thumbs-up"></i> {{ comment.likes }}</a>&nbsp;&nbsp;&nbsp;
+                                    <a href=""><i class="icon-thumbs-down"></i> {{ comment.dislikes }}</a>
+                                </div>
+                            </div>
+                            <div class="row" style="display: none;" id="answer">
+                                <div class="col-md-2 col-sm-2 col-xs-4">
+                                </div>
+                                <div class="col-md-10 col-sm-10 col-xs-8">
+                                    {% if session.user != null or session.admin != null %}
+                                            <div class="row">
+                                                <div class="col-md-1 col-sm-1 col-xs-2">
+                                                {% if comment.image %}
+                                                    <img class="img-responsive img-circle" src="..assets/img/{{ subcomment.image }}" alt="imageavatar" />
+                                                {% else %}
+                                                    <img class="img-responsive img-circle" src="../assets/img/avatardefaut.png" alt="imageavatar" />
+                                                {% endif %}
+                                                </div>
+                                                <div class="col-md-11 col-sm-11 col-xs-10">
+                                                    <a href=""><strong>Auteur</strong></a>
+                                                    <em style="font-weight: 200">le
+                                                        {# subcomment.published_at|date() #}
+                                                    </em>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        {% if ((session.admin.username == subcomment.username) or (session.user.username == comment.username)or (session.admin != null)) %}
+                                                            <a href="#"> <i class="icon-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                            <a href="#" data-toggle='confirmation' id="important_action"> <i class="icon-trash"></i></a>
+                                                        {% endif %}
+                                                </div>
+                                            </div>
+                                            {% for subcomment in comments.sub_content %}
+                                            <div class="row">
+                                                <div class="col-md-2 col-sm-2 col-xs-4">
+                                                </div>
+                                                <div class="col-md-10 col-sm-10 col-xs-8">
+                                                    <p style="margin: -10px 0 0px !important;font-weight: 700;">
+                                                        {{ subcomment.content }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        {# endfor #}
+                                        {% include('front/blog/_partials/post/_form_add_subcomment.html.twig') %}
+                                    {% else %}
+                                    <p>Connectez-vous pour publier une réponse.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <hr style="border-bottom: 2px solid rgba(255,255,255,0.2);">
+                            {% endfor %}
+                    </div>
+                </div>
+                <div class="divide20"></div>
+                <div class="blog-posts">
+                    <div class="post box">
+                        <button id="addComment">Ajouter un commentaire</<button></button>
+                        <div class="form-container" id="formAddComment" style="display:none;">
+                            <div class="response alert"></div>
+                            {{ message.display }}
+                            {% if session.user != null or session.admin != null %}
+                                {% include('front/blog/_partials/post/_form_add_comment.html.twig') %}
+                            {% else %}
+                                <p>Vous devez vous connecter ;-)</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="divide60"></div>
+            </div>
+                {{ include('front/blog/_partials/aside/index.html.twig')}}
+            </div>
+        </div>
+        <div class="divide100"></div>

@@ -1,0 +1,36 @@
+{% extends "./front/blog/base.html.twig" %}
+
+{% block header %}{% endblock %}
+
+{# Main content #}
+{% block main %}
+
+    <!-- About Portfolio -->
+    {% include 'front/blog/_partials/post/post.html.twig' %}
+
+{% endblock %}
+
+{% block js %}
+<script>
+  $(document).ready(function(){
+      if ($('#answer').css('display') == 'none') {
+        $("#show").click(function(){
+        $("#answer").show();
+        });
+      } else {
+        $("#show").click(function(){
+        $("#answer").hide();
+        });
+      };
+      if ($('#formAddComment').css('display') == 'none') {
+        $("#addComment").click(function(){
+        $("#formAddComment").show();
+        });
+      } else {
+        $("#addComment").click(function(){
+        $("#formAddComment").hide();
+        });
+      };
+  });
+</script>
+{% endblock %}

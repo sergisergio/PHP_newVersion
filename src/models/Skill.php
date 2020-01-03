@@ -28,4 +28,58 @@ class Skill extends Model
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    public function updateSkill($title, $level, $id) {
+        $req = $this->db->prepare("
+            UPDATE skill
+            SET name = :title, level = :level
+            WHERE id = :id");
+        $req->bindValue(':title', $title, \PDO::PARAM_STR);
+        $req->bindValue(':level', $level, \PDO::PARAM_INT);
+        $req->bindValue(':id', $id, \PDO::PARAM_INT);
+        return $req->execute();
+    }
+
+    public function addSkill($title, $level) {
+        $req = $this->db->prepare('
+            INSERT INTO skill (name, level)
+            VALUES (:title, :level)');
+        $req->bindValue(':title', $title, \PDO::PARAM_STR);
+        $req->bindValue(':level', $level, \PDO::PARAM_INT);
+        return $req->execute();
+    }
+
+    public function deleteSkill($id) {
+        $req = $this->db->prepare('
+            DELETE FROM skill WHERE id = :id');
+        $req->bindValue(':id', $id, \PDO::PARAM_INT);
+        return $req->execute();
+    }
+
+    public function addSkill2($name, $content) {
+        $req = $this->db->prepare('
+            INSERT INTO skill2 (name, content)
+            VALUES (:name, :content)');
+        $req->bindValue(':name', $name, \PDO::PARAM_STR);
+        $req->bindValue(':content', $content, \PDO::PARAM_LOB);
+        return $req->execute();
+    }
+
+    public function updateSkill2($name, $content, $id) {
+        $req = $this->db->prepare("
+            UPDATE skill2
+            SET name = :name, content = :content
+            WHERE id = :id");
+        $req->bindValue(':name', $name, \PDO::PARAM_STR);
+        $req->bindValue(':content', $content, \PDO::PARAM_LOB);
+        $req->bindValue(':id', $id, \PDO::PARAM_INT);
+        return $req->execute();
+    }
+
+    public function deleteSkill2($id) {
+        $req = $this->db->prepare('
+            DELETE FROM skill2 WHERE id = :id');
+        $req->bindValue(':id', $id, \PDO::PARAM_INT);
+        return $req->execute();
+    }
 }

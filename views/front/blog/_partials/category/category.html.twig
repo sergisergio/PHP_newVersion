@@ -1,0 +1,77 @@
+<div class="container inner">
+    <div class="blog list-view row">
+        <div class="col-md-8 col-sm-12 content">
+            <div class="blog-posts">
+                {% if number > 0 %}
+                <div class="pagination box">
+                    <ul>
+                        <li><a href="?c=blog&t=getPostsByCategory&category={{ category }}&page={{ _get.page - 1 }}" class="btn {% if _get.page == null or _get.page == 1 %}disabled{% endif %}"><i class="icon-left-dir-1"></i></a></li>
+                        {% for i in 1..numberOfPages %}
+                        <li class="btn {% if _get.page == i %}active{% endif %}"><a href="?c=blog&t=getPostsByCategory&category={{ category }}&page={{ i }}" style="border:none;">{{ i }}</a></li>
+                        {% endfor %}
+                        <li><a href="?c=blog&t=getPostsByCategory&category={{ category }}&page={% if _get.page == null %}2{% else %}{{ _get.page + 1 }}{% endif %}" class="btn {% if _get.page == numberOfPages %}disabled{% endif %}"><i class="icon-right-dir-1"></i></a></li>
+                        <li class="pull-right">{{ number }} articles</li>
+                    </ul>
+                </div>
+                {% endif %}
+                {% if number == 0 %}
+
+                  <div class="post box">
+                      <div class="row">
+                          <p>Aucun article ne correspond à votre recherche.</p>
+                      </div>
+                  </div>
+                {% elseif number == 1 %}
+                <div class="post box">
+                      <div class="row">
+                          <p>Un article correspond à votre recherche.</p>
+                      </div>
+                  </div>
+                {% else %}
+                <div class="post box">
+                      <div class="row">
+                          <p>{{ number }} articles correspondent à votre recherche.</p>
+                      </div>
+                  </div>
+                {% endif %}
+                  {% for post in posts %}
+                  <div class="post box">
+                      <div class="row">
+                          <div class="col-sm-5">
+                              <figure class="frame"><a href="index.php?c=blog&t=post&id={{ post.id }}">
+                                      <div class="text-overlay">
+                                          <div class="info"><span>Voir plus</span></div>
+                                      </div>
+                                      <img src="./assets/img/{{ post.image }}" alt="" />
+                                  </a></figure>
+                          </div>
+                          <div class="col-sm-7 post-content">
+                              <div class="meta">
+                                  <span class="category">
+                                          {{ post.category }}
+                                  </span>
+                                  <span class="date">{{ post.created_at|date}}</span>
+                                  <span class="comments"><a href="#">{{ post.numberComments }} <i class="icon-chat-1"></i></a></span>
+                              </div>
+                              <h2 class="post-title"><a href="">{{ post.title|e }}</a></h2>
+                              {{ post.content|slice(0,200)|raw }}
+                          </div>
+                      </div>
+                  </div>
+                  {% endfor %}
+            </div>
+            {% if number > 0 %}
+            <div class="pagination box">
+                <ul>
+                    <li><a href="?c=blog&t=getPostsByCategory&category={{ category }}&page={{ _get.page - 1 }}" class="btn {% if _get.page == null or _get.page == 1 %}disabled{% endif %}"><i class="icon-left-dir-1"></i></a></li>
+                    {% for i in 1..numberOfPages %}
+                    <li class="btn {% if _get.page == i %}active{% endif %}"><a href="?c=blog&t=getPostsByCategory&category={{ category }}page={{ i }}" style="border:none;">{{ i }}</a></li>
+                    {% endfor %}
+                    <li><a href="?c=blog&t=getPostsByCategory&category={{ category }}&page={% if _get.page == null %}2{% else %}{{ _get.page + 1 }}{% endif %}" class="btn {% if _get.page == numberOfPages %}disabled{% endif %}"><i class="icon-right-dir-1"></i></a></li>
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+        {{ include('front/blog/_partials/aside/index.html.twig')}}
+    </div>
+    <div class="divide100"></div>

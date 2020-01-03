@@ -34,14 +34,8 @@
 
 </head>
 <body class="full-layout">
-    <!--<div id="preloader">
-        <div id="status">
-            <div class="loadcircle"></div>
-        </div>
-    </div>-->
     <div class="body-wrapper">
-    {% block nav %}{% include('front/blog/_partials/nav.html.twig') %}{% endblock %}
-
+    {% block nav %}{% include('front/_partials/nav.html.twig') %}{% endblock %}
         <div class="container">
             {% block header %}{% endblock %}
             <div class="container inner">
@@ -50,9 +44,6 @@
             </div>
         </div>
     </div>
-    <!-- Contenu -->
-
-    <!-- Footer -->
     <script src="https://cdn.jsdelivr.net/npm/noty@3.2.0-beta/lib/noty.min.js"></script>
     <script src="../assets/js/jquery.min.js"></script>
     <script src="../assets/js/bootstrap.min.js"></script>

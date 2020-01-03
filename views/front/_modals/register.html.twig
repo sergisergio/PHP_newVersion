@@ -1,0 +1,55 @@
+
+            <div id="inscription" class="modal fade" role="dialog">
+              <div class="modal-dialog modal-lg">
+
+                <!-- Modal content-->
+                <div class="modal-content" style="margin-top:200px;background: #333;">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" style="text-align: center;">Inscription</h4>
+                  </div>
+                  <div class="modal-body">
+                    <form action="?c=login&t=registration" method="post" novalidate>
+                      <fieldset>
+                          <div class="row">
+                              {{ message.display }}
+                              <div class="col-md-offset-3 col-md-6 col-sm-12">
+                                  <div class="form-row text-input-row name-field">
+                                      <label>Pseudo</label>
+                                      <input type="text" placeholder="Votre pseudo" name="username" class="text-input defaultText " required />
+                                  </div>
+                                  <div class="form-row text-input-row email-field">
+                                      <label>Email</label>
+                                      <input type="email" placeholder="Votre e-mail" name="email" class="text-input defaultText  email" required/>
+                                  </div>
+                                  <div class="form-row text-input-row subject-field">
+                                      <label>Mot de passe</label>
+                                      <input type="password" placeholder="Votre mot de passe" name="password" class="text-input defaultText" />
+                                  </div>
+                                  <div class="form-row text-input-row subject-field">
+                                      <label>Confirmer votre mot de passe</label>
+                                      <input type="password" placeholder="Confirmez votre mot de passe" name="passwordCheck" class="text-input defaultText" />
+                                  </div>
+                              </div>
+                              <div class="col-sm-6 col-xs-6">
+                                  <div class="button-row pull-right">
+                                      <input type="submit" value="Envoyer" name="submit" class="btn btn-submit bm0" />
+                                  </div>
+                              </div>
+                              <div class="col-sm-6 col-xs-6 lp5">
+                                  <div class="button-row pull-left">
+                                      <input type="reset" value="Effacer" name="reset" class="btn btn-submit bm0" />
+                                      <input type="hidden" name="registerToken" id="token" value="{{ registerToken }}" />
+                                  </div>
+                              </div>
+                          </div>
+                      </fieldset>
+                  </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>

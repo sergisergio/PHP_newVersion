@@ -1,0 +1,35 @@
+<div id="updateSkill2{{ skill2.id }}" class="modal fade" role="dialog">
+                                      <div class="modal-dialog">
+
+                                        <!-- Modal content-->
+                                        <div class="modal-content" style="margin-top:200px;background: #333;">
+                                          <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            <h4 class="modal-title">Modifier une compétence</h4>
+                                          </div>
+                                          <div class="modal-body">
+                                            <form action="?c=admin&t=updateSkill2" method="post">
+                                                <div>
+                                                    <label for="title2" style="color: #fff;">Nom</label><br />
+                                                    <input  style="background: #eee; color: #111;" type="text" name="name" id="title2" value="{{ skill2.name }}">
+                                                </div>
+                                                <div>
+                                                    <label style="color: #fff;">Contenu</label><br />
+                                                    <textarea name="content" class="textarea" cols="30" rows="20">{{ skill2.content|raw }}</textarea>
+                                                </div>
+                                                <div>
+                                                    <input type="hidden" name="id" value="{{ skill2.id }}">
+                                                </div>
+                                                <div class="divide40"></div>
+                                                <div>
+                                                    <input class="btn btn-default" type="submit" style="width: 100px;display: block; margin: 0 auto;"/>
+                                                </div>
+                                            </form>
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                                          </div>
+                                        </div>
+
+                                      </div>
+                                    </div>

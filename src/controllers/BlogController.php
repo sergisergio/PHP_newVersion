@@ -67,7 +67,7 @@ class BlogController extends Controller
                 } else {
                     $comments = null;
                 }
-                echo $this->twig->render('front/blog/post/index.html.twig', [
+                echo $this->twig->render('front/blog/_partials/post/index.html.twig', [
                     'post'        => $post,
                     'comments'    => $comments,
                     'message'     => $this->msg,
@@ -105,7 +105,7 @@ class BlogController extends Controller
             $number = (int)$number;
             $number_of_pages = ceil($number/$results_per_page);
             $posts = $this->paginationService->paginateCategory($category, $currentPage, $number_of_pages, $results_per_page);
-            echo $this->twig->render('front/blog/category/index.html.twig', [
+            echo $this->twig->render('front/blog/_partials/category/index.html.twig', [
                 'posts'         => $posts,
                 'number'        => $number,
                 'numberOfPages' => $number_of_pages,
@@ -139,7 +139,7 @@ class BlogController extends Controller
             $number_of_pages = ceil($number/$results_per_page);
 
             $posts = $this->paginationService->paginateTag($tag, $currentPage, $number_of_pages, $results_per_page);
-            echo $this->twig->render('front/blog/tag/index.html.twig', [
+            echo $this->twig->render('front/blog/_partials/tag/index.html.twig', [
                 'posts'         => $posts,
                 'number'        => $number,
                 'numberOfPages' => $number_of_pages,

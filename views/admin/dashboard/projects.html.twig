@@ -26,6 +26,7 @@
               <th scope="col">id</th>
               <th scope="col">Image</th>
               <th scope="col">Nom</th>
+              <th scope="col">Statut</th>
               <th scope="col">Modifier</th>
               <th scope="col">Supprimer</th>
             </tr>
@@ -36,6 +37,7 @@
                 <th scope="row">{{ project.id }}</th>
                 <td style="width:10%;"><img src="../assets/img/{{ project.url }}" style="width:100%;{{ project.style }}"></td>
                 <td>{{ project.title }}</td>
+                <td>{{ project.published ? 'Publié' : 'Non publié' }}</td>
                 <td><i class="fa fa-pencil" aria-hidden="true"></i></td>
                 <td>
                   <form method="post" action="#" class="delete-form">

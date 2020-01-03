@@ -1,0 +1,71 @@
+<section id="skills">
+    <div class="box">
+        <h2 class="section-title">Compétences
+        </h2>
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                {% if session.admin != null %}
+                <a href="" class="pull-left" data-toggle="modal" data-target="#addSkill" data-rel="tooltip" data-placement="right" rel="tooltip" data-original-title="Ajouter">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                </a>
+                {% include 'front/home/_partials/skills/modal_add_skill1.html.twig' %}
+                {% endif %}
+                <div class="divide40"></div>
+                <div class="barWrapper">
+                    {% for skill in skills %}
+                    <span class="progressText"><B>{{ skill.name }}</B></span>
+                    {% if session.admin != null %}
+                    <form method="post" action="?c=admin&t=deleteSkill" class="pull-right" style="margin-top: -4px;">
+                      <input type="hidden" name="skillId" value="{{ skill.id }}">
+                        <button style="border: none;color: red !important;"type="submit" class="btn btn-danger btn-delete" onclick="return confirm('Confirmer la suppression ?');"><i class="fa fa-trash-o"></i></button>
+                    </form>
+                    &nbsp;&nbsp;
+                    <a href="" class="pull-right" data-toggle="modal" data-target="#myModalSkill1{{ skill.id }}" data-rel="tooltip" data-placement="right" rel="tooltip" data-original-title="Modifier {{ skill.name }}" data-id="{{ skill.id }}">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                    </a>
+                    {% include 'front/home/_partials/skills/modal_update_skill1.html.twig' %}
+                    {% endif %}
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="{{ skill.level }}" aria-valuemin="0" aria-valuemax="100">
+                            <span class="popOver" data-toggle="tooltip" data-placement="top" title="{{ skill.level }}%"> </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                {% if session.admin != null %}
+                <a href="" class="pull-left" data-toggle="modal" data-target="#addSkill2" data-rel="tooltip" data-placement="right" rel="tooltip" data-original-title="Ajouter">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                </a>
+                {% include 'front/home/_partials/skills/modal_add_skill2.html.twig' %}
+                {% endif %}
+                <div class="divide40"></div>
+                <div class="panel-group" id="accordion">
+                    {% for skill2 in skills2 %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                                    <h4 class="panel-title"> <a data-toggle="collapse" class="panel-toggle {{ skill2.active }}" data-parent="#accordion" href="#collapse{{ skill2.id }}"> {{ skill2.name }}</a></h4>
+                                    {% if session.admin != null %}
+                                    <form method="post" action="?c=admin&t=deleteSkill2" class="pull-right" style="margin-top: -35px;">
+                                      <input type="hidden" name="id" value="{{ skill2.id }}">
+                                        <button style="border: none;color: red !important;"type="submit" class="btn btn-danger btn-delete" onclick="return confirm('Confirmer la suppression ?');"><i class="fa fa-trash-o"></i></button>
+                                    </form>
+                                    <a href="" class="pull-right" data-toggle="modal" data-target="#updateSkill2{{ skill2.id }}" data-rel="tooltip" data-placement="top" rel="tooltip" data-original-title="Modifier {{ skill2.name }}" data-id="{{ skill2.id }}" style="margin-top: -32px;">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                    {% include 'front/home/_partials/skills/modal_update_skill2.html.twig' %}
+                                {% endif %}
+
+                        </div>
+                        <div id="collapse{{ skill2.id }}" class="panel-collapse collapse {{ skill2.class }} ">
+                            <div class="panel-body"> {{ skill2.content|raw }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="divide10"></div>
+    </div>
+</section>

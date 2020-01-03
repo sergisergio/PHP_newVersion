@@ -11,7 +11,7 @@ class IndexController extends Controller
      * AFFICHE LA PAGE D'ACCUEIL
      */
     public function index() {
-        $projects = $this->projectModel->getAllProjects();
+        $projects = $this->projectModel->getAllPublishedProjects();
         $categories = $this->categoryModel->getAllCategories();
         $skills = $this->skillModel->getAllSkills();
         $skills2 = $this->skillModel->getAllSkills2();

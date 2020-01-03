@@ -1,0 +1,32 @@
+<section id="portfolio" class="portfolio">
+    <div class="box">
+        <h2 class="section-title pull-left">Projets&nbsp;&nbsp;&nbsp;&nbsp;
+        {% if session.admin != null %}
+            <a href="?c=adminDashboard&t=projects" target="_blank" data-rel="tooltip" data-placement="right" rel="tooltip" data-original-title="Gérer les projets">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+            </a>
+            {% endif %}
+        </h2>
+
+        <div id="filters-container" class="cbp-l-filters-alignRight pull-right">
+            <div data-filter="*" class="cbp-filter-item-custom-active cbp-filter-item-custom btn">Tous</div>
+            {% for category in categories %}
+            <div data-filter=".{{ category.name }}" class="cbp-filter-item-custom btn">{{ category.name }}</div>
+            {% endfor %}
+        </div>
+        <div class="clearfix"></div>
+        <div id="grid-container" class="cbp-l-grid-masonry">
+            <ul>
+                {% for project in projects %}
+                <li class="cbp-item {{ project.name }}">
+                    <a class="thumb" href="#">
+                            <img src="./assets/img/{{ project.url}}" alt="" style="{{ project.style }}" data-toggle="modal" data-target="#modal{{ project.id }}">
+                    </a>
+                </li>
+                {% include 'front/home/_partials/portfolio/modal.html.twig' %}
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="cbp-l-loadMore-button"> <a href="front/home/_partials/more/port1-more.html.twig" class="cbp-l-loadMore-button-link btn">VOIR PLUS</a> </div>
+    </div>
+</section>
