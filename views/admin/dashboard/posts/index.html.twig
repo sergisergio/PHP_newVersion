@@ -24,11 +24,13 @@
                 <div class="divide20"></div>
                 <h2 class="text-center">Modifier/Supprimer un article</h2>
                 <div class="divide20"></div>
+                <p class="text-center">{{ number }} articles</p>
+                {% include('admin/dashboard/_partials/pagination.html.twig') %}
                 <div class="post box">
                   <table class="table table-striped table-dark">
                     <thead>
                       <tr>
-                        <th scope="col">id</th>
+                        <th scope="col"></th>
                         <th scope="col">Titre</th>
                         <th scope="col">Date</th>
                         <th scope="col">Statut</th>
@@ -40,12 +42,15 @@
                     <tbody>
                       {% for post in posts %}
                         <tr>
-                          <th scope="row">{{ post.id }}</th>
+                          <th scope="row">{{ loop.index }}</th>
                           <td>{{ post.title|slice(0,15) }}</td>
-                          <td>{{ post.created_at }}</td>
+                          <td>{{ post.created_at|date("d/m/Y") }}</td>
                           <td>{{ (post.published) ? 'Publié' : 'Non publié' }}</td>
                           <td>{{ post.author }}</td>
-                          <td><i class="fa fa-pencil" aria-hidden="true"></i></td>
+                          <td>
+                            <a href="" data-toggle="modal" data-target="#updatePost{{ post.id }}" data-id="{{ post.id }}"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                            {% include('admin/dashboard/posts/_modal_post_update.html.twig') %}
+                          </td>
                           <td>
                             {% include('admin/dashboard/posts/_form_post_delete.html.twig') %}
                           </td>
@@ -61,5 +66,18 @@
 {% block js %}
     <script src="https://cdn.tiny.cloud/1/bu5ham6xychsfqjny6a3sxl6r73e1wt3lyjl93m2p8sodbnj
 /tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-    <script>tinymce.init({selector:'textarea'});</script>
+    <script>tinymce.init({
+      selector:'.textarea',
+      plugins: [
+        'advlist autolink link image imagetools media lists charmap print preview hr anchor pagebreak spellchecker',
+        'searchreplace wordcount visualblocks visualchars code advcode fullscreen insertdatetime media nonbreaking',
+        'table emoticons template paste help'
+      ],
+      toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent | bullist numlist | emoticons | code",
+      menubar: 'favs file edit view insert format tools table help',
+      encoding: 'xml',
+      entity_encoding: 'raw',
+      entities: '160,nbsp',
+      language : 'fr_FR',
+    });</script>
 {% endblock %}

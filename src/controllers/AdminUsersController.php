@@ -31,24 +31,15 @@ class AdminUsersController extends Controller
      * METTRE A JOUR UN MEMBRE
      */
     public function updateUser() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userDown']) && !empty($_POST['userDown'])) {
-            $userId = $_POST['userDown'];
-            $user = $this->userModel->getUserById($userId);
-            if ($this->usersModel->updateRoleUser(0, $userId)) {
-                $this->msg->success($user['name']." est passé au rang de simple utilisateur", $this->getUrl(true));
-            } else {
-                $this->msg->error("Une erreur s'est produite", $this->getUrl(true));
-            }
-        } elseif ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userUp']) && !empty($_POST['userUp'])) {
-            $userId = $_POST['userUp'];
-            $user = $this->usersModel->getUserById($userId);
-            if ($this->usersModel->updateRoleUser(1, $userId)) {
-                $this->msg->success($user['name']." est passé au rang d'administrateur", $this->getUrl(true));
-            } else {
-                $this->msg->error("Une erreur s'est produite", $this->getUrl(true));
-            }
-        } else {
-            $this->msg->error("Erreur lors de l'envoie des données", $this->getUrl(true));
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $role = htmlspecialchars($_POST['role']);
+            $active = htmlspecialchars($_POST['active']);
+            $banned = htmlspecialchars($_POST['banned']);
+            $id = htmlspecialchars($_POST['id']);
+
+            $this->userModel->updateUser($role, $active, $banned, $id);
+            header('Location: ?c=adminDashboard&t=users');
+            exit;
         }
     }
     /**

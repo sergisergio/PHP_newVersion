@@ -26,6 +26,24 @@ class Blog extends Model
         return $req->execute();
     }
     /**
+     * @param $data
+     * @return bool
+     *
+     * MODIFIER UN ARTICLE
+     */
+    public function updatePost($data) {
+        $req = $this->db->prepare('
+            UPDATE posts
+            SET title = :title, content = :content, img_id = :img_id, published = :published
+            WHERE id = :id');
+        $req->bindValue(':title', $data['title'], \PDO::PARAM_STR);
+        $req->bindValue(':content', $data['content'], \PDO::PARAM_LOB);
+        $req->bindValue(':img_id', $data['img_id'], \PDO::PARAM_INT);
+        $req->bindValue(':published', $data['published'], \PDO::PARAM_INT);
+        $req->bindValue(':id', $data['id'], \PDO::PARAM_INT);
+        return $req->execute();
+    }
+    /**
      * @param $id
      * @return mixed
      *
@@ -60,7 +78,7 @@ class Blog extends Model
      *
      * METTRE A JOUR UN ARTICLE AVEC SON ID
      */
-    public function updatePost($data, $postId) {
+    /*public function updatePost($data, $postId) {
         $req = $this->db->prepare('
             UPDATE posts
             SET title = :title, subtitle = :subtitle, content = :content, image = :image, active = :active, date_update = NOW()
@@ -73,7 +91,7 @@ class Blog extends Model
         $req->bindValue(':image', $data['image'], \PDO::PARAM_STR);
         $req->bindValue(':active', $data['active'], \PDO::PARAM_BOOL);
         return $req->execute();
-    }
+    }*/
     /**
      * @return mixed
      *
@@ -84,6 +102,18 @@ class Blog extends Model
             SELECT COUNT(*)
             FROM posts
             WHERE published = 1');
+        $req->execute();
+        return $req->fetchColumn();
+    }
+    /**
+     * @return mixed
+     *
+     * RECUPERER LE NOMBRE D'ARTICLES
+     */
+    public function getNumber() {
+        $req = $this->db->prepare('
+            SELECT COUNT(*)
+            FROM posts');
         $req->execute();
         return $req->fetchColumn();
     }
@@ -102,6 +132,7 @@ class Blog extends Model
             LEFT JOIN image i on p.img_id = i.id
             LEFT JOIN category_posts x on p.id = x.posts_id
             LEFT JOIN category c on x.category_id = c.id
+            ORDER BY p.created_at DESC
             LIMIT :start, :results_per_page');
         $req->bindParam(':start', $start, \PDO::PARAM_INT);
         $req->bindParam(':results_per_page', $results_per_page, \PDO::PARAM_INT);

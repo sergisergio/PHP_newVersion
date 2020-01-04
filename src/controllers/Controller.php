@@ -90,4 +90,13 @@ class Controller
             return "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
         }
     }
+
+    // récupération uri courante
+    protected function getUri(bool $referer = false) {
+        if ($referer == true) {
+            return $_SERVER['HTTP_REFERER'];
+        } else {
+            return "$_SERVER[REQUEST_URI]";
+        }
+    }
 }

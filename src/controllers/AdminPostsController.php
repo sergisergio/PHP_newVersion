@@ -5,6 +5,7 @@ namespace Controllers;
 use Models\Blog;
 use Models\Category;
 use Models\Image;
+use Models\Tag;
 use Service\UploadService;
 
 /**
@@ -17,6 +18,7 @@ class AdminPostsController extends Controller
     protected $categoryModel;
     protected $blogModel;
     protected $imageModel;
+    protected $tagModel;
     protected $uploadService;
     /**
      * Constructeur
@@ -33,6 +35,7 @@ class AdminPostsController extends Controller
         $this->categoryModel = new Category;
         $this->blogModel = new Blog;
         $this->imageModel = new Image;
+        $this->tagModel = new Tag;
         $this->uploadService = new UploadService;
     }
     /**
@@ -40,9 +43,10 @@ class AdminPostsController extends Controller
      */
     public function addPost() {
         $title = htmlspecialchars($_POST['title']);
-        $content =  htmlspecialchars($_POST['content'], ENT_HTML5);
+        $content =  html_entity_decode(htmlspecialchars($_POST['content']));
         $category = htmlspecialchars($_POST['category']);
         $image = htmlspecialchars($_FILES['file_extension']['name']);
+        $tag = $_POST['tag'];
         $user_id = $_SESSION['admin']['id'];
         $file_extension = $_FILES['file_extension'];
         $file_extension_error = $_FILES['file_extension']['error'];
@@ -64,12 +68,69 @@ class AdminPostsController extends Controller
                 $last_id = $this->blogModel->getLastId();
                 $this->categoryModel->addCategoryToPost($category, $last_id);
                 $this->categoryModel->plusNumberPosts($category);
-                $this->msg->success("L'article a bien été ajouté !", $this->getUrl());
+                foreach ($tag as $singleTag) {
+                //var_dump($singleTag);
+                    $this->tagModel->linkTagsToPost($singleTag, $last_id);
+                }
+                //$this->msg->success("L'article a bien été ajouté !", $this->getUrl());
+                header('Location: ' . '?c=adminDashboard&page=1');
+                exit;
+
             } else {
-                $this->msg->error("L'article n'a pas pu être ajouté.", $this->getUrl());
+                //$this->msg->error("L'article n'a pas pu être ajouté.", $this->getUrl());
+                header('Location: ' . '?c=adminDashboard&page=1');
+                exit;
             }
         } else {
-            header('Location: ' . '?c=adminDashboard');
+            header('Location: ' . '?c=adminDashboard&page=1');
+            exit;
+        }
+    }
+    /**
+     * MODIFIER UN ARTICLE
+     */
+    public function updatePost() {
+        $title = htmlspecialchars($_POST['title']);
+        $content =  html_entity_decode(htmlspecialchars($_POST['content']));
+        $category = htmlspecialchars($_POST['category']);
+        $image = htmlspecialchars($_FILES['file_extension']['name']);
+        $id = htmlspecialchars($_POST['id']);
+        $tag = $_POST['tag'];
+        $user_id = $_SESSION['admin']['id'];
+        $file_extension = $_FILES['file_extension'];
+        $file_extension_error = $_FILES['file_extension']['error'];
+        $file_extension_size = $_FILES['file_extension']['size'];
+        $file_extension_tmp = $_FILES['file_extension']['tmp_name'];
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $imageId = $this->uploadService->upload($file_extension, $file_extension_error, $file_extension_size, $file_extension_tmp, $image);
+            $data = [
+                    'title'         => $title,
+                    'content'       => $content,
+                    'user_id'       => $user_id,
+                    'img_id'        => $imageId,
+                    'published'     => 1,
+                    'id'            => $id,
+                ];
+
+            if ($this->blogModel->updatePost($data)) {
+                $this->categoryModel->deleteCategoryToPost($id);
+                $this->categoryModel->addCategoryToPost($category, $id);
+                $this->tagModel->deleteTagsToPost($id);
+                foreach ($tag as $singleTag) {
+                    $this->tagModel->linkTagsToPost($singleTag, $id);
+                }
+                $this->msg->success("L'article a bien été modifié !");
+                header('Location: ' . '?c=adminDashboard&page=1');
+                exit;
+
+            } else {
+                $this->msg->error("L'article n'a pas pu être modifié.");
+                header('Location: ' . '?c=adminDashboard&page=1');
+                exit;
+            }
+        } else {
+            header('Location: ' . '?c=adminDashboard&page=1');
             exit;
         }
     }
@@ -88,15 +149,21 @@ class AdminPostsController extends Controller
                         $this->imageModel->deleteImage($imageId);
                     }
                     $this->categoryModel->minusNumberPosts($category);
-                    $this->msg->success("L'article a bien été supprimé", $this->getUrl());
+                    $this->msg->success("L'article a bien été supprimé");
+                    header('Location: ?c=adminDashboard&page=1');
+                    exit;
                 } else {
-                    $this->msg->error("L'article n'a pas pu être supprimé", $this->getUrl());
+                    $this->msg->error("L'article n'a pas pu être supprimé");
+                    header('Location: ?c=adminDashboard&page=1');
+                    exit;
                 }
             } else {
                 $this->msg->error("L'article n'existe pas", $this->getUrl());
+                header('Location: ?c=adminDashboard&page=1');
+                exit;
             }
         } else {
-            header('Location: ?c=adminDashboard');
+            header('Location: ?c=adminDashboard&page=1');
             exit;
         }
     }

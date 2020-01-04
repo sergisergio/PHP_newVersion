@@ -7,7 +7,7 @@
       </div>
       <div>
         <label for="textarea">Article</label><br />
-        <textarea type="text" id="textarea" name="content" value=""></textarea>
+        <textarea type="text" id="textarea" class="textarea" name="content"></textarea>
       </div>
     </div>
 
@@ -26,6 +26,17 @@
       <div>
         <label style="display: block;text-align: center;margin: 0 auto;" for="content">Ajouter une image (facultatif) </label><br />
         <input style="text-align: center;margin: 0 auto;" type="file" name="file_extension" />
+      </div>
+      <div class="divide20"></div>
+      <div>
+        <label>
+          Choisir un ou plusieurs tag(s)<br />
+          <select multiple name="tag[]">
+            {% for tag in tags %}
+              <option value="{{ tag.id }}">{{ tag.name }}</option>
+            {% endfor %}
+          </select>
+        </label>
       </div>
     </div>
   </div>

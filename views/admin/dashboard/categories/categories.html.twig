@@ -24,11 +24,13 @@
               </div>
             </div>
           </div>
+          <p class="text-center">{{ number }} catégories</p>
+          {% include('admin/dashboard/_partials/pagination.html.twig') %}
       <div class="post box">
         <table class="table table-striped table-dark">
           <thead>
             <tr>
-              <th scope="col">id</th>
+              <th scope="col"></th>
               <th scope="col">Nom</th>
               <th scope="col">Modifier</th>
               <th scope="col">Supprimer</th>
@@ -37,7 +39,7 @@
           <tbody>
             {% for category in categories %}
               <tr>
-                <th scope="row">{{ category.id }}</th>
+                <th scope="row">{{ loop.index }}</th>
                 <td>{{ category.name }}</td>
                 <td>
                   <a href="" data-toggle="modal" data-target="#updateCategory{{ category.id }}" data-id="{{ category.id }}">

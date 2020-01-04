@@ -78,6 +78,24 @@ class Category extends Model
 
         return $req->execute();
     }
+    public function updateCategoryToPost($category, $id) {
+        $req = $this->db->prepare('
+            UPDATE category_posts
+            SET category_id = :category_id
+            WHERE posts_id = :id');
+        $req->bindParam(':category_id', $category, \PDO::PARAM_INT);
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
+        return $req->execute();
+
+    }
+    public function deleteCategoryToPost($id) {
+        $req = $this->db->prepare('
+            DELETE
+            FROM category_posts
+            WHERE posts_id = :id');
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
+        return $req->execute();
+    }
     /**
      * INCREMENTE LE NOMBRE D'ARTICLES AVEC CETTE CATEGORIE
      */
@@ -123,5 +141,31 @@ class Category extends Model
         $req->bindParam(':name', $title, \PDO::PARAM_STR);
         $req->bindParam(':id', $id, \PDO::PARAM_INT);
         return $req->execute();
+    }
+    /**
+     * @return mixed
+     *
+     * RECUPERER LE NOMBRE DE CATEGORIES
+     */
+    public function getNumberOfCategories() {
+        $req = $this->db->prepare('
+            SELECT COUNT(*)
+            FROM category');
+        $req->execute();
+        return $req->fetchColumn();
+    }
+    /**
+     * RETOURNE LES CATEGORIES ET PAGINATION
+     */
+    public function getCategoryPagination($start, $results_per_page) {
+        $req = $this->db->prepare("
+            SELECT *
+            FROM category
+            ORDER BY name ASC
+            LIMIT :start, :results_per_page");
+        $req->bindParam(':start', $start, \PDO::PARAM_INT);
+        $req->bindParam(':results_per_page', $results_per_page, \PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

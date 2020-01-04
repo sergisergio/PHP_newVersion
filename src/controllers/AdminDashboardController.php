@@ -9,6 +9,7 @@ use Models\Comment;
 use Models\Tag;
 use Models\Project;
 use Models\Config;
+use Service\PaginationService;
 
 /**
  * class AdminDashboardController
@@ -24,6 +25,7 @@ class AdminDashboardController extends AdminController
     protected $tagModel;
     protected $projectModel;
     protected $configModel;
+    protected $paginationService;
     /**
      * Constructeur
      *
@@ -36,6 +38,30 @@ class AdminDashboardController extends AdminController
             header('Location: ?c=login');
             exit;
         }
+        if ($this->getUri() == '/index.php?c=adminDashboard') {
+            header('Location: ?c=adminDashboard&page=1');
+            exit;
+        }
+        if ($this->getUri() == '/index.php?c=adminDashboard&t=comments') {
+            header('Location: ?c=adminDashboard&t=comments&page=1');
+            exit;
+        }
+        if ($this->getUri() == '/index.php?c=adminDashboard&t=users') {
+            header('Location: ?c=adminDashboard&t=users&page=1');
+            exit;
+        }
+        if ($this->getUri() == '/index.php?c=adminDashboard&t=categories') {
+            header('Location: ?c=adminDashboard&t=categories&page=1');
+            exit;
+        }
+        if ($this->getUri() == '/index.php?c=adminDashboard&t=tags') {
+            header('Location: ?c=adminDashboard&t=tags&page=1');
+            exit;
+        }
+        if ($this->getUri() == '/index.php?c=adminDashboard&t=projects') {
+            header('Location: ?c=adminDashboard&t=projects&page=1');
+            exit;
+        }
         $this->blogModel = new Blog;
         $this->categoryModel = new Category;
         $this->userModel = new User;
@@ -43,67 +69,121 @@ class AdminDashboardController extends AdminController
         $this->tagModel = new Tag;
         $this->projectModel = new Project;
         $this->configModel = new Config;
+        $this->paginationService = new PaginationService;
     }
     /*
      * AFFICHER LES ARTICLES
      */
     public function index() {
-        $posts = $this->blogModel->getAllPostsWithUsers();
+        $currentPage = intval($_GET['page']);
+        $results_per_page = 8;
+        $number_of_posts = $this->blogModel->getNumber();
+        $number_of_pages = ceil($number_of_posts/$results_per_page);
+
+        $posts = $this->paginationService->paginate($currentPage, $number_of_pages, $results_per_page);
+        //$posts = $this->blogModel->getAllPostsWithUsers();
         $categories = $this->categoryModel->getAllCategories();
+        $tags = $this->tagModel->getAllTags();
         echo $this->twig->render('admin/dashboard/posts/index.html.twig', [
-            'message'   => $this->msg,
-            'posts'     => $posts,
-            'categories'     => $categories
+            'message'       => $this->msg,
+            'posts'         => $posts,
+            'categories'    => $categories,
+            'tags'          => $tags,
+            'numberOfPages' => $number_of_pages,
+            'number'        => $number_of_posts,
+            '__DIR__'       => '?c=adminDashboard',
         ]);
     }
     /*
      * AFFICHER LES MEMBRES
      */
     public function users() {
-        $users = $this->userModel->getAllUsers();
+        $currentPage = intval($_GET['page']);
+        $results_per_page = 20;
+        $number_of_users = $this->userModel->getNumberOfUsers();
+        $number_of_pages = ceil($number_of_users/$results_per_page);
+
+        $users = $this->paginationService->paginateUser($currentPage, $number_of_pages, $results_per_page);
+
         echo $this->twig->render('admin/dashboard/users/users.html.twig', [
             'message'   => $this->msg,
-            'users'     => $users
+            'users'     => $users,
+            'numberOfPages' => $number_of_pages,
+            'number'        => $number_of_users,
+            '__DIR__'       => '?c=adminDashboard&t=users',
         ]);
     }
     /*
      * AFFICHER LES CATEGORIES
      */
     public function categories() {
-        $categories = $this->categoryModel->getAllCategories();
+        $currentPage = intval($_GET['page']);
+        $results_per_page = 20;
+        $number_of_categories = $this->categoryModel->getNumberOfCategories();
+        $number_of_pages = ceil($number_of_categories/$results_per_page);
+
+        $categories = $this->paginationService->paginateCategoryAdmin($currentPage, $number_of_pages, $results_per_page);
+        //$categories = $this->categoryModel->getAllCategories();
         echo $this->twig->render('admin/dashboard/categories/categories.html.twig', [
-            'message'   => $this->msg,
-            'categories'     => $categories
+            'message'       => $this->msg,
+            'categories'    => $categories,
+            'numberOfPages' => $number_of_pages,
+            'number'        => $number_of_categories,
+            '__DIR__'       => '?c=adminDashboard&t=categories',
         ]);
     }
     /*
      * AFFICHER LES COMMENTAIRES
      */
     public function comments() {
-        $comments = $this->commentModel->getAllComments();
+        $currentPage = intval($_GET['page']);
+        $results_per_page = 10;
+        $number_of_comments = $this->commentModel->getNumberComments();
+        $number_of_pages = ceil($number_of_comments/$results_per_page);
+        $comments = $this->paginationService->paginateCommentAdmin($currentPage, $number_of_pages, $results_per_page);
+        //$comments = $this->commentModel->getAllComments();
         echo $this->twig->render('admin/dashboard/comments/comments.html.twig', [
-            'message'   => $this->msg,
-            'comments'     => $comments
+            'message'       => $this->msg,
+            'comments'      => $comments,
+            'numberOfPages' => $number_of_pages,
+            'number'        => $number_of_comments,
+            '__DIR__'       => '?c=adminDashboard&t=comments',
         ]);
     }
     /*
      * AFFICHER LES TAGS
      */
     public function tags() {
-        $tags = $this->tagModel->getAllTags();
+        $currentPage = intval($_GET['page']);
+        $results_per_page = 10;
+        $number_of_tags = $this->tagModel->getNumberOfTags();
+        $number_of_pages = ceil($number_of_tags/$results_per_page);
+        $tags = $this->paginationService->paginateTagAdmin($currentPage, $number_of_pages, $results_per_page);
+        //$tags = $this->tagModel->getAllTags();
         echo $this->twig->render('admin/dashboard/tags/tags.html.twig', [
-            'message'   => $this->msg,
-            'tags'     => $tags
+            'message'       => $this->msg,
+            'tags'          => $tags,
+            'numberOfPages' => $number_of_pages,
+            'number'        => $number_of_tags,
+            '__DIR__'       => '?c=adminDashboard&t=tags',
         ]);
     }
     /*
      * AFFICHER LES PROJETS
      */
     public function projects() {
-        $projects = $this->projectModel->getAllProjects();
+        $currentPage = intval($_GET['page']);
+        $results_per_page = 8;
+        $number_of_projects = $this->projectModel->getNumberOfProjects();
+        $number_of_pages = ceil($number_of_projects/$results_per_page);
+
+        $projects = $this->paginationService->paginateProject($currentPage, $number_of_projects, $results_per_page);
         echo $this->twig->render('admin/dashboard/projects/projects.html.twig', [
-            'message'   => $this->msg,
-            'projects'  => $projects
+            'message'       => $this->msg,
+            'projects'      => $projects,
+            'numberOfPages' => $number_of_pages,
+            'number'        => $number_of_projects,
+            '__DIR__'       => '?c=adminDashboard&t=projects',
         ]);
     }
     /**

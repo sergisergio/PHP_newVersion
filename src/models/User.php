@@ -178,4 +178,47 @@ class User extends Model
         $req->bindParam(':id', $id, \PDO::PARAM_INT);
         return $req->execute();
     }
+
+    public function updateUser($role, $active, $banned, $id) {
+        $req = $this->db->prepare('
+            UPDATE user
+            SET roles = :role, active = :active, banned = :banned
+            WHERE id = :id');
+        $req->bindValue(':role', $role, \PDO::PARAM_INT);
+        $req->bindValue(':active', $active, \PDO::PARAM_INT);
+        $req->bindValue(':banned', $banned, \PDO::PARAM_INT);
+        $req->bindValue(':id', $id, \PDO::PARAM_INT);
+        return $req->execute();
+    }
+    /**
+     * @return mixed
+     *
+     * RECUPERER LE NOMBRE D'ARTICLES
+     */
+    public function getNumberOfUsers() {
+        $req = $this->db->prepare('
+            SELECT COUNT(*)
+            FROM user');
+        $req->execute();
+        return $req->fetchColumn();
+    }
+    /**
+     * @param $this_page_first_result
+     * @param $results_per_page
+     * @return array
+     *
+     * RECUPERER DES ARTICLES SELON LA PAGINATION
+     */
+    public function getUsersPagination($start, $results_per_page) {
+        $req = $this->db->prepare('
+            SELECT u.id, u.email, u.roles, u.username, u.active, u.banned, u.created_at, i.url as image
+            FROM user u
+            INNER JOIN image i ON u.avatar_id = i.id
+            ORDER BY u.username ASC
+            LIMIT :start, :results_per_page');
+        $req->bindParam(':start', $start, \PDO::PARAM_INT);
+        $req->bindParam(':results_per_page', $results_per_page, \PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }

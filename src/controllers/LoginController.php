@@ -127,7 +127,7 @@ class LoginController extends Controller
                     'ip_address' => $_SERVER['REMOTE_ADDR'],
                     'token'      => $token,
                     'banned'     => 0,
-                    'avatar_id'  => 10
+                    'avatar_id'  => 15
                 ];
                 if ($this->userModel->setUser($data)) {
 

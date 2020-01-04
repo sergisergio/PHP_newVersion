@@ -56,8 +56,8 @@ class BlogController extends Controller
 
         $data = [
             'posts'         => $posts,
-            'number'        => $number_of_posts,
             'numberOfPages' => $number_of_pages,
+            'number'        => $number_of_posts,
             'categories'    => $categories,
             'tags'          => $tags,
             'url'           => $url,

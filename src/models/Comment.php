@@ -140,4 +140,32 @@ class Comment extends Model
         $req->bindParam(':id', $commentId, \PDO::PARAM_INT);
         return $req->execute();
     }
+
+
+    /**
+     * @return mixed
+     *
+     * RECUPERER LE NOMBRE DE COMMENTAIRES
+     */
+    public function getNumberComments() {
+        $req = $this->db->prepare('
+            SELECT COUNT(*)
+            FROM comment');
+        $req->execute();
+        return $req->fetchColumn();
+    }
+    /**
+     * RETOURNE LES TagS ET PAGINATION
+     */
+    public function getCommentPagination($start, $results_per_page) {
+        $req = $this->db->prepare("
+            SELECT *
+            FROM comment
+            ORDER BY published_at DESC
+            LIMIT :start, :results_per_page");
+        $req->bindParam(':start', $start, \PDO::PARAM_INT);
+        $req->bindParam(':results_per_page', $results_per_page, \PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }
