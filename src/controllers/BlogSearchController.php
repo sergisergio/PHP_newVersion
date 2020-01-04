@@ -2,14 +2,40 @@
 
 namespace Controllers;
 
+use Models\Blog;
+//use Service\PaginationService;
+use Models\Config;
+use Models\Tag;
+use Models\Category;
+use Models\Link;
+
 /**
  * class SearchController
  *
  * Cette classe gère le formulaire de recherche du blog
  */
-class SearchController extends Controller
+class BlogSearchController extends Controller
 {
-  public function index($search)
+    protected $blogModel;
+    //protected $paginationService;
+    protected $configModel;
+    protected $categoryModel;
+    protected $tagModel;
+    protected $linkModel;
+
+    public function __construct() {
+        parent::__construct();
+        $this->blogModel = new Blog;
+        //$this->paginationService = new PaginationService;
+        $this->configModel = new Config;
+        $this->categoryModel = new Category;
+        $this->tagModel = new Tag;
+        $this->linkModel = new Link;
+    }
+    /**
+     * METHODE QUI TRAITE LA RECHERCHE ET RETOURNE LA PAGE ADEQUATE
+     */
+    public function index($search)
     {
         $search = isset($_GET['q']) ? $_GET['q'] : '';
         if (isset($search) && $search != null) {
@@ -39,15 +65,15 @@ class SearchController extends Controller
               $posts = [];
             }
             echo $this->twig->render('front/blog/_partials/search/index.html.twig', [
-            'posts'         => $posts,
-            'number'        => $number,
-            'numberOfPages' => $number_of_pages,
-            'categories'    => $categories,
-            'tags'          => $tags,
-            'url'           => $url,
-            'populars'      => $populars,
-            'q'             => $search,
-        ]);
+                'posts'         => $posts,
+                'number'        => $number,
+                'numberOfPages' => $number_of_pages,
+                'categories'    => $categories,
+                'tags'          => $tags,
+                'url'           => $url,
+                'populars'      => $populars,
+                'q'             => $search,
+            ]);
         }
     }
 }

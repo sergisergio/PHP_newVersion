@@ -9,7 +9,7 @@
 
 {% block main %}
     <div class="container">
-      {% include 'admin/_partials/nav2.html.twig' %}
+      {% include 'admin/dashboard/_partials/nav2.html.twig' %}
       <h2 class="text-center">Gestion des commentaires</h2>
       <div class="divide20"></div>
         {{ message.display }}
@@ -30,7 +30,7 @@
                 <td>{{ comment.content|slice(0,50)|raw }}</td>
                 <td><i class="fa fa-pencil" aria-hidden="true"></i></td>
                 <td>
-                  {% include('admin/_forms/commentDelete.html.twig') %}
+                  {% include('admin/dashboard/comments/_form_comment_delete.html.twig') %}
                 </td>
               </tr>
               {% endfor %}

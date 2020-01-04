@@ -7,6 +7,9 @@ namespace Models;
  */
 class Image extends Model
 {
+    /**
+     * AJOUTER UNE IMAGE
+     */
     public function setImage($image) {
         $req = $this->db->prepare('
             INSERT INTO image (url)
@@ -14,6 +17,9 @@ class Image extends Model
         $req->bindValue(':url', $image, \PDO::PARAM_STR);
         return $req->execute();
     }
+    /**
+     * RECUPERER L'ID D'UNE IMAGE
+     */
     public function getId($image) {
         $req = $this->db->prepare('
             SELECT id

@@ -2,7 +2,7 @@
 
 require_once "vendor/autoload.php";
 
-$class = "Controllers\\" . (isset($_GET['c']) ? ucfirst($_GET['c']) . 'Controller' : 'IndexController');
+$class = "Controllers\\" . (isset($_GET['c']) ? ucfirst($_GET['c']) . 'Controller' : 'HomeController');
 $target = isset($_GET['t']) ? $_GET['t'] : "index";
 $getParams = isset($_GET['params']) ? $_GET['params'] : null;
 $postParams = isset($_POST['params']) ? $_POST['params'] : null;
@@ -18,7 +18,7 @@ if (class_exists($class, true)) {
         call_user_func([$class, "index"]);
     }
 } else {
-    header('This is not the page you are looking for', true, 404);
+    header('Erreur 404', true, 404);
     include('views/404.html');
     exit();
 }

@@ -19,9 +19,10 @@
             <ul>
                 {% for project in projects %}
                 <li class="cbp-item {{ project.name }}">
-                    <a class="thumb" href="#">
-                            <img src="./assets/img/{{ project.url}}" alt="" style="{{ project.style }}" data-toggle="modal" data-target="#modal{{ project.id }}">
+                    <a class="thumb" href="" data-toggle="modal" data-target="#modal{{ project.id }}" data-id="{{ project.id }}">
+                        <img src="./assets/img/{{ project.url}}" alt="" style="{{ project.style }}">
                     </a>
+
                 </li>
                 {% include 'front/home/_partials/portfolio/modal.html.twig' %}
                 {% endfor %}

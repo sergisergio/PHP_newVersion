@@ -9,7 +9,7 @@
 
 {% block main %}
     <div class="container">
-      {% include 'admin/_partials/nav2.html.twig' %}
+      {% include 'admin/dashboard/_partials/nav2.html.twig' %}
       <h2 class="text-center">Gestion des membres</h2>
       <div class="divide20"></div>
         {{ message.display }}
@@ -47,7 +47,7 @@
                 <td><i class="fa fa-pencil" aria-hidden="true"></i></td>
                 <td>
                   {% if (user.username != session.admin.username) %}
-                    {% include('admin/_forms/userDelete.html.twig') %}
+                    {% include('admin/dashboard/users/_form_user_delete.html.twig') %}
                   {% endif %}
                 </td>
               </tr>

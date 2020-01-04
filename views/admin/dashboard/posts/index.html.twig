@@ -9,14 +9,14 @@
 
 {% block main %}
     <div class="container">
-      {% include 'admin/_partials/nav2.html.twig' %}
+      {% include 'admin/dashboard/_partials/nav2.html.twig' %}
       <h2 class="text-center">Gestion des articles</h2>
       <div class="divide20"></div>
         {{ message.display }}
           <div class="post box">
             <h2>Ajouter un article</h2>
               <div class="form-container">
-                {% include('admin/_forms/postAdd.html.twig') %}
+                {% include('admin/dashboard/posts/_form_post_add.html.twig') %}
               </div>
             </div>
             <div class="divide20"></div>
@@ -41,13 +41,13 @@
                       {% for post in posts %}
                         <tr>
                           <th scope="row">{{ post.id }}</th>
-                          <td>{{ post.title }}</td>
+                          <td>{{ post.title|slice(0,15) }}</td>
                           <td>{{ post.created_at }}</td>
                           <td>{{ (post.published) ? 'Publié' : 'Non publié' }}</td>
                           <td>{{ post.author }}</td>
                           <td><i class="fa fa-pencil" aria-hidden="true"></i></td>
                           <td>
-                            {% include('admin/_forms/postDelete.html.twig') %}
+                            {% include('admin/dashboard/posts/_form_post_delete.html.twig') %}
                           </td>
                         </tr>
                       {% endfor %}

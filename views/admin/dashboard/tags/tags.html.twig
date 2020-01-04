@@ -9,14 +9,14 @@
 
 {% block main %}
     <div class="container">
-      {% include 'admin/_partials/nav2.html.twig' %}
+      {% include 'admin/dashboard/_partials/nav2.html.twig' %}
       <h2 class="text-center">Gestion des tags</h2>
       <div class="divide20"></div>
         {{ message.display }}
         <div class="post box">
             <h2>Ajouter une étiquette</h2>
               <div class="form-container">
-                {% include('admin/_forms/tagAdd.html.twig') %}
+                {% include('admin/dashboard/tags/_form_tag_add.html.twig') %}
               </div>
             </div>
       <div class="post box">
@@ -34,9 +34,13 @@
               <tr>
                 <th scope="row">{{ tag.id }}</th>
                 <td>{{ tag.name }}</td>
-                <td><i class="fa fa-pencil" aria-hidden="true"></i></td>
                 <td>
-                  {% include('admin/_forms/tagDelete.html.twig') %}
+                  <a href="" data-toggle="modal" data-target="#updateTag{{ tag.id }}" data-id="{{ tag.id }}">
+                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                  </a>
+                  {% include('admin/dashboard/tags/_modal_tag_update.html.twig') %}
+                <td>
+                  {% include('admin/dashboard/tags/_form_tag_delete.html.twig') %}
                 </td>
               </tr>
             {% endfor %}

@@ -8,7 +8,7 @@
             </div>
             <div id="collapse{{ link.id }}" class="panel-collapse collapse {{ link.class }}">
               <div class="panel-body">
-                <ul>
+                <ul style="list-style-type: none;">
                   {% for sublink in sublinks %}
                   {% if link.id ==  sublink.link_id %}
                     <li><a href="{{ sublink.sublinkurl }}" target="_blank">{{ sublink.sublinkname }}</a></li>

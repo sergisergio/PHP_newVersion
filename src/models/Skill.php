@@ -28,7 +28,9 @@ class Skill extends Model
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
-
+    /**
+     * METTRE A JOUR UNE BARRE DE PROGRESSION
+     */
     public function updateSkill($title, $level, $id) {
         $req = $this->db->prepare("
             UPDATE skill
@@ -39,7 +41,9 @@ class Skill extends Model
         $req->bindValue(':id', $id, \PDO::PARAM_INT);
         return $req->execute();
     }
-
+    /**
+     * AJOUTER UNE BARRE DE PROGRESSION
+     */
     public function addSkill($title, $level) {
         $req = $this->db->prepare('
             INSERT INTO skill (name, level)
@@ -48,14 +52,18 @@ class Skill extends Model
         $req->bindValue(':level', $level, \PDO::PARAM_INT);
         return $req->execute();
     }
-
+    /**
+     * SUPPRIMER UNE BARRE DE PROGRESSION
+     */
     public function deleteSkill($id) {
         $req = $this->db->prepare('
             DELETE FROM skill WHERE id = :id');
         $req->bindValue(':id', $id, \PDO::PARAM_INT);
         return $req->execute();
     }
-
+    /**
+     * AJOUTER UNE COMPETENCE
+     */
     public function addSkill2($name, $content) {
         $req = $this->db->prepare('
             INSERT INTO skill2 (name, content)
@@ -64,7 +72,9 @@ class Skill extends Model
         $req->bindValue(':content', $content, \PDO::PARAM_LOB);
         return $req->execute();
     }
-
+    /**
+     * METTRE A JOUR UEN COMPETENCE
+     */
     public function updateSkill2($name, $content, $id) {
         $req = $this->db->prepare("
             UPDATE skill2
@@ -75,7 +85,9 @@ class Skill extends Model
         $req->bindValue(':id', $id, \PDO::PARAM_INT);
         return $req->execute();
     }
-
+    /**
+     * SUPPRIMER UEN COMPETENCE
+     */
     public function deleteSkill2($id) {
         $req = $this->db->prepare('
             DELETE FROM skill2 WHERE id = :id');

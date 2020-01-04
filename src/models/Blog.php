@@ -25,7 +25,6 @@ class Blog extends Model
         $req->bindValue(':numberComments', $data['numberComments'], \PDO::PARAM_INT);
         return $req->execute();
     }
-
     /**
      * @param $id
      * @return mixed
@@ -45,7 +44,6 @@ class Blog extends Model
         $req->execute();
         return $req->fetch(\PDO::FETCH_ASSOC);
     }
-
     /**
      * @param $id
      * @return mixed
@@ -55,7 +53,6 @@ class Blog extends Model
     public function getLastId() {
         return $this->db->lastInsertId();
     }
-
     /**
      * @param $data
      * @param $postId
@@ -77,7 +74,6 @@ class Blog extends Model
         $req->bindValue(':active', $data['active'], \PDO::PARAM_BOOL);
         return $req->execute();
     }
-
     /**
      * @return mixed
      *
@@ -91,7 +87,6 @@ class Blog extends Model
         $req->execute();
         return $req->fetchColumn();
     }
-
     /**
      * @param $this_page_first_result
      * @param $results_per_page
@@ -113,7 +108,6 @@ class Blog extends Model
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
-
     /**
      * RECUPERER TOUS LES ARTICLES
      */
@@ -126,7 +120,6 @@ class Blog extends Model
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
-
     /**
      * RECUPERER LES 3 ARTICLES LES PLUS COMMENTES
      */
@@ -141,7 +134,6 @@ class Blog extends Model
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
-
     /**
      * @param int $id
      * @return bool
@@ -156,7 +148,9 @@ class Blog extends Model
         $req->bindParam(':id', $id, \PDO::PARAM_INT);
         return $req->execute();
     }
-
+    /**
+     * INCREMENTER LE NOMBRE DE COMMENTAIRES D'UN ARTICLE
+     */
     public function addNumberComment($id) {
         $req = $this->db->prepare('
             UPDATE posts
@@ -166,7 +160,9 @@ class Blog extends Model
         return $req->execute();
 
     }
-
+    /**
+     * DECREMENTER LE NOMBRE DE COMMENTAIRES D'UN ARTICLE
+     */
     public function minusNumberComment($id) {
         $req = $this->db->prepare('
             UPDATE posts
@@ -192,7 +188,9 @@ class Blog extends Model
         $req->execute();
         return $req->fetchColumn();
     }
-
+    /**
+     * RECUPERER TOUS LES ARTICLES AVEC LA RECHERCHE
+     */
     public function searchRequest($search) {
         $req = $this->db->prepare("
             SELECT * FROM posts
@@ -203,6 +201,9 @@ class Blog extends Model
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
+    /**
+     * RETOURNE LE NOMBRE D'ARTICLES EN RAPPORT AVEC LA RECHERCHE
+     */
     public function countSearchRequest($search) {
         $req = $this->db->prepare("
             SELECT COUNT(*) FROM posts
@@ -235,7 +236,9 @@ class Blog extends Model
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
-
+    /**
+     * RETOURNE LES ARTICLES EN RAPPORT AVEC LA CATEGORIE DEMANDEE
+     */
     public function searchByCategory($category) {
         $req = $this->db->prepare("
             SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, c.name as category
@@ -249,7 +252,9 @@ class Blog extends Model
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
-
+    /**
+     * RETOURNE LES ARTICLES EN RAPPORT AVEC LA CATEGORIE DEMANDEE ET PAGINATION
+     */
     public function getCategoryPagination($category, $start, $results_per_page) {
         $req = $this->db->prepare("
             SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, c.name as category
@@ -266,7 +271,9 @@ class Blog extends Model
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
-
+    /**
+     * RETOURNE LE NOMBRE D'ARTICLES EN RAPPORT A LA CATEGORIE DEMANDEE
+     */
     public function countSearchByCategoryRequest($category) {
         $req = $this->db->prepare("
             SELECT COUNT(*)
@@ -278,7 +285,9 @@ class Blog extends Model
         $req->execute();
         return $req->fetchColumn();
     }
-
+    /**
+     * RETOURNE LES ARTICLES EN RAPPORT AVEC LE TAG DEMANDE
+     */
     public function searchByTag($tag) {
         $req = $this->db->prepare("
             SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, x.name as tag
@@ -292,7 +301,9 @@ class Blog extends Model
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
-
+    /**
+     * RETOURNE LES ARTICLES EN RAPPORT AVEC LE TAG DEMANDE ET PAGINATION
+     */
     public function getTagPagination($tag, $start, $results_per_page) {
         $req = $this->db->prepare("
             SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, x.name as tag
@@ -309,7 +320,9 @@ class Blog extends Model
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
-
+    /**
+     * RETOURNE LE NOMBRE D'ARTICLES EN RAPPORT AVEC LE TAG DEMANDE
+     */
     public function countSearchByTagRequest($tag) {
         $req = $this->db->prepare("
             SELECT COUNT(*)

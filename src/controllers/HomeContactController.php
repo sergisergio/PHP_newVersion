@@ -2,11 +2,20 @@
 
 namespace Controllers;
 
+use Service\MailService;
+
 /**
  * CLASSE GERANT LE FORMULAIRE DE CONTACT
  */
-class ContactController extends Controller
+class HomeContactController extends Controller
 {
+    protected $mailService;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->mailService = new MailService;
+    }
     /*
      * ENVOI DE MESSAGE SUR MA BOITE MAIL
      */

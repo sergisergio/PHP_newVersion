@@ -19,7 +19,9 @@ class Description extends Model
         $req->execute();
         return $req->fetch(\PDO::FETCH_ASSOC);
     }
-
+    /**
+     * METTRE A JOUR LA DESCRIPTION
+     */
     public function updateDescription($title, $content) {
         $req = $this->db->prepare("
             UPDATE description
@@ -29,7 +31,9 @@ class Description extends Model
         $req->bindValue(':content', $content, \PDO::PARAM_STR);
         return $req->execute();
     }
-
+    /**
+     * METTRE A JOUR LE SOUS-TITRE
+     */
     public function updateSubtitle($title) {
         $req = $this->db->prepare("
             UPDATE description

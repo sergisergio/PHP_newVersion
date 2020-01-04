@@ -2,11 +2,28 @@
 
 namespace Controllers;
 
+use Models\Category;
+use Models\Project;
+use Models\Skill;
+use Models\Description;
+
 /**
  * CLASSE GERANT LA PAGE D'ACCUEIL
  */
-class IndexController extends Controller
+class HomeController extends Controller
 {
+    protected $skillModel;
+    protected $categoryModel;
+    protected $projectModel;
+    protected $descriptionModel;
+
+    public function __construct() {
+        parent::__construct();
+        $this->projectModel = new Project;
+        $this->categoryModel = new Category;
+        $this->skillModel = new Skill;
+        $this->descriptionModel = new Description;
+    }
     /*
      * AFFICHE LA PAGE D'ACCUEIL
      */

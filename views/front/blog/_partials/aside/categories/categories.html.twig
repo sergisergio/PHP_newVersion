@@ -1,6 +1,6 @@
 <div class="sidebox box widget">
     <h3 class="widget-title section-title">Categories</h3>
-    <ul class="circled">
+    <ul style="list-style-type: none;">
         {% for category in categories %}
         <li><a href="?c=blog&t=getPostsByCategory&category={{ category.name }}&page=1">{{ category.name }} ({{ category.numberPosts }})</a></li>
         {% endfor %}

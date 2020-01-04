@@ -2,18 +2,55 @@
 
 namespace Controllers;
 
+use Models\Blog;
+use Models\Category;
+use Models\User;
+use Models\Comment;
+use Models\Tag;
+use Models\Project;
+use Models\Config;
+
 /**
+ * class AdminDashboardController
+ *
  * CLASSE GERANT LA PARTIE ADMIN
  */
 class AdminDashboardController extends AdminController
 {
+    protected $categoryModel;
+    protected $blogModel;
+    protected $userModel;
+    protected $commentModel;
+    protected $tagModel;
+    protected $projectModel;
+    protected $configModel;
+    /**
+     * Constructeur
+     *
+     * REDIRIGE VERS LE FORMULAIRE DE CONNEXION SI LE MEMBRE N'EST PAS ADMINISTRATEUR
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        if (!$this->isAdmin()) {
+            header('Location: ?c=login');
+            exit;
+        }
+        $this->blogModel = new Blog;
+        $this->categoryModel = new Category;
+        $this->userModel = new User;
+        $this->commentModel = new Comment;
+        $this->tagModel = new Tag;
+        $this->projectModel = new Project;
+        $this->configModel = new Config;
+    }
     /*
      * AFFICHER LES ARTICLES
      */
     public function index() {
         $posts = $this->blogModel->getAllPostsWithUsers();
         $categories = $this->categoryModel->getAllCategories();
-        echo $this->twig->render('admin/dashboard/index.html.twig', [
+        echo $this->twig->render('admin/dashboard/posts/index.html.twig', [
             'message'   => $this->msg,
             'posts'     => $posts,
             'categories'     => $categories
@@ -24,7 +61,7 @@ class AdminDashboardController extends AdminController
      */
     public function users() {
         $users = $this->userModel->getAllUsers();
-        echo $this->twig->render('admin/dashboard/users.html.twig', [
+        echo $this->twig->render('admin/dashboard/users/users.html.twig', [
             'message'   => $this->msg,
             'users'     => $users
         ]);
@@ -34,7 +71,7 @@ class AdminDashboardController extends AdminController
      */
     public function categories() {
         $categories = $this->categoryModel->getAllCategories();
-        echo $this->twig->render('admin/dashboard/categories.html.twig', [
+        echo $this->twig->render('admin/dashboard/categories/categories.html.twig', [
             'message'   => $this->msg,
             'categories'     => $categories
         ]);
@@ -44,7 +81,7 @@ class AdminDashboardController extends AdminController
      */
     public function comments() {
         $comments = $this->commentModel->getAllComments();
-        echo $this->twig->render('admin/dashboard/comments.html.twig', [
+        echo $this->twig->render('admin/dashboard/comments/comments.html.twig', [
             'message'   => $this->msg,
             'comments'     => $comments
         ]);
@@ -54,7 +91,7 @@ class AdminDashboardController extends AdminController
      */
     public function tags() {
         $tags = $this->tagModel->getAllTags();
-        echo $this->twig->render('admin/dashboard/tags.html.twig', [
+        echo $this->twig->render('admin/dashboard/tags/tags.html.twig', [
             'message'   => $this->msg,
             'tags'     => $tags
         ]);
@@ -64,7 +101,7 @@ class AdminDashboardController extends AdminController
      */
     public function projects() {
         $projects = $this->projectModel->getAllProjects();
-        echo $this->twig->render('admin/dashboard/projects.html.twig', [
+        echo $this->twig->render('admin/dashboard/projects/projects.html.twig', [
             'message'   => $this->msg,
             'projects'  => $projects
         ]);
@@ -87,202 +124,6 @@ class AdminDashboardController extends AdminController
             }
         } else {
             $this->redirect404();
-        }
-    }
-    /**
-     * METTRE A JOUR UN MEMBRE
-     */
-    public function updateUser() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userDown']) && !empty($_POST['userDown'])) {
-            $userId = $_POST['userDown'];
-            $user = $this->userModel->getUserById($userId);
-            if ($this->usersModel->updateRoleUser(0, $userId)) {
-                $this->msg->success($user['name']." est passé au rang de simple utilisateur", $this->getUrl(true));
-            } else {
-                $this->msg->error("Une erreur s'est produite", $this->getUrl(true));
-            }
-        } elseif ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userUp']) && !empty($_POST['userUp'])) {
-            $userId = $_POST['userUp'];
-            $user = $this->usersModel->getUserById($userId);
-            if ($this->usersModel->updateRoleUser(1, $userId)) {
-                $this->msg->success($user['name']." est passé au rang d'administrateur", $this->getUrl(true));
-            } else {
-                $this->msg->error("Une erreur s'est produite", $this->getUrl(true));
-            }
-        } else {
-            $this->msg->error("Erreur lors de l'envoie des données", $this->getUrl(true));
-        }
-    }
-    /**
-     * AJOUTER UN ARTICLE
-     */
-    public function addPost() {
-        $title = htmlspecialchars($_POST['title']);
-        $content =  htmlspecialchars($_POST['content'], ENT_HTML5);
-        $category = htmlspecialchars($_POST['category']);
-        $image = htmlspecialchars($_FILES['file_extension']['name']);
-        $user_id = $_SESSION['admin']['id'];
-        $file_extension = $_FILES['file_extension'];
-        $file_extension_error = $_FILES['file_extension']['error'];
-        $file_extension_size = $_FILES['file_extension']['size'];
-        $file_extension_tmp = $_FILES['file_extension']['tmp_name'];
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $imageId = $this->uploadService->upload($file_extension, $file_extension_error, $file_extension_size, $file_extension_tmp, $image);
-            $data = [
-                    'title'         => $title,
-                    'content'       => $content,
-                    'user_id'       => $user_id,
-                    'img_id'        => $imageId,
-                    'published'     => 1,
-                    'numberComments' => 0
-                ];
-
-            if ($this->blogModel->setPost($data)) {
-                $last_id = $this->blogModel->getLastId();
-                $this->categoryModel->addCategoryToPost($category, $last_id);
-                $this->categoryModel->plusNumberPosts($category);
-                $this->msg->success("L'article a bien été ajouté !", $this->getUrl());
-            } else {
-                $this->msg->error("L'article n'a pas pu être ajouté.", $this->getUrl());
-            }
-        } else {
-            header('Location: ' . '?c=adminDashboard');
-            exit;
-        }
-    }
-    /**
-     * SUPPRIMER UN ARTICLE
-     */
-    public function deletePost() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $postId = $_POST['postId'];
-            if (isset($postId) && $post = $this->blogModel->getPostById($_POST['postId'])) {
-                $category = $post['category'];
-                $imageId = $post['img_id'];
-
-                if ($this->blogModel->deletePost($post['id'])) {
-                    if ($imageId != 14) {
-                        $this->imageModel->deleteImage($imageId);
-                    }
-                    $this->categoryModel->minusNumberPosts($category);
-                    $this->msg->success("L'article a bien été supprimé", $this->getUrl());
-                } else {
-                    $this->msg->error("L'article n'a pas pu être supprimé", $this->getUrl());
-                }
-            } else {
-                $this->msg->error("L'article n'existe pas", $this->getUrl());
-            }
-        } else {
-            header('Location: ?c=adminDashboard');
-            exit;
-        }
-    }
-    /**
-     * SUPPRIMER UN MEMBRE
-     */
-    public function deleteUser() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if (isset($_POST['userId']) && $post = $this->userModel->getUserById($_POST['postId'])) {
-                if ($this->userModel->deleteUser($user['id'])) {
-                    $this->msg->success("Le membre a bien été supprimé", $this->getUrl());
-                } else {
-                    $this->msg->error("Le membre n'a pas pu être supprimé", $this->getUrl());
-                }
-            } else {
-                $this->msg->error("Le membre n'existe pas", $this->getUrl());
-            }
-        } else {
-            header('Location: ?c=adminDashboard&t=users');
-            exit;
-        }
-    }
-    /**
-     * AJOUTER UNE CATEGORIE
-     */
-    public function addCategory() {
-        $name = htmlspecialchars($_POST['name']);
-        $data = [
-                    'name'         => $name,
-                    'numberPosts'  => 0
-                ];
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if ($this->categoryModel->setCategory($data)) {
-                $this->msg->success("La catégorie a bien été ajoutée !", $this->getUrl());
-            } else {
-                $this->msg->error("La catégorie n'a pas pu être ajoutée.", $this->getUrl());
-            }
-        } else {
-            header('Location: ' . '?c=adminDashboard&t=categories');
-            exit;
-        }
-    }
-    /**
-     * SUPPRIMER UNE CATEGORIE
-     */
-    public function deleteCategory() {
-        $category['id'] = $_GET['id'];
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                if ($this->categoryModel->deleteCategory($category['id'])) {
-                    $this->msg->success("La catégorie a bien été supprimée", $this->getUrl());
-                } else {
-                    $this->msg->error("La catégorie n'a pas pu être supprimée", $this->getUrl());
-                }
-        } else {
-            header('Location: ?c=adminDashboard&t=categories');
-            exit;
-        }
-    }
-    /**
-     * SUPPRIMER UN COMMENTAIRE
-     */
-    public function deleteComment() {
-        $comment['id'] = $_GET['id'];
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                if ($this->commentModel->deleteComment($comment['id'])) {
-                    $this->msg->success("Le commentaire a bien été supprimé", $this->getUrl());
-                } else {
-                    $this->msg->error("Le commentaire n'a pas pu être supprimé", $this->getUrl());
-                }
-        } else {
-            header('Location: ?c=adminDashboard&t=comments');
-            exit;
-        }
-    }
-    /**
-     * AJOUTER UNE ETIQUETTE
-     */
-    public function addTag() {
-        $name = htmlspecialchars($_POST['name']);
-        $data = [
-                    'name' => $name,
-                    'numberPosts'  => 0
-                ];
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if ($this->tagModel->setTag($data)) {
-                $this->msg->success("Le tag a bien été ajouté !", $this->getUrl());
-            } else {
-                $this->msg->error("Le tag n'a pas pu être ajouté.", $this->getUrl());
-            }
-        } else {
-            header('Location: ' . '?c=adminDashboard&t=tags');
-            exit;
-        }
-    }
-    /**
-     * SUPPRIMER UNE ETIQUETTE
-     */
-    public function deleteTag() {
-        $tag['id'] = $_GET['id'];
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                if ($this->tagModel->deleteTag($tag['id'])) {
-                    $this->msg->success("Le tag a bien été supprimé", $this->getUrl());
-                } else {
-                    $this->msg->error("Le tag n'a pas pu être supprimé", $this->getUrl());
-                }
-        } else {
-            header('Location: ?c=adminDashboard&t=tags');
-            exit;
         }
     }
 }

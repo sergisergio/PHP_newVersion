@@ -104,7 +104,9 @@ class Comment extends Model
         $req->bindValue(':validated', $data['validated'], \PDO::PARAM_INT);
         return $req->execute();
     }
-
+    /**
+     * RECUPERE LES SOUS-COMMENTAIRES EN LIEN AVEC UN COMMENTAIRE
+     */
     public function getSubCommentsByCommentId($commentId) {
         $req = $this->db->prepare('
             SELECT s.id, s.content, s.post_id, s.published_at, s.validated, u.username as author, i.url as image
@@ -117,7 +119,9 @@ class Comment extends Model
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
-
+    /**
+     * INCREMENTE LE NOMBRE DE LIKES D'UN COMMENTAIRE
+     */
     public function plusLikes($commentId) {
         $req = $this->db->prepare('UPDATE comment
             SET likes = likes + 1
@@ -125,6 +129,9 @@ class Comment extends Model
         $req->bindParam(':id', $commentId, \PDO::PARAM_INT);
         return $req->execute();
     }
+    /**
+     * DECREMENTE LE NOMBRE DE LIKES D'UN COMMENTAIRE
+     */
 
     public function minusLikes($commentId) {
         $req = $this->db->prepare('UPDATE comment

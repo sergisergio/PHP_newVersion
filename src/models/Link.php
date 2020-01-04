@@ -7,6 +7,9 @@ namespace Models;
  */
 class Link extends Model
 {
+    /**
+     * RECUPERER TOUS LES LIENS
+     */
     public function getAllLinks() {
         $req = $this->db->prepare('
             SELECT *
@@ -14,6 +17,9 @@ class Link extends Model
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
+    /**
+     * RECUPERER TOUS LES SOUS-LIENS
+     */
     public function getAllSublinks() {
         $req = $this->db->prepare('
             SELECT l.id, l.name, l.active, l.class, s.name as sublinkname, s.url as sublinkurl, s.link_id as link_id

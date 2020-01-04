@@ -2,11 +2,37 @@
 
 namespace Controllers;
 
+use Models\Blog;
+use Service\PaginationService;
+use Models\Config;
+use Models\Tag;
+use Models\Category;
+use Models\Link;
+use Models\Comment;
+
 /**
  * CLASSE GERANT LE BLOG
  */
 class BlogController extends Controller
 {
+    protected $blogModel;
+    protected $paginationService;
+    protected $configModel;
+    protected $categoryModel;
+    protected $tagModel;
+    protected $linkModel;
+    protected $commentModel;
+
+    public function __construct() {
+        parent::__construct();
+        $this->blogModel = new Blog;
+        $this->paginationService = new PaginationService;
+        $this->configModel = new Config;
+        $this->categoryModel = new Category;
+        $this->tagModel = new Tag;
+        $this->linkModel = new Link;
+        $this->commentModel = new Comment;
+    }
     /**
      * AFFICHER LA PAGE PRINCIPALE
      */

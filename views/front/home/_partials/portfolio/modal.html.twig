@@ -3,9 +3,14 @@
         <div class="modal-content" style="margin-top:200px;background: #333;">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">{{ project.title }}</h4>
+                <h4 class="modal-title" style="text-align: center;">{{ project.title }}</h4>
             </div>
             <div class="modal-body">
+                <img src="./assets/img/{{ project.url}}" alt="" style="{{ project.style }}; width: 50%; margin: 20px auto;" class="img-responsive">
+                <div style="width:80%;margin: 20px auto;">
+                    {{ project.description|raw }}
+                </div>
+                <button type="button" class="btn btn-default" style="display: block; margin: 0 auto;" ><a href="{{ project.link }}" target="_blank">Voir plus</a></button>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>

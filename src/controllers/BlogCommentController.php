@@ -2,11 +2,34 @@
 
 namespace Controllers;
 
+use Models\Config;
+use Models\User;
+use Models\Blog;
+use Models\Comment;
+
 /**
  * CLASSE GERANT LES COMMENTAIRES
  */
-class CommentController extends Controller
+class BlogCommentController extends Controller
 {
+    protected $configModel;
+    protected $userModel;
+    protected $blogModel;
+    protected $commentModel;
+
+    public function __construct()
+    {
+        parent::__construct();
+        if (!$this->isAdmin()) {
+            header('Location: ?c=login');
+            exit;
+        }
+        $this->configModel = new Config;
+        $this->userModel = new User;
+        $this->blogModel = new Blog;
+        $this->commentModel = new Comment;
+    }
+
     /**
      * AJOUTER UN COMMENTAIRE
      */

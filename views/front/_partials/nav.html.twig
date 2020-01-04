@@ -7,10 +7,10 @@
     <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
             <li class="current"><a href="index.php">Accueil</a></li>
-            <li><a href="#portfolio">Portfolio</a></li>
-            <li><a href="#about">A propos</a></li>
-            <li><a href="#skills">Compétences</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li><a href="index.php#portfolio">Portfolio</a></li>
+            <li><a href="index.php#about">A propos</a></li>
+            <li><a href="index.php#skills">Compétences</a></li>
+            <li><a href="index.php#contact">Contact</a></li>
             <li><a href="index.php?c=blog&v=view1&page=1">Blog</a></li>
             {% if session.admin != null %}
                 <li><a href="index.php?c=adminDashboard">Admin</a></li>
@@ -18,9 +18,9 @@
             {% if session.user != null or session.admin != null %}
             <li><a href="index.php?c=login&t=logout">Déconnexion</a></li>
             {% else %}
-            <li><a href=""  data-toggle="modal" data-target="#connexion">Connexion</a></li>
+            <li><a href="" data-toggle="modal" data-target="#connexion">Connexion</a></li>
             {% include 'front/_modals/login.html.twig' %}
-            <li><a href=""  data-toggle="modal" data-target="#inscription">Inscription</a></li>
+            <li><a href="" data-toggle="modal" data-target="#inscription">Inscription</a></li>
             {% include 'front/_modals/register.html.twig' %}
             {% endif %}
             {% if session.user != null%}

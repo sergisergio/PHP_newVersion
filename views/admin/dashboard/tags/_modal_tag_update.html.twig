@@ -1,0 +1,29 @@
+<div id="updateTag{{ tag.id }}" class="modal fade" role="dialog">
+                    <div class="modal-dialog modal-lg">
+
+                      <!-- Modal content-->
+                      <div class="modal-content about-modal-content col-md-6 col-md-offset-3">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          <h4 class="modal-title">Modifier l'étiquette</h4>
+                        </div>
+                        <div class="modal-body">
+                          <form action="?c=adminTags&t=updateTag" method="post">
+                              <div>
+                                  <label for="title">Nom</label><br />
+                                  <input type="text" name="title" id="title" value="{{ tag.name }}">
+                              </div>
+                              <input type="hidden" name="id" value="{{ tag.id }}">
+                              <div class="divide40"></div>
+                              <div>
+                                  <input class="btn btn-default btn-modal" type="submit"/>
+                              </div>
+                          </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>

@@ -2,11 +2,26 @@
 
 namespace Controllers;
 
+use Models\User;
+use Models\Security;
+use Service\SecurityService;
+
 /**
  * CLASSE GERANT L'INSCRIPTION, LA CONNEXION ET LA DECONNEXION
  */
 class LoginController extends Controller
 {
+    protected $userModel;
+    protected $securityModel;
+    protected $securityService;
+
+    public function __construct() {
+        parent::__construct();
+        $this->userModel = new User;
+        $this->securityModel = new Security;
+        $this->securityService = new SecurityService;
+    }
+
     /*
      * GERER LA CONNEXION
      */

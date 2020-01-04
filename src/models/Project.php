@@ -12,7 +12,7 @@ class Project extends Model
      */
     public function getAllPublishedProjects() {
         $req = $this->db->prepare('
-            SELECT *
+            SELECT p.id, p.title, p.description, p.link, p.created_at, p.published, i.url as url, i.alt as alt, i.style as style, c.name as category
             FROM projects p
             INNER JOIN image i on p.img_id = i.id
             INNER JOIN projects_category r on p.id = r.projects_id
@@ -27,7 +27,7 @@ class Project extends Model
      */
     public function getAllProjects() {
         $req = $this->db->prepare('
-            SELECT *
+            SELECT p.id, p.title, p.description, p.link, p.created_at, p.published, i.url as url, i.alt as alt, i.style as style, c.name as category
             FROM projects p
             INNER JOIN image i on p.img_id = i.id
             INNER JOIN projects_category r on p.id = r.projects_id

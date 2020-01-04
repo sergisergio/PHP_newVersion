@@ -47,4 +47,13 @@ class Tag extends Model
         $req->bindParam(':id', $id, \PDO::PARAM_INT);
         return $req->execute();
     }
+    public function updateTag($title, $id) {
+        $req = $this->db->prepare('
+            UPDATE tag
+            SET name = :name
+            WHERE id = :id');
+        $req->bindParam(':name', $title, \PDO::PARAM_STR);
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
+        return $req->execute();
+    }
 }

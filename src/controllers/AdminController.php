@@ -2,13 +2,18 @@
 
 namespace Controllers;
 
+use Models\Description;
+use Models\Skill;
+
 /**
- * class AdminController
+ * classe AdminController
  *
  * Cette classe redirige vers le formulaire de connexion si l'utilisateur n'a pas de session admin
  */
 class AdminController extends Controller
 {
+    protected $descriptionModel;
+    protected $skillModel;
     /**
      * Constructeur
      *
@@ -21,8 +26,12 @@ class AdminController extends Controller
             header('Location: ?c=login');
             exit;
         }
+        $this->descriptionModel = new Description;
+        $this->skillModel = new Skill;
     }
-
+    /**
+     * METTRE A JOUR LA RUBRIQUE QUI-SUIS-JE ?
+     */
     public function updateAbout() {
         $title = strip_tags(htmlspecialchars($_POST['title']));
         $content = strip_tags(htmlspecialchars($_POST['content']));
@@ -33,7 +42,9 @@ class AdminController extends Controller
             exit;
         }
     }
-
+    /**
+     * METTRE A JOUR UNE BARRE DE PROGRESSION
+     */
     public function updateSkill() {
         $title = strip_tags(htmlspecialchars($_POST['title']));
         $level = intval(strip_tags(htmlspecialchars($_POST['level'])));
@@ -46,7 +57,9 @@ class AdminController extends Controller
             exit;
         }
     }
-
+    /**
+     * AJOUTER UNE BARRE DE PROGRESSION
+     */
     public function addSkill() {
         $title = strip_tags(htmlspecialchars($_POST['title']));
         $level = intval(strip_tags(htmlspecialchars($_POST['level'])));
@@ -58,7 +71,9 @@ class AdminController extends Controller
             exit;
         }
     }
-
+    /**
+     * SUPPRIMER UEN BARRE DE PROGRESSION
+     */
     public function deleteSkill() {
         $id = strip_tags(htmlspecialchars($_POST['skillId']));
         if (isset($id)) {
@@ -67,7 +82,9 @@ class AdminController extends Controller
             exit;
         }
     }
-
+    /**
+     * AJOUTER UNE COMPETENCE
+     */
     public function addSkill2() {
         $name = strip_tags(htmlspecialchars($_POST['name']));
         $content = strip_tags(htmlspecialchars($_POST['content']));
@@ -79,7 +96,9 @@ class AdminController extends Controller
             exit;
         }
     }
-
+    /**
+     * SUPPRIMER UEN COMPETENCE
+     */
     public function deleteSkill2() {
         $id = strip_tags(htmlspecialchars($_POST['id']));
         if (isset($id)) {
@@ -88,7 +107,9 @@ class AdminController extends Controller
             exit;
         }
     }
-
+    /**
+     * METTRE A JOUR UEN COMPETENCE
+     */
     public function updateSkill2() {
         $name = strip_tags(htmlspecialchars($_POST['name']));
         $content = strip_tags(htmlspecialchars($_POST['content']));
@@ -99,7 +120,9 @@ class AdminController extends Controller
             exit;
         }
     }
-
+    /**
+     * METTRE A JOUR LE SOUS_TITRE DU HEADER
+     */
     public function updateSubtitle() {
         $title = strip_tags(htmlspecialchars($_POST['title']));
         if (isset($title)) {

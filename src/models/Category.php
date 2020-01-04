@@ -78,6 +78,9 @@ class Category extends Model
 
         return $req->execute();
     }
+    /**
+     * INCREMENTE LE NOMBRE D'ARTICLES AVEC CETTE CATEGORIE
+     */
     public function plusNumberPosts($category) {
         $req = $this->db->prepare('
             UPDATE category
@@ -87,7 +90,9 @@ class Category extends Model
         return $req->execute();
 
     }
-
+    /**
+     * DECREMENTE LE NOMBRE D'ARTICLES AVEC CETTE CATEGORIE
+     */
     public function minusNumberPosts($category) {
         $req = $this->db->prepare('
             UPDATE category
@@ -105,6 +110,18 @@ class Category extends Model
             WHERE category_id = :category_id
             LIMIT 1');
         $req->bindParam(':category_id', $category, \PDO::PARAM_INT);
+        return $req->execute();
+    }
+    /**
+     * METTRE A JOUR UNE CATEGORIE
+     */
+    public function updateCategory($title, $id) {
+        $req = $this->db->prepare('
+            UPDATE category
+            SET name = :name
+            WHERE id = :id');
+        $req->bindParam(':name', $title, \PDO::PARAM_STR);
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
         return $req->execute();
     }
 }
