@@ -43,7 +43,7 @@ class AdminPostsController extends Controller
      */
     public function addPost() {
         $title = htmlspecialchars($_POST['title']);
-        $content =  html_entity_decode(htmlspecialchars($_POST['content']));
+        $content =  html_entity_decode($_POST['content']);
         $category = htmlspecialchars($_POST['category']);
         $image = htmlspecialchars($_FILES['file_extension']['name']);
         $tag = $_POST['tag'];
@@ -54,6 +54,9 @@ class AdminPostsController extends Controller
         $file_extension_tmp = $_FILES['file_extension']['tmp_name'];
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+
+            //var_dump($content);die();
             $imageId = $this->uploadService->upload($file_extension, $file_extension_error, $file_extension_size, $file_extension_tmp, $image);
             $data = [
                     'title'         => $title,
@@ -91,7 +94,7 @@ class AdminPostsController extends Controller
      */
     public function updatePost() {
         $title = htmlspecialchars($_POST['title']);
-        $content =  html_entity_decode(htmlspecialchars($_POST['content']));
+        $content =  html_entity_decode($_POST['content']);
         $category = htmlspecialchars($_POST['category']);
         $image = htmlspecialchars($_FILES['file_extension']['name']);
         $id = htmlspecialchars($_POST['id']);

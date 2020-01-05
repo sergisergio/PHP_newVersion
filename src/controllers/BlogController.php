@@ -53,6 +53,7 @@ class BlogController extends Controller
         $tags = $this->tagModel->getAllTags();
         $links = $this->linkModel->getAllLinks();
         $sublinks = $this->linkModel->getAllSublinks();
+        $tags_per_post = $this->blogModel->getTagsPerPost($id);
 
         $data = [
             'posts'         => $posts,
@@ -64,6 +65,7 @@ class BlogController extends Controller
             'populars'      => $populars,
             'links'         => $links,
             'sublinks'      => $sublinks,
+            'tags_per_post' => $tags_per_post,
             ];
 
         if ($view == "view1") {

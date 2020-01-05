@@ -126,7 +126,7 @@ class Blog extends Model
      */
     public function getPostsPagination($start, $results_per_page) {
         $req = $this->db->prepare('
-            SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, c.name as category
+            SELECT DISTINCT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, c.name as category
             FROM posts p
             LEFT JOIN user u on p.user_id = u.id
             LEFT JOIN image i on p.img_id = i.id
@@ -136,6 +136,17 @@ class Blog extends Model
             LIMIT :start, :results_per_page');
         $req->bindParam(':start', $start, \PDO::PARAM_INT);
         $req->bindParam(':results_per_page', $results_per_page, \PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getTagsPerPost() {
+        $req = $this->db->prepare('
+            SELECT p.id, t.name as tag
+            FROM posts p
+            LEFT JOIN tag_posts a on p.id = a.posts_id
+            LEFT JOIN tag t  on t.id = a.tag_id');
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }

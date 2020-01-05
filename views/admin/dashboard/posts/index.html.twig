@@ -48,8 +48,9 @@
                           <td>{{ (post.published) ? 'Publié' : 'Non publié' }}</td>
                           <td>{{ post.author }}</td>
                           <td>
-                            <a href="" data-toggle="modal" data-target="#updatePost{{ post.id }}" data-id="{{ post.id }}"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                            <a href="" class="recupId" data-toggle="modal" data-target="#updatePost{{ post.id }}" data-id="{{ post.id }}" value="{{ post.id }}"><i class="fa fa-pencil" aria-hidden="true"></i></a>
                             {% include('admin/dashboard/posts/_modal_post_update.html.twig') %}
+
                           </td>
                           <td>
                             {% include('admin/dashboard/posts/_form_post_delete.html.twig') %}

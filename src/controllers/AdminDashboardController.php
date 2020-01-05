@@ -84,6 +84,7 @@ class AdminDashboardController extends AdminController
         //$posts = $this->blogModel->getAllPostsWithUsers();
         $categories = $this->categoryModel->getAllCategories();
         $tags = $this->tagModel->getAllTags();
+        $tags_per_post = $this->blogModel->getTagsPerPost($id);
         echo $this->twig->render('admin/dashboard/posts/index.html.twig', [
             'message'       => $this->msg,
             'posts'         => $posts,
@@ -92,6 +93,8 @@ class AdminDashboardController extends AdminController
             'numberOfPages' => $number_of_pages,
             'number'        => $number_of_posts,
             '__DIR__'       => '?c=adminDashboard',
+            'tags_per_post' => $tags_per_post,
+            'id'            => $id,
         ]);
     }
     /*
