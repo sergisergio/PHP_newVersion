@@ -118,17 +118,15 @@ class BlogCommentController extends Controller
      */
     public function likes() {
         if ($this->isLogged()) {
-            $this->commentModel->plusLikes() {
+            $this->commentModel->plusLikes();
             }
-        }
     }
     /**
      * AJOUTER UN DISLIKE A UN COMMENTAIRE
      */
     public function dislikes() {
         if ($this->isLogged()) {
-            $this->commentModel->minusLikes() {
-            }
+            $this->commentModel->minusLikes();
         }
     }
 }

@@ -1,4 +1,4 @@
-<form action="index.php?c=comment&t=addComment&id={{ post.id }}" method="post">
+<form action="index.php?c=blogComment&t=addComment" method="post">
     <input type="hidden" name="user_id" value="{% if session.admin %}{{ session.admin.id }}{% elseif session.user %}{{ session.user.id }}{% endif %}">
     <input type="hidden" name="post_id" value="{{ post.id }}">
     <div>

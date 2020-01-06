@@ -1,10 +1,53 @@
-<form action="#" method="post" enctype="multipart/form-data">
-  <div>
-    <label for="name">Nom</label><br />
-    <input type="text" id="name" name="name" placeholder="nom" />
+<form action="index.php?c=adminProjects&t=addProject" method="post" enctype="multipart/form-data">
+  <div class="row">
+    <div class="col-md-8 col-sm-12">
+      <div>
+        <label for="title">Titre</label><br />
+        <input type="text" id="title" name="title" value="" />
+      </div>
+      <div>
+        <label for="link">Lien</label><br />
+        <input type="text" id="link" name="link" value="" />
+      </div>
+      <div>
+        <label for="textarea">Description</label><br />
+        <textarea type="text" id="textarea" class="textarea" name="content"></textarea>
+      </div>
+    </div>
+    <div class="col-md-4 col-sm-12">
+      <div>
+        <label>
+          Choisir une catégorie<br />
+          <select name="category">
+            {% for category in categories %}
+              <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endfor %}
+          </select>
+        </label>
+      </div>
+      <div>
+        <label style="display: block;text-align: center;margin: 0 auto;" for="content">Ajouter une image (facultatif) </label><br />
+        <input style="text-align: center;margin: 0 auto;" type="file" name="file_extension" />
+      </div>
+      <div class="divide20"></div>
+      <div>
+        <label>
+          Publié<br />
+          <select name="published">
+              <option value="1">Oui</option>
+              <option value="0">Non</option>
+          </select>
+        </label>
+      </div>
+    </div>
   </div>
+  <div class="divide20"></div>
+  <div class="divide20"></div>
   <div class="divide40"></div>
   <div>
     <input class="btn btn-default" type="submit" style="width: 100px;display: block; margin: 0 auto;"/>
   </div>
+  <!--<div>
+    <input type="hidden" name="token" id="token" value="<?= $csrfAddPostToken; ?>" />
+  </div>-->
 </form>

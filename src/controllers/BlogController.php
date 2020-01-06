@@ -90,6 +90,7 @@ class BlogController extends Controller
                 $populars = $this->blogModel->getMostSeens();
                 $links = $this->linkModel->getAllLinks();
                 $sublinks = $this->linkModel->getAllSublinks();
+                $tags_per_post = $this->blogModel->getTagsPerPost($id);
                 if ($this->isLogged()) {
                     $comments = $this->commentModel->getVerifiedCommentsByPostId($post['id']);
                 } else {
@@ -106,6 +107,7 @@ class BlogController extends Controller
                     'subcomments' => $subcomments,
                     'links'       => $links,
                     'sublinks'    => $sublinks,
+                    'tags_per_post' => $tags_per_post,
                 ]);
             } else {
                 $this->redirect404();
@@ -128,6 +130,7 @@ class BlogController extends Controller
             $links = $this->linkModel->getAllLinks();
             $sublinks = $this->linkModel->getAllSublinks();
             $url = $this->getUrl();
+            $tags_per_post = $this->blogModel->getTagsPerPost($id);
             //$posts = $this->blogModel->searchByCategory($category);
             $number = $this->blogModel->countSearchByCategoryRequest($category);
             $number = (int)$number;
@@ -144,6 +147,7 @@ class BlogController extends Controller
                 'category'      => $category,
                 'links'         => $links,
                 'sublinks'      => $sublinks,
+                'tags_per_post' => $tags_per_post,
             ]);
         }
     }
@@ -165,6 +169,7 @@ class BlogController extends Controller
             $number = $this->blogModel->countSearchByTagRequest($tag);
             $number = (int)$number;
             $number_of_pages = ceil($number/$results_per_page);
+            $tags_per_post = $this->blogModel->getTagsPerPost($id);
 
             $posts = $this->paginationService->paginateTag($tag, $currentPage, $number_of_pages, $results_per_page);
             echo $this->twig->render('front/blog/_partials/tag/index.html.twig', [
@@ -178,6 +183,7 @@ class BlogController extends Controller
                 'tag'           => $tag,
                 'links'         => $links,
                 'sublinks'      => $sublinks,
+                'tags_per_post' => $tags_per_post,
             ]);
         }
     }

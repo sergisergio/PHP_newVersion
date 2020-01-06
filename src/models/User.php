@@ -59,7 +59,9 @@ class User extends Model
         $req->bindValue(':token', $data['token']);
         return $req->execute();
     }
-
+    /**
+     * ACTIVER UN MEMBRE
+     */
     public function setUserActive($username) {
         $req = $this->db->prepare("
             UPDATE user
@@ -68,7 +70,9 @@ class User extends Model
         $req->bindValue(':username', $username, \PDO::PARAM_STR);
         return $req->execute();
     }
-
+    /**
+     * METTRE A JOUR UN TOKEN
+     */
     public function updateToken($username, $token) {
         $req = $this->db->prepare("
             UPDATE user
@@ -178,7 +182,9 @@ class User extends Model
         $req->bindParam(':id', $id, \PDO::PARAM_INT);
         return $req->execute();
     }
-
+    /**
+     * METTRE A JOUR UN MEMBRE
+     */
     public function updateUser($role, $active, $banned, $id) {
         $req = $this->db->prepare('
             UPDATE user

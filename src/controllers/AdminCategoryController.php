@@ -13,7 +13,6 @@ class AdminCategoryController extends Controller
 {
     protected $categoryModel;
 
-
     /**
      * Constructeur
      *
@@ -37,9 +36,7 @@ class AdminCategoryController extends Controller
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (isset($title) && isset($id)) {
                 $this->categoryModel->updateCategory($title, $id);
-                //header('Location: index.php?c=adminDashboard&t=categories');
-                //exit;
-                $this->msg->success("La catégorie a bien été modifiée !", $this->getUrl());
+                $this->msg->success("La catégorie a bien été modifiée !", $this->getUrl(true));
             }
         }
     }
@@ -54,13 +51,12 @@ class AdminCategoryController extends Controller
                 ];
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($this->categoryModel->setCategory($data)) {
-                $this->msg->success("La catégorie a bien été ajoutée !", $this->getUrl());
+                $this->msg->success("La catégorie a bien été ajoutée !", $this->getUrl(true));
             } else {
-                $this->msg->error("La catégorie n'a pas pu être ajoutée.", $this->getUrl());
+                $this->msg->error("La catégorie n'a pas pu être ajoutée.", $this->getUrl(true));
             }
         } else {
-            header('Location: ' . '?c=adminDashboard&t=categories');
-            exit;
+            $this->msg->error("Une erreur est survenue.", $this->getUrl(true));
         }
     }
     /**
@@ -70,13 +66,12 @@ class AdminCategoryController extends Controller
         $category['id'] = $_GET['id'];
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($this->categoryModel->deleteCategory($category['id'])) {
-                    $this->msg->success("La catégorie a bien été supprimée", $this->getUrl());
+                    $this->msg->success("La catégorie a bien été supprimée", $this->getUrl(true));
                 } else {
-                    $this->msg->error("La catégorie n'a pas pu être supprimée", $this->getUrl());
+                    $this->msg->error("La catégorie n'a pas pu être supprimée", $this->getUrl(true));
                 }
         } else {
-            header('Location: ?c=adminDashboard&t=categories');
-            exit;
+            $this->msg->error("Une erreur est survenue.", $this->getUrl(true));
         }
     }
 }

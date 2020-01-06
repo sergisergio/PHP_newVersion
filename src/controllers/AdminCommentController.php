@@ -24,7 +24,7 @@ class AdminCommentController extends Controller
             header('Location: ?c=login');
             exit;
         }
-        $this->linkComment = new Comment;
+        $this->commentModel = new Comment;
     }
     /**
      * SUPPRIMER UN COMMENTAIRE
@@ -33,13 +33,26 @@ class AdminCommentController extends Controller
         $comment['id'] = $_GET['id'];
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($this->commentModel->deleteComment($comment['id'])) {
-                    $this->msg->success("Le commentaire a bien été supprimé", $this->getUrl());
+                    $this->msg->success("Le commentaire a bien été supprimé", $this->getUrl(true));
                 } else {
-                    $this->msg->error("Le commentaire n'a pas pu être supprimé", $this->getUrl());
+                    $this->msg->error("Le commentaire n'a pas pu être supprimé", $this->getUrl(true));
                 }
         } else {
-            header('Location: ?c=adminDashboard&t=comments');
-            exit;
+            $this->msg->error("Une erreur est survenue", $this->getUrl(true));
+        }
+    }
+    /**
+     * PUBLIER OU DEPUBLIER UN COMMENTAIRE
+     */
+    public function toggleComment() {
+        $published = $_GET['g'];
+        $id = $_GET['id'];
+        if ($published) {
+            $this->commentModel->unPublish($id);
+            $this->msg->success("Le commentaire a bien été dépublié !", $this->getUrl(true));
+        } else {
+            $this->commentModel->publish($id);
+            $this->msg->success("Le commentaire a bien été publié !", $this->getUrl(true));
         }
     }
 }

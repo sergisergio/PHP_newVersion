@@ -7,6 +7,42 @@ namespace Models;
  */
 class Project extends Model
 {
+    public function getLastId() {
+        return $this->db->lastInsertId();
+    }
+    /**
+     * @param $data
+     * @return bool
+     *
+     * CREER UN PROJET
+     */
+    public function setProject($data) {
+        $req = $this->db->prepare('
+            INSERT INTO projects (title, description, link, created_at, img_id, published)
+            VALUES (:title, :description, :link, NOW(), :img_id, :published)');
+        $req->bindValue(':title', $data['title'], \PDO::PARAM_STR);
+        $req->bindValue(':description', $data['content'], \PDO::PARAM_LOB);
+        $req->bindValue(':link', $data['link'], \PDO::PARAM_STR);
+        $req->bindValue(':img_id', $data['img_id'], \PDO::PARAM_INT);
+        $req->bindValue(':published', $data['published'], \PDO::PARAM_INT);
+        return $req->execute();
+    }
+    /**
+     * METTRE A JOUR UN PROJET
+     */
+    public function updateProject($data) {
+        $req = $this->db->prepare('
+            UPDATE projects
+            SET title = :title, description = :description, link = :link, img_id = :img_id, published = :published
+            WHERE id = :id');
+        $req->bindValue(':title', $data['title'], \PDO::PARAM_STR);
+        $req->bindValue(':description', $data['content'], \PDO::PARAM_LOB);
+        $req->bindValue(':link', $data['link'], \PDO::PARAM_STR);
+        $req->bindValue(':img_id', $data['img_id'], \PDO::PARAM_INT);
+        $req->bindValue(':published', $data['published'], \PDO::PARAM_INT);
+        $req->bindValue(':id', $data['id'], \PDO::PARAM_INT);
+        return $req->execute();
+    }
     /**
      * RECUPERER TOUS LES PROJETS PUBLIES
      */
@@ -67,5 +103,62 @@ class Project extends Model
         $req->bindParam(':results_per_page', $results_per_page, \PDO::PARAM_INT);
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * DEPUBLIER UN PROJET
+     */
+    public function unPublish($id) {
+        $req = $this->db->prepare('
+            UPDATE projects
+            SET published = 0
+            WHERE id = :id');
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
+        return $req->execute();
+
+    }
+
+    /**
+     * PUBLIER UN PROJET
+     */
+    public function publish($id) {
+        $req = $this->db->prepare('
+            UPDATE projects
+            SET published = 1
+            WHERE id = :id');
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
+        return $req->execute();
+
+    }
+
+    /**
+     * @param $id
+     * @return mixed
+     *
+     * RECUPERE UN PROJET AVEC SON ID
+     */
+    public function getProjectById($id) {
+        $req = $this->db->prepare('
+            SELECT *
+            FROM projects p
+            WHERE p.id = :id');
+        $req->bindValue(':id', $id, \PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * @param int $id
+     * @return bool
+     *
+     * SUPPRIMER UN PROJET
+     */
+    public function deleteProject(int $id) {
+        $req = $this->db->prepare('
+            DELETE FROM projects
+            WHERE id = :id
+            LIMIT 1');
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
+        return $req->execute();
     }
 }

@@ -56,8 +56,7 @@ class AdminTagsController extends Controller
 
         if (isset($title) && isset($id)) {
             $this->tagModel->updateTag($title, $id);
-            header('Location: index.php?c=adminDashboard&t=tags');
-            exit;
+            $this->msg->success("Le tag a bien été modifié !", $this->getUrl(true));
         }
     }
     /**

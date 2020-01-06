@@ -54,10 +54,7 @@ class AdminPostsController extends Controller
         $file_extension_tmp = $_FILES['file_extension']['tmp_name'];
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-
-            //var_dump($content);die();
-            $imageId = $this->uploadService->upload($file_extension, $file_extension_error, $file_extension_size, $file_extension_tmp, $image);
+            $imageId = $this->uploadService->uploadPost($file_extension, $file_extension_error, $file_extension_size, $file_extension_tmp, $image, $title);
             $data = [
                     'title'         => $title,
                     'content'       => $content,
@@ -72,7 +69,6 @@ class AdminPostsController extends Controller
                 $this->categoryModel->addCategoryToPost($category, $last_id);
                 $this->categoryModel->plusNumberPosts($category);
                 foreach ($tag as $singleTag) {
-                //var_dump($singleTag);
                     $this->tagModel->linkTagsToPost($singleTag, $last_id);
                 }
                 //$this->msg->success("L'article a bien été ajouté !", $this->getUrl());
@@ -106,7 +102,7 @@ class AdminPostsController extends Controller
         $file_extension_tmp = $_FILES['file_extension']['tmp_name'];
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $imageId = $this->uploadService->upload($file_extension, $file_extension_error, $file_extension_size, $file_extension_tmp, $image);
+            $imageId = $this->uploadService->uploadPost($file_extension, $file_extension_error, $file_extension_size, $file_extension_tmp, $image, $title);
             $data = [
                     'title'         => $title,
                     'content'       => $content,
@@ -166,6 +162,25 @@ class AdminPostsController extends Controller
                 exit;
             }
         } else {
+            header('Location: ?c=adminDashboard&page=1');
+            exit;
+        }
+    }
+
+    /**
+     * PUBLIER OU DEPUBLIER UN ARTICLE
+     */
+    public function togglePublished() {
+        $published = $_GET['g'];
+        $id = $_GET['id'];
+        if ($published) {
+            $this->blogModel->unPublish($id);
+            $this->msg->success("L'article a bien été dépublié !");
+            header('Location: ?c=adminDashboard&page=1');
+            exit;
+        } else {
+            $this->blogModel->publish($id);
+            $this->msg->success("L'article a bien été publié !");
             header('Location: ?c=adminDashboard&page=1');
             exit;
         }

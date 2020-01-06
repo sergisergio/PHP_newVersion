@@ -79,9 +79,11 @@ class AdminDashboardController extends AdminController
         $results_per_page = 8;
         $number_of_posts = $this->blogModel->getNumber();
         $number_of_pages = ceil($number_of_posts/$results_per_page);
+        if ($number_of_pages == 0) {
+            $number_of_pages += 1;
+        }
 
         $posts = $this->paginationService->paginate($currentPage, $number_of_pages, $results_per_page);
-        //$posts = $this->blogModel->getAllPostsWithUsers();
         $categories = $this->categoryModel->getAllCategories();
         $tags = $this->tagModel->getAllTags();
         $tags_per_post = $this->blogModel->getTagsPerPost($id);
@@ -105,6 +107,9 @@ class AdminDashboardController extends AdminController
         $results_per_page = 20;
         $number_of_users = $this->userModel->getNumberOfUsers();
         $number_of_pages = ceil($number_of_users/$results_per_page);
+        if ($number_of_pages == 0) {
+            $number_of_pages += 1;
+        }
 
         $users = $this->paginationService->paginateUser($currentPage, $number_of_pages, $results_per_page);
 
@@ -124,6 +129,9 @@ class AdminDashboardController extends AdminController
         $results_per_page = 20;
         $number_of_categories = $this->categoryModel->getNumberOfCategories();
         $number_of_pages = ceil($number_of_categories/$results_per_page);
+        if ($number_of_pages == 0) {
+            $number_of_pages += 1;
+        }
 
         $categories = $this->paginationService->paginateCategoryAdmin($currentPage, $number_of_pages, $results_per_page);
         //$categories = $this->categoryModel->getAllCategories();
@@ -143,6 +151,9 @@ class AdminDashboardController extends AdminController
         $results_per_page = 10;
         $number_of_comments = $this->commentModel->getNumberComments();
         $number_of_pages = ceil($number_of_comments/$results_per_page);
+        if ($number_of_pages == 0) {
+            $number_of_pages += 1;
+        }
         $comments = $this->paginationService->paginateCommentAdmin($currentPage, $number_of_pages, $results_per_page);
         //$comments = $this->commentModel->getAllComments();
         echo $this->twig->render('admin/dashboard/comments/comments.html.twig', [
@@ -161,6 +172,9 @@ class AdminDashboardController extends AdminController
         $results_per_page = 10;
         $number_of_tags = $this->tagModel->getNumberOfTags();
         $number_of_pages = ceil($number_of_tags/$results_per_page);
+        if ($number_of_pages == 0) {
+            $number_of_pages += 1;
+        }
         $tags = $this->paginationService->paginateTagAdmin($currentPage, $number_of_pages, $results_per_page);
         //$tags = $this->tagModel->getAllTags();
         echo $this->twig->render('admin/dashboard/tags/tags.html.twig', [
@@ -179,7 +193,10 @@ class AdminDashboardController extends AdminController
         $results_per_page = 8;
         $number_of_projects = $this->projectModel->getNumberOfProjects();
         $number_of_pages = ceil($number_of_projects/$results_per_page);
-
+        if ($number_of_pages == 0) {
+            $number_of_pages += 1;
+        }
+        $categories = $this->categoryModel->getAllCategories();
         $projects = $this->paginationService->paginateProject($currentPage, $number_of_projects, $results_per_page);
         echo $this->twig->render('admin/dashboard/projects/projects.html.twig', [
             'message'       => $this->msg,
@@ -187,6 +204,7 @@ class AdminDashboardController extends AdminController
             'numberOfPages' => $number_of_pages,
             'number'        => $number_of_projects,
             '__DIR__'       => '?c=adminDashboard&t=projects',
+            'categories'    => $categories,
         ]);
     }
     /**

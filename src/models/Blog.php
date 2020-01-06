@@ -71,27 +71,7 @@ class Blog extends Model
     public function getLastId() {
         return $this->db->lastInsertId();
     }
-    /**
-     * @param $data
-     * @param $postId
-     * @return bool
-     *
-     * METTRE A JOUR UN ARTICLE AVEC SON ID
-     */
-    /*public function updatePost($data, $postId) {
-        $req = $this->db->prepare('
-            UPDATE posts
-            SET title = :title, subtitle = :subtitle, content = :content, image = :image, active = :active, date_update = NOW()
-            WHERE id = :id
-            LIMIT 1');
-        $req->bindValue(':id', $postId, \PDO::PARAM_INT);
-        $req->bindValue(':title', $data['title'], \PDO::PARAM_STR);
-        $req->bindValue(':subtitle', $data['subtitle'], \PDO::PARAM_STR);
-        $req->bindValue(':content', $data['content'], \PDO::PARAM_LOB);
-        $req->bindValue(':image', $data['image'], \PDO::PARAM_STR);
-        $req->bindValue(':active', $data['active'], \PDO::PARAM_BOOL);
-        return $req->execute();
-    }*/
+
     /**
      * @return mixed
      *
@@ -139,7 +119,9 @@ class Blog extends Model
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
-
+    /**
+     * RECUPERER TOUS LES TAGS PAR ARTICLE
+     */
     public function getTagsPerPost() {
         $req = $this->db->prepare('
             SELECT p.id, t.name as tag
@@ -332,12 +314,14 @@ class Blog extends Model
      */
     public function searchByTag($tag) {
         $req = $this->db->prepare("
-            SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, x.name as tag
+            SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, x.name as tag, c.name as category
             FROM posts p
             INNER JOIN user u on p.user_id = u.id
             INNER JOIN image i on p.img_id = i.id
             INNER JOIN tag_posts t on p.id = t.posts_id
             LEFT JOIN tag x on x.id = t.tag_id
+            LEFT JOIN category_posts a on p.id = a.posts_id
+            LEFT JOIN category c on a.category_id = c.id
             WHERE x.name = :tag");
         $req->bindParam(':tag', $tag, \PDO::PARAM_STR);
         $req->execute();
@@ -348,12 +332,14 @@ class Blog extends Model
      */
     public function getTagPagination($tag, $start, $results_per_page) {
         $req = $this->db->prepare("
-            SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, x.name as tag
+            SELECT p.id, p.title, p.content, p.published, p.created_at, p.numberComments, u.username as author, i.url as image, x.name as tag, c.name as category
             FROM posts p
             INNER JOIN user u on p.user_id = u.id
             INNER JOIN image i on p.img_id = i.id
             INNER JOIN tag_posts t on p.id = t.posts_id
             LEFT JOIN tag x on x.id = t.tag_id
+            LEFT JOIN category_posts a on p.id = a.posts_id
+            LEFT JOIN category c on a.category_id = c.id
             WHERE x.name = :tag
             LIMIT :start, :results_per_page");
         $req->bindParam(':tag', $tag, \PDO::PARAM_STR);
@@ -377,4 +363,29 @@ class Blog extends Model
         return $req->fetchColumn();
     }
 
+    /**
+     * DEPUBLIER UN ARTICLE
+     */
+    public function unPublish($id) {
+        $req = $this->db->prepare('
+            UPDATE posts
+            SET published = 0
+            WHERE id = :id');
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
+        return $req->execute();
+
+    }
+
+    /**
+     * PUBLIER UN ARTICLE
+     */
+    public function publish($id) {
+        $req = $this->db->prepare('
+            UPDATE posts
+            SET published = 1
+            WHERE id = :id');
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
+        return $req->execute();
+
+    }
 }

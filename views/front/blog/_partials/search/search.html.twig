@@ -32,8 +32,18 @@
                                   <span class="date">{{ post.created_at|date}}</span>
                                   <span class="comments"><a href="#">{{ post.numberComments }} <i class="icon-chat-1"></i></a></span>
                               </div>
-                              <h2 class="post-title"><a href="">{{ post.title|e }}</a></h2>
+                              <h2 class="post-title"><a href="index.php?c=blog&t=post&id={{ post.id }}">{{ post.title|e }}</a></h2>
                               {{ post.content|slice(0,200)|raw }}
+                              <div class="divide40"></div>
+                            <div>
+                                {% for tag in tags %}
+                                    {% for singleTag in tags_per_post %}
+                                        {% if ((singleTag.tag == tag.name) and (singleTag.id == post.id)) %}
+                                            #{{ singleTag.tag}}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
                           </div>
                       </div>
                   </div>

@@ -78,6 +78,9 @@ class Category extends Model
 
         return $req->execute();
     }
+    /**
+     * METTRE A JOUR LA CATEGORIE D'UN ARTICLE
+     */
     public function updateCategoryToPost($category, $id) {
         $req = $this->db->prepare('
             UPDATE category_posts
@@ -88,6 +91,9 @@ class Category extends Model
         return $req->execute();
 
     }
+    /**
+     * SUPPRIMER LA CATEGORIE D'UN ARTICLE
+     */
     public function deleteCategoryToPost($id) {
         $req = $this->db->prepare('
             DELETE
@@ -120,7 +126,9 @@ class Category extends Model
         return $req->execute();
 
     }
-
+    /**
+     * ENLEVER LA CATEGORIE D'UN ARTICLE
+     */
     public function deleteFromCategoryPosts($category) {
         $req = $this->db->prepare('
             DELETE
@@ -167,5 +175,29 @@ class Category extends Model
         $req->bindParam(':results_per_page', $results_per_page, \PDO::PARAM_INT);
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
+    }
+    /**
+     * AJOUTER UNE CATEGORIE A UN PROJET
+     */
+    public function addCategoryToProject($category, $last_id) {
+        $req = $this->db->prepare('
+            INSERT INTO projects_category (category_id, projects_id)
+            VALUES (:category_id, :projects_id)');
+        $req->bindValue(':category_id', $category, \PDO::PARAM_INT);
+        $req->bindValue(':projects_id', $last_id, \PDO::PARAM_INT);
+
+        return $req->execute();
+    }
+    /**
+     * METTRE A JOUR UNE CATEGORIE
+     */
+    public function updateCategoryToProject($category, $id) {
+        $req = $this->db->prepare('
+            UPDATE projects_category
+            SET category_id = :category_id
+            WHERE category_id = :id');
+        $req->bindParam(':category_id', $category, \PDO::PARAM_INT);
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
+        return $req->execute();
     }
 }

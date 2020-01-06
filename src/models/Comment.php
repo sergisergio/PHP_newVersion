@@ -168,4 +168,30 @@ class Comment extends Model
         $req->execute();
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    /**
+     * DEPUBLIER UN ARTICLE
+     */
+    public function unPublish($id) {
+        $req = $this->db->prepare('
+            UPDATE comment
+            SET validated = 0
+            WHERE id = :id');
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
+        return $req->execute();
+
+    }
+
+    /**
+     * PUBLIER UN ARTICLE
+     */
+    public function publish($id) {
+        $req = $this->db->prepare('
+            UPDATE comment
+            SET validated = 1
+            WHERE id = :id');
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
+        return $req->execute();
+
+    }
 }

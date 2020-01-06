@@ -48,6 +48,7 @@ class BlogSearchController extends Controller
             $number = $this->blogModel->countSearchRequest($search);
             $number = (int)$number;
             $number_of_pages = ceil($number/$results_per_page);
+            $tags_per_post = $this->blogModel->getTagsPerPost($id);
             if ($number > 0)
             {
               if (isset($_GET['page']) AND !empty($_GET['page']) AND ($_GET['page'] > 0 ) AND ($_GET['page'] <= $number_of_pages)) {
@@ -73,6 +74,7 @@ class BlogSearchController extends Controller
                 'url'           => $url,
                 'populars'      => $populars,
                 'q'             => $search,
+                'tags_per_post' => $tags_per_post,
             ]);
         }
     }

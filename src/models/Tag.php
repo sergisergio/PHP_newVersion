@@ -83,6 +83,9 @@ class Tag extends Model
         return $req->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    /**
+     * AJOUTER DES TAGS A UN ARTICLE
+     */
     public function linkTagsToPost($singleTag, $last_id) {
         $req = $this->db->prepare('
             INSERT INTO tag_posts (tag_id, posts_id)
@@ -91,6 +94,9 @@ class Tag extends Model
         $req->bindValue(':posts_id', $last_id, \PDO::PARAM_INT);
         return $req->execute();
     }
+    /**
+     * METTRE A JOUR DES TAGS POUR UN ARTICLE
+     */
     public function updateTagsToPost($singleTag, $id) {
         $req = $this->db->prepare('
             UPDATE tag_posts
@@ -100,6 +106,9 @@ class Tag extends Model
         $req->bindParam(':id', $id, \PDO::PARAM_INT);
         return $req->execute();
     }
+    /**
+     * SUPPRIMER LES TAGS D'UN ARTICLE
+     */
     public function deleteTagsToPost($id) {
         $req = $this->db->prepare('
             DELETE

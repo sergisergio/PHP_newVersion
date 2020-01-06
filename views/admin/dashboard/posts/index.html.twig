@@ -45,7 +45,7 @@
                           <th scope="row">{{ loop.index }}</th>
                           <td>{{ post.title|slice(0,15) }}</td>
                           <td>{{ post.created_at|date("d/m/Y") }}</td>
-                          <td>{{ (post.published) ? 'Publié' : 'Non publié' }}</td>
+                          <td><a href="?c=adminPosts&t=togglePublished&g={{ post.published }}&id={{ post.id }}">{{ (post.published) ? 'Publié' : 'Non publié' }}</a></td>
                           <td>{{ post.author }}</td>
                           <td>
                             <a href="" class="recupId" data-toggle="modal" data-target="#updatePost{{ post.id }}" data-id="{{ post.id }}" value="{{ post.id }}"><i class="fa fa-pencil" aria-hidden="true"></i></a>

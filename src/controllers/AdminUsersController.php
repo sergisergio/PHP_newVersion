@@ -38,8 +38,7 @@ class AdminUsersController extends Controller
             $id = htmlspecialchars($_POST['id']);
 
             $this->userModel->updateUser($role, $active, $banned, $id);
-            header('Location: ?c=adminDashboard&t=users');
-            exit;
+            $this->msg->success("Le membre a bien été modifié", $this->getUrl(true));
         }
     }
     /**
@@ -47,18 +46,17 @@ class AdminUsersController extends Controller
      */
     public function deleteUser() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if (isset($_POST['userId']) && $post = $this->userModel->getUserById($_POST['postId'])) {
+            if (isset($_POST['userId']) && $user = $this->userModel->getUserById($_POST['userId'])) {
                 if ($this->userModel->deleteUser($user['id'])) {
-                    $this->msg->success("Le membre a bien été supprimé", $this->getUrl());
+                    $this->msg->success("Le membre a bien été supprimé", $this->getUrl(true));
                 } else {
-                    $this->msg->error("Le membre n'a pas pu être supprimé", $this->getUrl());
+                    $this->msg->error("Le membre n'a pas pu être supprimé", $this->getUrl(true));
                 }
             } else {
-                $this->msg->error("Le membre n'existe pas", $this->getUrl());
+                $this->msg->error("Le membre n'existe pas", $this->getUrl(true));
             }
         } else {
-            header('Location: ?c=adminDashboard&t=users');
-            exit;
+            $this->msg->error("Une erreur est survenue.", $this->getUrl(true));
         }
     }
 }

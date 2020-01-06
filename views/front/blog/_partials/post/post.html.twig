@@ -17,6 +17,16 @@
                             <div class="divide30"></div>
                             <div class="divide40"></div>
                             {{ post.content|raw }}
+                            <div class="divide40"></div>
+                            <div>
+                                {% for tag in tags %}
+                                    {% for singleTag in tags_per_post %}
+                                        {% if ((singleTag.tag == tag.name) and (singleTag.id == post.id)) %}
+                                            #{{ singleTag.tag}}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
                         </div>
                         <div class="divide20"></div>
                     </div>
