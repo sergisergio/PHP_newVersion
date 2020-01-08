@@ -1,0 +1,12 @@
+<form action="?c=adminTags&t=updateTag" method="post">
+                    <div>
+                        <label for="title">Nom</label><br />
+                        <input type="text" name="title" id="title" value="{{ tag.name }}">
+                    </div>
+                    <input type="hidden" name="id" value="{{ tag.id }}">
+                    <div class="divide40"></div>
+                    <div>
+                        <input class="btn btn-default btn-modal" type="submit"/>
+                    </div>
+                    <input type="hidden" name="update_tag_token" id="update_tag_token" value="{{ update_tag_token }}">
+                </form>

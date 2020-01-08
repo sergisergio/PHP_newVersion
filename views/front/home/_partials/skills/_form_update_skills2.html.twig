@@ -1,0 +1,19 @@
+
+                                            <form action="?c=admin&t=updateSkill2" method="post">
+                                                <div>
+                                                    <label for="title2" style="color: #fff;">Nom</label><br />
+                                                    <input  style="background: #eee; color: #111;" type="text" name="name" id="title2" value="{{ skill2.name }}">
+                                                </div>
+                                                <div>
+                                                    <label style="color: #fff;">Contenu</label><br />
+                                                    <textarea name="content" class="textarea" cols="30" rows="20">{{ skill2.content|raw }}</textarea>
+                                                </div>
+                                                <div>
+                                                    <input type="hidden" name="id" value="{{ skill2.id }}">
+                                                </div>
+                                                <div class="divide40"></div>
+                                                <div>
+                                                    <input class="btn btn-default" type="submit" style="width: 100px;display: block; margin: 0 auto;"/>
+                                                </div>
+                                                <input type="hidden" name="update_skill2_token" id="update_skill2_token" value="{{ update_skill2_token }}" />
+                                            </form>

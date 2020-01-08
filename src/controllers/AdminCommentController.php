@@ -30,15 +30,25 @@ class AdminCommentController extends Controller
      * SUPPRIMER UN COMMENTAIRE
      */
     public function deleteComment() {
+        $token = $_SESSION['delete_comment_token'];
+        $delete_comment_token = $_POST['delete_comment_token'];
+
         $comment['id'] = $_GET['id'];
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                if ($this->commentModel->deleteComment($comment['id'])) {
-                    $this->msg->success("Le commentaire a bien été supprimé", $this->getUrl(true));
+
+        if (isset($token) AND isset($delete_comment_token) AND !empty($token) AND !empty($delete_comment_token)) {
+            if ($token == $delete_comment_token) {
+                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                    if ($this->commentModel->deleteComment($comment['id'])) {
+                        $this->msg->success("Le commentaire a bien été supprimé", $this->getUrl(true));
+                    } else {
+                        $this->msg->error("Le commentaire n'a pas pu être supprimé", $this->getUrl(true));
+                    }
                 } else {
-                    $this->msg->error("Le commentaire n'a pas pu être supprimé", $this->getUrl(true));
+                    $this->msg->error("Une erreur est survenue", $this->getUrl(true));
                 }
+            }
         } else {
-            $this->msg->error("Une erreur est survenue", $this->getUrl(true));
+            $this->msg->error("Une erreur est survenue !", $this->getUrl(true));
         }
     }
     /**

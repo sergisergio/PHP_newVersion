@@ -3,7 +3,7 @@
         <div class="col-md-8 col-sm-12 content">
             <div class="blog-posts">
                 {% if number > 0 %}
-                {{ include('front/blog/_partials/search/_pagination.html.twig')}}
+                {% include('admin/dashboard/_partials/pagination.html.twig') %}
                 {% endif %}
                 <div class="divide40"></div>
                 {% if number == 0 %}
@@ -51,7 +51,7 @@
                 {% endif %}
             </div>
             {% if number > 0 %}
-            {{ include('front/blog/_partials/search/_pagination.html.twig')}}
+            {% include('admin/dashboard/_partials/pagination.html.twig') %}
             {% endif %}
         </div>
         {{ include('front/blog/_partials/aside/index.html.twig')}}

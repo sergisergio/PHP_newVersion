@@ -15,10 +15,7 @@
                     {% for skill in skills %}
                     <span class="progressText"><B>{{ skill.name }}</B></span>
                     {% if session.admin != null %}
-                    <form method="post" action="?c=admin&t=deleteSkill" class="pull-right" style="margin-top: -4px;">
-                      <input type="hidden" name="skillId" value="{{ skill.id }}">
-                        <button style="border: none;color: red !important;"type="submit" class="btn btn-danger btn-delete" onclick="return confirm('Confirmer la suppression ?');"><i class="fa fa-trash-o"></i></button>
-                    </form>
+                    {% include('front/home/_partials/skills/_form_delete_skills.html.twig') %}
                     &nbsp;&nbsp;
                     <a href="" class="pull-right" data-toggle="modal" data-target="#myModalSkill1{{ skill.id }}" data-rel="tooltip" data-placement="right" rel="tooltip" data-original-title="Modifier {{ skill.name }}" data-id="{{ skill.id }}">
                         <i class="fa fa-pencil" aria-hidden="true"></i>
@@ -47,10 +44,7 @@
                         <div class="panel-heading">
                                     <h4 class="panel-title"> <a data-toggle="collapse" class="panel-toggle {{ skill2.active }}" data-parent="#accordion" href="#collapse{{ skill2.id }}"> {{ skill2.name }}</a></h4>
                                     {% if session.admin != null %}
-                                    <form method="post" action="?c=admin&t=deleteSkill2" class="pull-right" style="margin-top: -35px;">
-                                      <input type="hidden" name="id" value="{{ skill2.id }}">
-                                        <button style="border: none;color: red !important;"type="submit" class="btn btn-danger btn-delete" onclick="return confirm('Confirmer la suppression ?');"><i class="fa fa-trash-o"></i></button>
-                                    </form>
+                                    {% include('front/home/_partials/skills/_form_delete_skills2.html.twig') %}
                                     <a href="" class="pull-right" data-toggle="modal" data-target="#updateSkill2{{ skill2.id }}" data-rel="tooltip" data-placement="top" rel="tooltip" data-original-title="Modifier {{ skill2.name }}" data-id="{{ skill2.id }}" style="margin-top: -32px;">
                                     <i class="fa fa-pencil" aria-hidden="true"></i></a>
                                     {% include 'front/home/_partials/skills/modal_update_skill2.html.twig' %}

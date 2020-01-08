@@ -25,7 +25,7 @@ class Controller
 
     public function __construct()
     {
-        // sémarrage session
+        // démarrage session
         if (!session_id()) @session_start();
         // messages Flash
         $this->msg = new \Plasticbrain\FlashMessages\FlashMessages();

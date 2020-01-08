@@ -10,6 +10,7 @@ use Models\Tag;
 use Models\Project;
 use Models\Config;
 use Service\PaginationService;
+use Service\SecurityService;
 
 /**
  * class AdminDashboardController
@@ -26,6 +27,7 @@ class AdminDashboardController extends AdminController
     protected $projectModel;
     protected $configModel;
     protected $paginationService;
+    protected $securityService;
     /**
      * Constructeur
      *
@@ -70,11 +72,23 @@ class AdminDashboardController extends AdminController
         $this->projectModel = new Project;
         $this->configModel = new Config;
         $this->paginationService = new PaginationService;
+        $this->securityService = new SecurityService;
     }
     /*
      * AFFICHER LES ARTICLES
      */
     public function index() {
+
+        if (!isset($_SESSION['add_post_token']) || ($_SESSION['add_post_token'] == NULL)) {
+           $_SESSION['add_post_token'] = bin2hex(openssl_random_pseudo_bytes(6));
+        }
+        if (!isset($_SESSION['update_post_token']) || ($_SESSION['update_post_token'] == NULL)) {
+           $_SESSION['update_post_token'] = bin2hex(openssl_random_pseudo_bytes(6));
+        }
+        if (!isset($_SESSION['delete_post_token']) || ($_SESSION['delete_post_token'] == NULL)) {
+           $_SESSION['delete_post_token'] = bin2hex(openssl_random_pseudo_bytes(6));
+        }
+
         $currentPage = intval($_GET['page']);
         $results_per_page = 8;
         $number_of_posts = $this->blogModel->getNumber();
@@ -88,21 +102,31 @@ class AdminDashboardController extends AdminController
         $tags = $this->tagModel->getAllTags();
         $tags_per_post = $this->blogModel->getTagsPerPost($id);
         echo $this->twig->render('admin/dashboard/posts/index.html.twig', [
-            'message'       => $this->msg,
-            'posts'         => $posts,
-            'categories'    => $categories,
-            'tags'          => $tags,
-            'numberOfPages' => $number_of_pages,
-            'number'        => $number_of_posts,
-            '__DIR__'       => '?c=adminDashboard',
-            'tags_per_post' => $tags_per_post,
-            'id'            => $id,
+            'message'            => $this->msg,
+            'posts'              => $posts,
+            'categories'         => $categories,
+            'tags'               => $tags,
+            'numberOfPages'      => $number_of_pages,
+            'number'             => $number_of_posts,
+            '__DIR__'            => '?c=adminDashboard',
+            'tags_per_post'      => $tags_per_post,
+            'id'                 => $id,
+            'add_post_token'     => $_SESSION['add_post_token'],
+            'update_post_token'  => $_SESSION['update_post_token'],
+            'delete_post_token'  => $_SESSION['delete_post_token'],
         ]);
     }
     /*
      * AFFICHER LES MEMBRES
      */
     public function users() {
+        if (!isset($_SESSION['update_user_token']) || ($_SESSION['update_user_token'] == NULL)) {
+           $_SESSION['update_user_token'] = bin2hex(openssl_random_pseudo_bytes(6));
+        }
+        if (!isset($_SESSION['delete_user_token']) || ($_SESSION['delete_user_token'] == NULL)) {
+           $_SESSION['delete_user_token'] = bin2hex(openssl_random_pseudo_bytes(6));
+        }
+
         $currentPage = intval($_GET['page']);
         $results_per_page = 20;
         $number_of_users = $this->userModel->getNumberOfUsers();
@@ -114,17 +138,28 @@ class AdminDashboardController extends AdminController
         $users = $this->paginationService->paginateUser($currentPage, $number_of_pages, $results_per_page);
 
         echo $this->twig->render('admin/dashboard/users/users.html.twig', [
-            'message'   => $this->msg,
-            'users'     => $users,
-            'numberOfPages' => $number_of_pages,
-            'number'        => $number_of_users,
-            '__DIR__'       => '?c=adminDashboard&t=users',
+            'message'            => $this->msg,
+            'users'              => $users,
+            'numberOfPages'      => $number_of_pages,
+            'number'             => $number_of_users,
+            '__DIR__'            => '?c=adminDashboard&t=users',
+            'update_user_token'  => $_SESSION['update_user_token'],
+            'delete_user_token'  => $_SESSION['delete_user_token'],
         ]);
     }
     /*
      * AFFICHER LES CATEGORIES
      */
     public function categories() {
+        if (!isset($_SESSION['add_category_token']) || ($_SESSION['add_category_token'] == NULL)) {
+           $_SESSION['add_category_token'] = bin2hex(openssl_random_pseudo_bytes(6));
+        }
+        if (!isset($_SESSION['update_category_token']) || ($_SESSION['update_category_token'] == NULL)) {
+           $_SESSION['update_category_token'] = bin2hex(openssl_random_pseudo_bytes(6));
+        }
+        if (!isset($_SESSION['delete_category_token']) || ($_SESSION['delete_category_token'] == NULL)) {
+           $_SESSION['delete_category_token'] = bin2hex(openssl_random_pseudo_bytes(6));
+        }
         $currentPage = intval($_GET['page']);
         $results_per_page = 20;
         $number_of_categories = $this->categoryModel->getNumberOfCategories();
@@ -134,19 +169,26 @@ class AdminDashboardController extends AdminController
         }
 
         $categories = $this->paginationService->paginateCategoryAdmin($currentPage, $number_of_pages, $results_per_page);
-        //$categories = $this->categoryModel->getAllCategories();
+
         echo $this->twig->render('admin/dashboard/categories/categories.html.twig', [
-            'message'       => $this->msg,
-            'categories'    => $categories,
-            'numberOfPages' => $number_of_pages,
-            'number'        => $number_of_categories,
-            '__DIR__'       => '?c=adminDashboard&t=categories',
+            'message'                => $this->msg,
+            'categories'             => $categories,
+            'numberOfPages'          => $number_of_pages,
+            'number'                 => $number_of_categories,
+            '__DIR__'                => '?c=adminDashboard&t=categories',
+            'add_category_token'     => $_SESSION['add_category_token'],
+            'update_category_token'  => $_SESSION['update_category_token'],
+            'delete_category_token'  => $_SESSION['delete_category_token'],
         ]);
     }
     /*
      * AFFICHER LES COMMENTAIRES
      */
     public function comments() {
+        if (!isset($_SESSION['delete_comment_token']) || ($_SESSION['delete_comment_token'] == NULL)) {
+           $_SESSION['delete_comment_token'] = bin2hex(openssl_random_pseudo_bytes(6));
+        }
+        $_SESSION['delete_comment_token'] = $delete_comment_token;
         $currentPage = intval($_GET['page']);
         $results_per_page = 10;
         $number_of_comments = $this->commentModel->getNumberComments();
@@ -155,19 +197,30 @@ class AdminDashboardController extends AdminController
             $number_of_pages += 1;
         }
         $comments = $this->paginationService->paginateCommentAdmin($currentPage, $number_of_pages, $results_per_page);
-        //$comments = $this->commentModel->getAllComments();
+
         echo $this->twig->render('admin/dashboard/comments/comments.html.twig', [
-            'message'       => $this->msg,
-            'comments'      => $comments,
-            'numberOfPages' => $number_of_pages,
-            'number'        => $number_of_comments,
-            '__DIR__'       => '?c=adminDashboard&t=comments',
+            'message'               => $this->msg,
+            'comments'              => $comments,
+            'numberOfPages'         => $number_of_pages,
+            'number'                => $number_of_comments,
+            '__DIR__'               => '?c=adminDashboard&t=comments',
+            'delete_comment_token'  => $_SESSION['delete_comment_token'],
         ]);
     }
     /*
      * AFFICHER LES TAGS
      */
     public function tags() {
+        if (!isset($_SESSION['add_tag_token']) || ($_SESSION['add_tag_token'] == NULL)) {
+           $_SESSION['add_tag_token'] = bin2hex(openssl_random_pseudo_bytes(6));
+        }
+        if (!isset($_SESSION['update_tag_token']) || ($_SESSION['update_tag_token'] == NULL)) {
+           $_SESSION['update_tag_token'] = bin2hex(openssl_random_pseudo_bytes(6));
+        }
+        if (!isset($_SESSION['delete_tag_token']) || ($_SESSION['delete_tag_token'] == NULL)) {
+           $_SESSION['delete_tag_token'] = bin2hex(openssl_random_pseudo_bytes(6));
+        }
+
         $currentPage = intval($_GET['page']);
         $results_per_page = 10;
         $number_of_tags = $this->tagModel->getNumberOfTags();
@@ -176,19 +229,32 @@ class AdminDashboardController extends AdminController
             $number_of_pages += 1;
         }
         $tags = $this->paginationService->paginateTagAdmin($currentPage, $number_of_pages, $results_per_page);
-        //$tags = $this->tagModel->getAllTags();
+
         echo $this->twig->render('admin/dashboard/tags/tags.html.twig', [
-            'message'       => $this->msg,
-            'tags'          => $tags,
-            'numberOfPages' => $number_of_pages,
-            'number'        => $number_of_tags,
-            '__DIR__'       => '?c=adminDashboard&t=tags',
+            'message'           => $this->msg,
+            'tags'              => $tags,
+            'numberOfPages'     => $number_of_pages,
+            'number'            => $number_of_tags,
+            '__DIR__'           => '?c=adminDashboard&t=tags',
+            'add_tag_token'     => $_SESSION['add_tag_token'],
+            'update_tag_token'  => $_SESSION['update_tag_token'],
+            'delete_tag_token'  => $_SESSION['delete_tag_token'],
         ]);
     }
     /*
      * AFFICHER LES PROJETS
      */
     public function projects() {
+        if (!isset($_SESSION['add_project_token']) || ($_SESSION['add_project_token'] == NULL)) {
+           $_SESSION['add_project_token'] = bin2hex(openssl_random_pseudo_bytes(6));
+        }
+        if (!isset($_SESSION['update_project_token']) || ($_SESSION['update_project_token'] == NULL)) {
+           $_SESSION['update_project_token'] = bin2hex(openssl_random_pseudo_bytes(6));
+        }
+        if (!isset($_SESSION['delete_project_token']) || ($_SESSION['delete_project_token'] == NULL)) {
+           $_SESSION['delete_project_token'] = bin2hex(openssl_random_pseudo_bytes(6));
+        }
+
         $currentPage = intval($_GET['page']);
         $results_per_page = 8;
         $number_of_projects = $this->projectModel->getNumberOfProjects();
@@ -199,12 +265,15 @@ class AdminDashboardController extends AdminController
         $categories = $this->categoryModel->getAllCategories();
         $projects = $this->paginationService->paginateProject($currentPage, $number_of_projects, $results_per_page);
         echo $this->twig->render('admin/dashboard/projects/projects.html.twig', [
-            'message'       => $this->msg,
-            'projects'      => $projects,
-            'numberOfPages' => $number_of_pages,
-            'number'        => $number_of_projects,
-            '__DIR__'       => '?c=adminDashboard&t=projects',
-            'categories'    => $categories,
+            'message'               => $this->msg,
+            'projects'              => $projects,
+            'numberOfPages'         => $number_of_pages,
+            'number'                => $number_of_projects,
+            '__DIR__'               => '?c=adminDashboard&t=projects',
+            'categories'            => $categories,
+            'add_project_token'     => $_SESSION['add_project_token'],
+            'update_project_token'  => $_SESSION['update_project_token'],
+            'delete_project_token'  => $_SESSION['delete_project_token'],
         ]);
     }
     /**

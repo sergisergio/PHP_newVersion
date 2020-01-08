@@ -1,0 +1,58 @@
+<form action="?c=adminPosts&t=updatePost" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-8 col-sm-12">
+                            <div>
+                                <label for="title">Titre</label><br />
+                                <input type="text" id="title" name="title" value="{{ post.title }}" />
+                            </div>
+                            <div>
+                                <label for="textarea">Article</label><br />
+                                <textarea type="text" class="textarea" id="textarea" name="content">{{ post.content|raw }}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-12">
+                            <div>
+                                <label>
+                                    Choisir une catégorie<br />
+                                    <select name="category">
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}" {{ (post.category ==  category.name) ? 'selected' : '' }}>{{ category.name }}</option>
+                                    {% endfor %}
+                                    </select>
+                                </label>
+                            </div>
+                            <div>
+                                <label style="display: block;text-align: center;margin: 0 auto;" for="content">Ajouter une image (facultatif) </label><br />
+                                <input style="text-align: center;margin: 0 auto;" type="file" name="file_extension" />
+                            </div>
+                            <div class="divide20"></div>
+                            <div>
+                                <label>
+                                  <!-- TO DO -->
+                                  <!-- récupérer les tags en fonction de l'article -->
+                                  Choisir un ou plusieurs tag(s)<br />
+                                  <select multiple name="tag[]">
+                                      {% for tag in tags %}
+                                      <option value="{{ tag.id }}"
+                                          {% for singleTag in tags_per_post %}
+                                          {% if ((singleTag.tag == tag.name) and (singleTag.id == post.id)) %}
+                                          selected
+                                          {% endif %}
+                                          {% endfor %}>
+                                          {{ tag.name }}
+                                      </option>
+                                        {% endfor %}
+                                  </select>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="divide20"></div>
+                    <div class="divide20"></div>
+                    <div class="divide40"></div>
+                    <input type="hidden" name="id" value="{{ post.id }}">
+                    <div>
+                        <input class="btn btn-default" type="submit" style="width: 100px;display: block; margin: 0 auto;"/>
+                    </div>
+                    <input type="hidden" name="update_post_token" id="update_post_token" value="{{ update_post_token }}" />
+                </form>

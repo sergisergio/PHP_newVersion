@@ -1,4 +1,6 @@
-{% extends "./front/blog/base.html.twig" %}
+{% extends "./base.html.twig" %}
+
+{% block nav %}{% include('front/_partials/nav.html.twig') %}{% endblock %}
 
 {% block header %}{% endblock %}
 
@@ -8,6 +10,8 @@
     {% include 'front/blog/_partials/views/posts.html.twig' %}
 
 {% endblock %}
+
+{% block footer %}{% include('front/_partials/footer.html.twig') %}{% endblock %}
 
 {% block js %}
 {% endblock %}

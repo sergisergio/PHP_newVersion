@@ -6,52 +6,7 @@
                 <h4 class="modal-title">Modifier le membre</h4>
             </div>
             <div class="modal-body">
-                <form action="?c=adminUsers&t=updateUser" method="post">
-                    <div class="col-md-4">
-                        <label>Role<br />
-                        <select name="role">
-                            {% if user.roles %}
-                            <option value="1">Admin</option>
-                            <option value="0">Membre</option>
-                            {% else %}
-                            <option value="0">Membre</option>
-                            <option value="1">Admin</option>
-                            {% endif %}
-                        </select>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label>Activé ?<br />
-                        <select name="active">
-                            {% if user.active %}
-                            <option value="1">Oui</option>
-                            <option value="0">Non</option>
-                            {% else %}
-                            <option value="0">Non</option>
-                            <option value="1">Oui</option>
-                            {% endif %}
-                        </select>
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label>Banni ?<br />
-                        <select name="banned">
-                            {% if user.banned %}
-                            <option value="1">Oui</option>
-                            <option value="0">Non</option>
-                            {% else %}
-                            <option value="0">Non</option>
-                            <option value="1">Oui</option>
-                            {% endif %}
-                        </select>
-                        </label>
-                    </div>
-                    <input type="hidden" name="id" value="{{ user.id }}">
-                    <div class="divide40"></div>
-                    <div>
-                        <input class="btn btn-default btn-modal" type="submit"/>
-                    </div>
-                </form>
+                {% include('admin/dashboard/users/_form_user_update.html.twig') %}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>

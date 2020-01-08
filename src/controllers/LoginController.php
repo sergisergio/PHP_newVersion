@@ -27,58 +27,84 @@ class LoginController extends Controller
      */
     public function index() {
 
+        $array = [
+            "username" => "",
+            "password" => "",
+            "error" => "",
+            "success" => "",
+            "isSuccess" => false,
+            "role" => ""
+        ];
+
+
+
         if ($this->isLogged()) {
             header('Location: ?c=index');
             exit();
         }
-        if ((isset($_GET['g'])) && $_GET['g'] == 'sentmail') {
-            $this->msg->success("Un lien de confirmation vous a été envoyé", 'index.php?c=login');
-        } elseif ((isset($_GET['g'])) && $_GET['g'] == 'confirm') {
+        if ((isset($_GET['g'])) && $_GET['g'] == 'confirm') {
             $this->msg->success("Votre compte est activé !", 'index.php?c=login');
         } elseif (((isset($_GET['g'])) && $_GET['g'] == 'notvalid') && (isset($_GET['user']))) {
             $username = $_GET['user'];
             $this->msg->success('Ce lien a expiré ! <a href="?c=login&t=resend&user='.$username.'">Renvoyer un lien</a>', 'index.php?c=login');
         }
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
             $username = strip_tags(htmlspecialchars($_POST['username']));
             $password = strip_tags(htmlspecialchars($_POST['password']));
             $checkUser = $this->userModel->getUserByUsernameOrEmail($username);
             $checkPassword = password_verify($password, $checkUser['password']);
+            sleep(0.3);
             $ip = $_SERVER['REMOTE_ADDR'];
+
+
+
+
             if (empty($username) || empty($password)) {
-                $this->msg->error("Tous les champs n'ont pas été remplis", $this->getUrl());
-            } elseif ( !$checkUser) {
+                $array["error"] = "Veuillez remplir les champs !";
+                $array["isSuccess"] = false;
+            } elseif ($checkUser == false) {
+                $attempts = $this->securityModel->getAttempts($ip);
+
+                //$last_attempt = array_key_last($attempts);
+                $now = strtotime(date("Y-m-d H:i:s"));
+                $limitAttemptsDate = strtotime($attempts[2]['tried_at_plus_one_day']);
+
+
+                // if (isset($limitAttemptsDate)) {
+                //     if ($now - $limitAttemptsDate < 0) {
+                //         $this->securityModel->deleteAttempts($ip);
+                //     }
+                // }
+
+
                 $this->securityModel->registerAttempt($ip, $username);
                 $count = $this->securityModel->checkBruteForce($ip, $username);
                 if ($count < 2) {
-                    $this->msg->error("Identifiant ou mot de passe incorrect ! Il vous reste ".(3 - $count)." tentatives", $this->getUrl());
+                    $array["error"] = 'identifiant ou mot de passe incorrect !Il vous reste '.(3 - $count).' tentatives';
+                    $array["isSuccess"] = false;
                 } elseif ($count == 2) {
-                    $this->msg->error("Identifiant ou mot de passe incorrect ! Il vous reste une tentative", $this->getUrl());
+                    $array["error"] = 'identifiant ou mot de passe incorrect !Il vous reste une tentative';
+                    $array["isSuccess"] = false;
                 } else {
                     $this->userModel->banUser($username);
-                    $this->msg->error("Nombre de tentatives atteintes! Vous pourrez essayer de vous reconnecter dans 24h.", $this->getUrl());
+                    $array["error"] = 'Nombre de tentatives atteintes! Vous pourrez essayer de vous reconnecter dans 24h.';
+                    $array["isSuccess"] = false;
                 }
             } else {
                 if ($checkPassword) {
+                    $array["isSuccess"] = true;
                     if ($checkUser['roles'] == 1) {
                         $_SESSION['admin'] = $checkUser;
-                        header('Location: ' . '?c=adminDashboard');
-                        exit;
+                        $array["role"] = 'admin';
                     } else {
                         $_SESSION['user'] = $checkUser;
-                        header('Location: ' . '?c=blog&v=view1&page=1');
-                        exit;
+                        $array["role"] = 'user';
                     }
                 }
             }
+            echo json_encode($array);
         }
-
-        echo $this->twig->render('front/login/index.html.twig', [
-            'message'       => $this->msg,
-            'session_admin' => $_SESSION['admin'],
-            'session_user'  => $_SESSION['user'],
-            //'token'     => $loginToken
-        ]);
     }
     /*
      * GERER L'INSCRIPTION
@@ -86,6 +112,14 @@ class LoginController extends Controller
      * Metttre SMTP et port du FAI ds php.ini et utiliser PHPMailer
      */
     public function registration() {
+        $array = [
+            "email" => "",
+            "username" => "",
+            "password" => "",
+            "error" => "",
+            "isSuccess" => false
+        ];
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $email = strip_tags(htmlspecialchars($_POST['email']));
             $username = strip_tags(htmlspecialchars($_POST['username']));
@@ -96,24 +130,40 @@ class LoginController extends Controller
             $token = $this->securityService->str_random(100);
             // check if fields are empty
             if (empty($email) || empty($username) || empty($password) || empty($passwordCheck)) {
-                $this->msg->error("Tous les champs n'ont pas été remplis", $this->getUrl());
+                //echo "Tous les champs n'ont pas été remplis";
+                $array["error"] = "Veuillez remplir les champs !";
+                $array["isSuccess"] = false;
             // check if passwords match
             } elseif ($password != $passwordCheck) {
-                $this->msg->error("Les mots de passe ne correspondent pas", $this->getUrl());
+                //echo 'Les mots de passe ne correspondent pas';
+                $array["error"] = "Les mots de passe ne correspondent pas !";
+                $array["isSuccess"] = false;
             // check if mail exist
             } elseif ($mailExist) {
-                $this->msg->error("Adresse mail déjà utilisée", $this->getUrl());
+                //echo 'Adresse mail déjà utilisée';
+                $array["error"] = "Adresse mail déjà utilisée !";
+                $array["isSuccess"] = false;
             // check if user exist
             } elseif ($userExist) {
-                $this->msg->error("Pseudo déjà utilisé", $this->getUrl());
+                //echo 'Pseudo déjà utilisé';
+                $array["error"] = "Pseudo déjà utilisé !";
+                $array["isSuccess"] = false;
             } elseif (!preg_match('/^[a-zA-Z0-9_@#&é§è!çà^¨$*`£ù%=+:\;.,?°<>]+$/', $username)) {
-                $this->msg->error("Votre pseudo n'est pas valide");
+                //echo "Votre pseudo n'est pas valide";
+                $array["error"] = "Votre pseudo n'est pas valide !";
+                $array["isSuccess"] = false;
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $this->msg->error("Votre email n'est pas valide !");
+                //echo "Votre email n'est pas valide !";
+                $array["error"] = "Votre email n'est pas valide !";
+                $array["isSuccess"] = false;
             } elseif (strlen($username) < 5  || strlen($username) > 20) {
-                $this->msg->error("Votre pseudo doit faire entre 5 et 20 caractères !");
+                //echo 'Votre pseudo doit faire entre 5 et 20 caractères !';
+                $array["error"] = "Votre pseudo doit faire entre 5 et 20 caractères !";
+                $array["isSuccess"] = false;
             } elseif (strlen($password) < 6 || strlen($password) > 50) {
-                $this->msg->error("Votre mot de passe doit faire entre 6 et 50 caractères !");
+                //echo 'Votre mot de passe doit faire entre 6 et 50 caractères !';
+                $array["error"] = "Votre mot de passe doit faire entre 6 et 50 caractères !";
+                $array["isSuccess"] = false;
             } else {
                 date_default_timezone_set('Europe/Paris');
                 $password = password_hash($password, PASSWORD_ARGON2I);
@@ -131,7 +181,7 @@ class LoginController extends Controller
                 ];
                 if ($this->userModel->setUser($data)) {
 
-                    // On active la visibilité des erreurs SMTP
+                    //On active la visibilité des erreurs SMTP
                     try {
                         $this->mail->SMTPDebug = 3;
 
@@ -177,20 +227,20 @@ class LoginController extends Controller
                         ob_start();
                         $this->mail->send();
                         ob_end_clean();
-                        header('Location: ?c=login&g=sentmail');
+                        //header('Location: ?c=login&g=sentmail');
+                        $array["isSuccess"] = true;
                     } catch (Exception $e) {
-                        $this->msg->error("Un problème est survenu ! Le message n\'a pas pu être envoyé... ");
+                        $array["error"] = "Un problème est survenu ! Le message n\'a pas pu être envoyé... ";
+                        $array["isSuccess"] = false;
                     }
-                    //exit();
+                    exit();
                 } else {
-                    $this->msg->error("Une erreur s'est produite", $this->getUrl());
+                    $array["error"] = "Une erreur s'est produite";
+                        $array["isSuccess"] = false;
                 }
             }
+            echo json_encode($array);
         }
-        echo $this->twig->render('front/registration/index.html.twig', [
-            'message'   => $this->msg,
-            'registerToken'     => $registerToken
-        ]);
     }
     /*
      * GERER LA DECONNEXION
@@ -200,8 +250,8 @@ class LoginController extends Controller
             session_unset();
             session_destroy();
         }
-        header('Location: ?c=index');
-
+        header('Location: ?c=home');
+        exit();
     }
 
     public function confirm() {

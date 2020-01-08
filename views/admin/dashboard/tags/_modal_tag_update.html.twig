@@ -6,17 +6,7 @@
                 <h4 class="modal-title">Modifier l'étiquette</h4>
             </div>
             <div class="modal-body">
-                <form action="?c=adminTags&t=updateTag" method="post">
-                    <div>
-                        <label for="title">Nom</label><br />
-                        <input type="text" name="title" id="title" value="{{ tag.name }}">
-                    </div>
-                    <input type="hidden" name="id" value="{{ tag.id }}">
-                    <div class="divide40"></div>
-                    <div>
-                        <input class="btn btn-default btn-modal" type="submit"/>
-                    </div>
-                </form>
+                {% include('admin/dashboard/tags/_form_tag_update.html.twig') %}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>

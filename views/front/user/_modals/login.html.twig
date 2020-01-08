@@ -1,0 +1,79 @@
+
+            <div id="connexion" class="modal fade" role="dialog">
+              <div class="modal-dialog modal-lg">
+
+                <!-- Modal content-->
+                <div class="modal-content" style="margin-top:200px;background: #333;">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" style="text-align: center;">Connexion</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="divide20"></div>
+                    <form id="loginForm" class="m-t" role="form" action="?c=login" method="post" novalidate>
+                      <fieldset>
+                          <div class="row">
+                              {# message.display #}
+                              <div id="alert" class="alert alert-danger alert-dismissible"
+                              style="border-color: red;background: red;color: white;width: 70%;display: block !important;margin: 0 auto;border-radius:20px;"
+                              >
+                                <a href="#" class="close" aria-label="close" style="color:white;font-weight:800;font-size:30px;right: 0px;">&times;</a>
+                                <p class="comments" style="text-align: center; font-weight: bold;"></p>
+                              </div>
+                              <div id="success" class="alert alert-success alert-dismissible"
+                              style="border-color: green;background: green;color: white;width: 70%;display: block !important;margin: 0 auto;order-radius:20px;"
+                              >
+                                <a href="#" class="close" aria-label="close" style="color:white;font-weight:800;font-size:30px;right: 0px;">&times;</a>
+                                <p class="comments" style="text-align: center; font-weight: bold;"></p>
+                              </div>
+                              <div class="divide20"></div>
+                              <div class="col-md-offset-3 col-md-6 col-sm-12">
+                                  <div class="form-row text-input-row name-field">
+                                      <label>Pseudo ou Email</label>
+                                      <input type="text" name="username" id="username" value="" placeholder="pseudo ou email" class="text-input defaultText required"/>
+                                  </div>
+                                  <div class="pwd form-row text-input-row subject-field">
+                                      <label>Mot de passe</label><a class="pull-right" href="?c=login&t=forgetPassword"> (Mot de passe oublié ?)</a>
+                                      <input type="password" id="password" name="password" class="text-input defaultText" placeholder="Mot de passe" required />
+                                      <span class="p-viewer">
+                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                      </span>
+                                  </div>
+                                  <style>
+                                    .pwd {
+                                      position: relative;
+                                    }
+                                    .p-viewer {
+                                      z-index: 9999;
+                                      position: absolute;
+                                      top: 40%;
+                                      right: 10px;
+                                    }
+                                  </style>
+                              </div>
+                              <div class="col-sm-6 col-xs-6">
+                                  <div class="button-row pull-right">
+                                      <input id='login_button' type="submit" value="Connexion" name="submit" class="btn btn-submit bm0" />
+                                  </div>
+                              </div>
+                              <div class="col-sm-6 col-xs-6 lp5">
+                                  <div class="button-row pull-left">
+                                      <input type="reset" value="Effacer" name="reset" class="btn btn-submit bm0" />
+                                  </div>
+                                  <input type="hidden" name="login_token" id="login_token" value="{{ login_token }}" />
+                              </div>
+                          </div>
+                      </fieldset>
+                  </form>
+                  <div class="divide40"></div>
+                  <p style="text-align: center;">Pas de compte ? <a href="" data-toggle="modal" data-target="#inscription">Inscrivez-vous !</a></p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+

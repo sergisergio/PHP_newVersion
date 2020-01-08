@@ -1,0 +1,63 @@
+<form action="index.php?c=adminProjects&t=updateProject" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-8 col-sm-12">
+                            <div>
+                                <label for="title">Titre</label><br />
+                                <input type="text" id="title" name="title" value="{{ project.title }}" />
+                            </div>
+                            <div>
+                                <label for="link">Lien</label><br />
+                                <input type="text" id="link" name="link" value="{{ project.link }}" />
+                            </div>
+                            <div>
+                                <label for="textarea">Description</label><br />
+                                <textarea type="text" id="textarea" class="textarea" name="content">{{ project.description }}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-12">
+                            <div>
+                                <label>
+                                    Choisir une catégorie<br />
+                                    <select name="category">
+                                        {% for category in categories %}
+                                        <option value="{{ category.id }}"
+                                        {{ (project.category == category.name) ? 'selected' : '' }}>
+                                        {{ category.name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </label>
+                            </div>
+                            {% if project.url is not null %}
+                            <div style="width:20%;">
+                                <img src="../assets/img/{{ project.url }}" alt="" class="img-responsive" style="{{ project.style }}">
+                            </div>
+                            {% else %}
+                            <p>Aucune image pour l'instant</p>
+                            {% endif %}
+                            <div class="divide20"></div>
+                            <div>
+                                <label style="display: block;text-align: center;margin: 0 auto;" for="content">Modifier l'image (facultatif) </label><br />
+                                <input style="text-align: center;margin: 0 auto;" type="file" name="file_extension" />
+                            </div>
+                            <div class="divide20"></div>
+                            <div>
+                                <label>
+                                Publié<br />
+                                <select name="published">
+                                    <option value="1">Oui</option>
+                                    <option value="0">Non</option>
+                                </select>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="divide20"></div>
+                    <div class="divide20"></div>
+                    <div class="divide40"></div>
+                    <input type="hidden" name="id" value="{{ project.id }}">
+                    <div>
+                        <input class="btn btn-default" type="submit" style="width: 100px;display: block; margin: 0 auto;"/>
+                    </div>
+                    <input type="hidden" name="update_project_token" id="update_project_token" value="{{ update_project_token }}" />
+                </form>

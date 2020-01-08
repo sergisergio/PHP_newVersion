@@ -43,11 +43,9 @@ class BlogController extends Controller
         $number_of_posts = $this->blogModel->getNumberOfPosts();
         $number_of_pages = ceil($number_of_posts/$results_per_page);
         $url = $this->getUrl();
-        //$this->debugService->display_debug('$posts', $posts, true);
 
         $posts = $this->paginationService->paginate($currentPage, $number_of_pages, $results_per_page);
 
-        //var_dump($currentPage);die();
         $populars = $this->blogModel->getMostSeens();
         $categories = $this->categoryModel->getAllCategories();
         $tags = $this->tagModel->getAllTags();
@@ -69,10 +67,13 @@ class BlogController extends Controller
             ];
 
         if ($view == "view1") {
+            $data['__DIR__'] = '?c=blog&v=view1';
             echo $this->twig->render('front/blog/index.html.twig', $data);
         } elseif ($view == "view2") {
+            $data['__DIR__'] = '?c=blog&v=view2';
             echo $this->twig->render('front/blog/index2.html.twig', $data);
         } elseif ($view == 'view3') {
+            $data['__DIR__'] = '?c=blog&v=view3';
             echo $this->twig->render('front/blog/index3.html.twig', $data);
         } else {
             $this->redirect404();
@@ -82,6 +83,9 @@ class BlogController extends Controller
      * AFFICHER UN ARTICLE EN PARTICULIER
      */
     public function post() {
+        $add_comment_token = $this->securityService->str_random(100);
+        $_SESSION['add_comment_token'] = $add_comment_token;
+
         if (isset($_GET['id']) && $post = $this->blogModel->getPostById($_GET['id'])) {
             if ($post['published'] || $this->isAdmin()) {
                 $post['content'] = htmlspecialchars_decode($post['content'], ENT_HTML5);
@@ -108,6 +112,7 @@ class BlogController extends Controller
                     'links'       => $links,
                     'sublinks'    => $sublinks,
                     'tags_per_post' => $tags_per_post,
+                    'add_comment_token' => $add_comment_token,
                 ]);
             } else {
                 $this->redirect404();
@@ -148,6 +153,7 @@ class BlogController extends Controller
                 'links'         => $links,
                 'sublinks'      => $sublinks,
                 'tags_per_post' => $tags_per_post,
+                '__DIR__'       => '?c=blog&t=getPostsByCategory&category=PHP',
             ]);
         }
     }
@@ -184,6 +190,7 @@ class BlogController extends Controller
                 'links'         => $links,
                 'sublinks'      => $sublinks,
                 'tags_per_post' => $tags_per_post,
+                '__DIR__'       => '?c=blog&t=getPostsByTag&tag=PHP',
             ]);
         }
     }

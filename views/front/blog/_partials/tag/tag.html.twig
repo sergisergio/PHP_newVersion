@@ -3,16 +3,7 @@
         <div class="col-md-8 col-sm-12 content">
             <div class="blog-posts">
                 {% if number > 0 %}
-                <div class="pagination box">
-                    <ul>
-                        <li><a href="?c=blog&t=getPostsByTag&tag={{ tag }}&page={{ _get.page - 1 }}" class="btn {% if _get.page == null or _get.page == 1 %}disabled{% endif %}"><i class="icon-left-dir-1"></i></a></li>
-                        {% for i in 1..numberOfPages %}
-                        <li class="btn {% if _get.page == i %}active{% endif %}"><a href="?c=blog&t=getPostsByTag&tag={{ tag }}&page={{ i }}" style="border:none;">{{ i }}</a></li>
-                        {% endfor %}
-                        <li><a href="?c=blog&t=getPostsByTag&tag={{ tag }}&page={% if _get.page == null %}2{% else %}{{ _get.page + 1 }}{% endif %}" class="btn {% if _get.page == numberOfPages %}disabled{% endif %}"><i class="icon-right-dir-1"></i></a></li>
-                        <li class="pull-right">{% if number == 1 %}{{ number }} article{% else %}{{ number }} articles{% endif %}</li>
-                    </ul>
-                </div>
+                {% include('admin/dashboard/_partials/pagination.html.twig') %}
                 {% endif %}
                 {% if number == 0 %}
                   <div class="post box">
@@ -69,15 +60,7 @@
                   {% endfor %}
             </div>
             {% if number > 0 %}
-            <div class="pagination box">
-                <ul>
-                    <li><a href="?c=blog&t=getPostsByTag&tag={{ category }}&page={{ _get.page - 1 }}" class="btn {% if _get.page == null or _get.page == 1 %}disabled{% endif %}"><i class="icon-left-dir-1"></i></a></li>
-                    {% for i in 1..numberOfPages %}
-                    <li class="btn {% if _get.page == i %}active{% endif %}"><a href="?c=blog&t=getPostsByTag&tag={{ tag }}page={{ i }}" style="border:none;">{{ i }}</a></li>
-                    {% endfor %}
-                    <li><a href="?c=blog&t=getPostsByTag&tag={{ tag }}&page={% if _get.page == null %}2{% else %}{{ _get.page + 1 }}{% endif %}" class="btn {% if _get.page == numberOfPages %}disabled{% endif %}"><i class="icon-right-dir-1"></i></a></li>
-                </ul>
-            </div>
+            {% include('admin/dashboard/_partials/pagination.html.twig') %}
             {% endif %}
         </div>
         {{ include('front/blog/_partials/aside/index.html.twig')}}

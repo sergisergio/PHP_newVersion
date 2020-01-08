@@ -1,5 +1,7 @@
 {% extends "./base.html.twig" %}
 
+{% block nav %}{% include('front/_partials/nav.html.twig') %}{% endblock %}
+
 {% block header %}{{ include('front/home/_partials/header/header.html.twig') }}{% endblock %}
 
 {# Main content #}
@@ -20,4 +22,15 @@
 {% endblock %}
 
 {% block js %}
+  {{ parent() }}
+  <script>
+    $(window).scroll(function() {
+        if ($(window).scrollTop() > 2450) { // scroll down abit and get the action
+            $(".progress-bar").each(function() {
+                each_bar_width = $(this).attr('aria-valuenow');
+                $(this).width(each_bar_width + '%');
+            });
+        }
+    });
+  </script>
 {% endblock %}

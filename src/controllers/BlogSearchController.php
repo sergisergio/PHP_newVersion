@@ -75,6 +75,7 @@ class BlogSearchController extends Controller
                 'populars'      => $populars,
                 'q'             => $search,
                 'tags_per_post' => $tags_per_post,
+                '__DIR__'       => '?c=blogSearch&q='.$search,
             ]);
         }
     }

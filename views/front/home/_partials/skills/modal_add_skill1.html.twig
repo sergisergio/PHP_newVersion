@@ -8,20 +8,7 @@
                             <h4 class="modal-title">Ajouter une barre de progression</h4>
                           </div>
                           <div class="modal-body">
-                            <form action="?c=admin&t=addSkill" method="post">
-                                <div>
-                                    <label for="title">Titre</label><br />
-                                    <input class="input-modal" type="text" name="title" id="title">
-                                </div>
-                                <div>
-                                    <label>Niveau</label><br />
-                                    <input class="input-modal" type="text" name="level">
-                                </div>
-                                <div class="divide40"></div>
-                                <div>
-                                    <input class="btn btn-default btn-modal" type="submit"/>
-                                </div>
-                            </form>
+                            {% include('front/home/_partials/skills/_form_add_skills.html.twig') %}
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>

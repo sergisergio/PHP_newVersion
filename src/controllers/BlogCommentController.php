@@ -34,32 +34,43 @@ class BlogCommentController extends Controller
      * AJOUTER UN COMMENTAIRE
      */
     public function addComment() {
+
+        $token = $_SESSION['add_comment_token'];
+        $add_comment_token = $_POST['add_comment_token'];
+
         if ($this->isLogged()) {
             $config = $this->configModel->getConfig();
             $maxLength = $config['characters'];
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                if (empty($_POST['content']) || empty($_POST['user_id']) || empty($_POST['post_id'])) {
-                    $this->msg->error("Tous les champs n'ont pas été remplis", $this->getUrl(true) .'#comments-notification');
-                } elseif (strlen($_POST['content']) > $maxLength) {
-                    $this->msg->error("Le commentaire fait plus de $maxLength caractères", $this->getUrl(true));
-                } else {
-                    $user = $this->userModel->getUserById($_POST['user_id']);
-                    $content = $_POST['content'];
-                    $data = [
-                        'user_id'   => $user['id'],
-                        'post_id'   => $_POST['post_id'],
-                        'content'   => $content,
-                        'validated' => 1
-                    ];
-                    if ($this->commentModel->addComment($data)) {
-                        $this->blogModel->addNumberComment($data['post_id']);
-                        $this->msg->warning("Commentaire en attente de validation", $this->getUrl(true));
+
+            if (isset($token) AND isset($update_about_token) AND !empty($token) AND !empty($update_about_token)) {
+                if ($token == $update_about_token) {
+                    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                        if (empty($_POST['content']) || empty($_POST['user_id']) || empty($_POST['post_id'])) {
+                            $this->msg->error("Tous les champs n'ont pas été remplis", $this->getUrl(true) .'#comments-notification');
+                        } elseif (strlen($_POST['content']) > $maxLength) {
+                            $this->msg->error("Le commentaire fait plus de $maxLength caractères", $this->getUrl(true));
+                        } else {
+                            $user = $this->userModel->getUserById($_POST['user_id']);
+                            $content = $_POST['content'];
+                            $data = [
+                                'user_id'   => $user['id'],
+                                'post_id'   => $_POST['post_id'],
+                                'content'   => $content,
+                                'validated' => 1
+                            ];
+                            if ($this->commentModel->addComment($data)) {
+                                $this->blogModel->addNumberComment($data['post_id']);
+                                $this->msg->warning("Commentaire en attente de validation", $this->getUrl(true));
+                            } else {
+                                $this->msg->error("Le commentaire n'a pas pu être ajouté", $this->getUrl(true));
+                            }
+                        }
                     } else {
-                        $this->msg->error("Le commentaire n'a pas pu être ajouté", $this->getUrl(true));
+                        $this->redirect404();
                     }
                 }
             } else {
-                $this->redirect404();
+                $this->msg->error("Une erreur est survenue !", $this->getUrl(true));
             }
         } else {
             $this->redirect404();

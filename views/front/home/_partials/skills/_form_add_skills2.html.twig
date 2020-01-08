@@ -1,0 +1,16 @@
+
+                            <form action="?c=admin&t=addSkill2" method="post">
+                                <div>
+                                    <label for="title">Nom</label><br />
+                                    <input  style="background: #eee; color: #111;" type="text" name="name" id="title">
+                                </div>
+                                <div>
+                                    <label>Contenu</label><br />
+                                    <textarea name="content" class="textarea" cols="30" rows="10"></textarea>
+                                </div>
+                                <div class="divide40"></div>
+                                <div>
+                                    <input class="btn btn-default" type="submit" style="width: 100px;display: block; margin: 0 auto;"/>
+                                </div>
+                                <input type="hidden" name="add_skill2_token" id="add_skill2_token" value="{{ add_skill2_token }}" />
+                            </form>

@@ -1,4 +1,5 @@
 <form method="post" action="?c=adminPosts&t=deletePost" class="delete-form">
   <input type="hidden" name="postId" value="{{ post.id }}">
     <button type="submit" class="btn btn-danger" onclick="return confirm('Confirmer la suppression ?');"><i class="fa fa-trash-o"></i></button>
+    <input type="hidden" name="delete_post_token" id="delete_post_token" value="{{ delete_post_token }}" />
 </form>

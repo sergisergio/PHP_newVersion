@@ -1,0 +1,15 @@
+<form action="?c=admin&t=updateAbout" method="post">
+                        <div>
+                            <label for="title">Nom</label><br />
+                            <input type="text" name="title" id="title" value="{{ description.title }}">
+                        </div>
+                        <div>
+                            <label>Description</label><br />
+                            <textarea name="content" class="textarea">{{ description.content|raw }}</textarea>
+                        </div>
+                        <div class="divide40"></div>
+                        <div>
+                            <input class="btn btn-default btn-modal" type="submit"/>
+                        </div>
+                        <input type="hidden" name="update_about_token" id="update_about_token" value="{{ update_about_token }}" />
+                    </form>

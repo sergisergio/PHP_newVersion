@@ -1,0 +1,53 @@
+.tooltip{
+          position:relative;
+          float:right;
+          z-index: 1000;
+        }
+        .tooltip > .tooltip-inner {background-color: #eebf3f; padding:3px 15px; color:rgb(23,44,66); font-weight:bold; font-size:13px;}
+        .popOver + .tooltip > .tooltip-arrow {  border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid #eebf3f;}
+
+
+        .progress{
+          border-radius:0;
+          overflow:visible;
+          border: 1px solid #9cbc68;
+          background : #000;
+        }
+        .progress-bar{
+           background-color: #9cbc68 !important;
+          -webkit-transition: width 1.5s ease-in-out !important;
+          transition: width 1.5s ease-in-out !important;
+        }
+        .fa-pencil, .fa-plus {
+            color: red;
+        }
+        .about-modal-content {
+            margin-top:200px;background: #333;
+        }
+        .btn-modal {
+            width: 100px;display: block; margin: 0 auto;
+        }
+        .input-modal {
+            background: #eee; color: #111;
+        }
+        li {
+            list-style-type: none;
+        }
+        .pwd {
+            position: relative;
+        }
+        .p-viewer {
+            z-index: 9999;
+            position: absolute;
+            top: 40%;
+            right: 10px;
+        }
+        .about-modal-content {
+            margin-top:200px;background: #333;
+        }
+        .btn-modal {
+            width: 100px;display: block; margin: 0 auto;
+        }
+        .input-modal {
+            background: #eee; color: #111;
+        }

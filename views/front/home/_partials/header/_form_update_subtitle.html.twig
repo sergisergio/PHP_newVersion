@@ -1,0 +1,11 @@
+<form action="?c=admin&t=updateSubtitle" method="post">
+  <div>
+    <label for="title">Sous-titre</label><br />
+    <input type="text" name="title" id="title" value="{{ description.subtitle }}">
+  </div>
+  <div class="divide40"></div>
+  <div>
+    <input class="btn btn-default btn-modal" type="submit"/>
+  </div>
+  <input type="hidden" name="update_subtitle" id="update_subtitle" value="{{ update_subtitle }}" />
+</form>

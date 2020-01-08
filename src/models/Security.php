@@ -36,10 +36,27 @@ class Security extends Model
     public function registerAttempt($ip, $username)
     {
         $req = $this->db->prepare('
-            INSERT INTO connexion(ip, username)
-            VALUES(:ip, :username)');
+            INSERT INTO connexion(ip, username, tried_at, tried_at_plus_one_day)
+            VALUES(:ip, :username, NOW(), NOW() + INTERVAL 1 DAY)');
         $req->bindParam(':ip', $ip);
         $req->bindParam(':username', $username);
+        $req->execute();
+    }
+
+    public function getAttempts($ip) {
+        $req = $this->db->prepare('
+            SELECT * FROM connexion
+            WHERE ip = :ip');
+        $req->bindParam(':ip', $ip);
+        $req->execute();
+        return $req->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function deleteAttempts($ip) {
+        $req = $this->db->prepare('
+            DELETE FROM connexion
+            WHERE ip = :ip');
+        $req->bindParam(':ip', $ip);
         $req->execute();
     }
 }

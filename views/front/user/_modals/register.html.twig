@@ -1,0 +1,83 @@
+
+            <div id="inscription" class="modal fade" role="dialog">
+              <div class="modal-dialog modal-lg">
+
+                <!-- Modal content-->
+                <div class="modal-content" style="margin-top:200px;background: #333;">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" style="text-align: center;">Inscription</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="divide20"></div>
+                    <form id="signupForm" action="?c=login&t=registration" method="post" novalidate>
+
+                      <fieldset>
+                          <div class="row">
+                              {# message.display #}
+                              <div id="alert2" class="alert alert-danger alert-dismissible"
+                              style="border-color: red;background: red;color: white;width: 70%;display: block !important;margin: 0 auto;"
+                              >
+                                <a href="#" class="close" aria-label="close" style="color:white;font-weight:800;font-size:30px;right: 0px;">&times;</a>
+                                <p class="comments" style="text-align: center; font-weight: bold;"></p>
+                              </div>
+                              <div class="divide20"></div>
+                              <div class="col-md-offset-3 col-md-6 col-sm-12">
+                                  <div class="form-row text-input-row name-field">
+                                      <label>Pseudo</label>
+                                      <input type="text" placeholder="Votre pseudo" name="username" class="text-input defaultText " required />
+                                  </div>
+                                  <div class="form-row text-input-row email-field">
+                                      <label>Email</label>
+                                      <input type="email" placeholder="Votre e-mail" name="email" class="text-input defaultText  email" required/>
+                                  </div>
+                                  <div class="pwd form-row text-input-row subject-field">
+                                      <label>Mot de passe</label>
+                                      <input id="pass" type="password" placeholder="Votre mot de passe" name="password" class="text-input defaultText" />
+                                      <span class="p-viewer-password">
+                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                      </span>
+                                  </div>
+                                  <div class="pwd2 form-row text-input-row subject-field">
+                                      <label>Confirmer votre mot de passe</label>
+                                      <input id ="pass2" type="password" placeholder="Confirmez votre mot de passe" name="passwordCheck" class="text-input defaultText" />
+                                      <span class="p-viewer-password2">
+                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                      </span>
+                                  </div>
+                                  <style>
+                                    .pwd, .pwd2 {
+                                      position: relative;
+                                    }
+                                    .p-viewer-password, .p-viewer-password2 {
+                                      z-index: 9999;
+                                      position: absolute;
+                                      top: 40%;
+                                      right: 10px;
+                                    }
+                                  </style>
+                              </div>
+                              <div class="col-sm-6 col-xs-6">
+                                  <div class="button-row pull-right">
+                                      <input type="submit" value="Inscription" name="submit" class="btn btn-submit bm0" />
+                                  </div>
+                              </div>
+                              <div class="col-sm-6 col-xs-6 lp5">
+                                  <div class="button-row pull-left">
+                                      <input type="reset" value="Effacer" name="reset" class="btn btn-submit bm0" />
+                                      <input type="hidden" name="signup_token" id="signup_token" value="{{ signup_token }}" />
+                                  </div>
+                              </div>
+                          </div>
+                      </fieldset>
+                  </form>
+                  <div class="divide40"></div>
+                  <p style="text-align: center;">Déjà un compte ? <a href=""  data-toggle="modal" data-target="#connexion">Connectez-vous !</a></p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>

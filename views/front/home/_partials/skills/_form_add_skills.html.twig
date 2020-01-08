@@ -1,0 +1,16 @@
+
+                            <form action="?c=admin&t=addSkill" method="post">
+                                <div>
+                                    <label for="title">Titre</label><br />
+                                    <input class="input-modal" type="text" name="title" id="title">
+                                </div>
+                                <div>
+                                    <label>Niveau</label><br />
+                                    <input class="input-modal" type="text" name="level">
+                                </div>
+                                <div class="divide40"></div>
+                                <div>
+                                    <input class="btn btn-default btn-modal" type="submit"/>
+                                </div>
+                                <input type="hidden" name="add_skill_token" id="add_skill_token" value="{{ add_skill_token }}" />
+                            </form>

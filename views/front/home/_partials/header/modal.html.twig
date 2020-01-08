@@ -9,16 +9,7 @@
                     <h4 class="modal-title">Changer le sous-titre</h4>
                   </div>
                   <div class="modal-body">
-                    <form action="?c=admin&t=updateSubtitle" method="post">
-                        <div>
-                            <label for="title">Sous-titre</label><br />
-                            <input type="text" name="title" id="title" value="{{ description.subtitle }}">
-                        </div>
-                        <div class="divide40"></div>
-                        <div>
-                            <input class="btn btn-default btn-modal" type="submit"/>
-                        </div>
-                    </form>
+                    {% include('front/home/_partials/header/_form_update_subtitle.html.twig') %}
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>

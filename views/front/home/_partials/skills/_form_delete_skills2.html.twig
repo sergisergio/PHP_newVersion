@@ -1,0 +1,6 @@
+
+                                    <form method="post" action="?c=admin&t=deleteSkill2" class="pull-right" style="margin-top: -35px;">
+                                      <input type="hidden" name="id" value="{{ skill2.id }}">
+                                        <button style="border: none;color: red !important;"type="submit" class="btn btn-danger btn-delete" onclick="return confirm('Confirmer la suppression ?');"><i class="fa fa-trash-o"></i></button>
+                                        <input type="hidden" name="delete_skill2_token" id="delete_skill2_token" value="{{ delete_skill2_token }}" />
+                                    </form>

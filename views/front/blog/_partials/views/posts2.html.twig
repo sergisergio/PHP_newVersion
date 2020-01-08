@@ -1,7 +1,7 @@
 <div class="container inner">
         <div class="blog grid-view row">
             <div class="col-md-8 col-sm-12 content">
-                {{ include('front/blog/_partials/views/_pagination.html.twig')}}
+                {% include('admin/dashboard/_partials/pagination.html.twig') %}
                 <div class="blog-posts">
                     <div class="divide40"></div>
                     {% for post in posts %}
@@ -58,7 +58,7 @@
                     </div>
                     {% endfor %}
                 </div>
-                {{ include('front/blog/_partials/views/_pagination.html.twig')}}
+                {% include('admin/dashboard/_partials/pagination.html.twig') %}
             </div>
             {{ include('front/blog/_partials/aside/index.html.twig')}}
         </div>

@@ -1,0 +1,12 @@
+<form action="?c=adminCategory&t=updateCategory" method="post">
+    <div>
+        <label for="title">Nom</label><br />
+        <input type="text" name="title" id="title" value="{{ category.name }}">
+    </div>
+    <input type="hidden" name="id" value="{{ category.id }}">
+    <div class="divide40"></div>
+    <div>
+        <input class="btn btn-default btn-modal" type="submit"/>
+    </div>
+    <input type="hidden" name="update_category_token" id="update_category_token" value="{{ update_category_token }}" />
+</form>

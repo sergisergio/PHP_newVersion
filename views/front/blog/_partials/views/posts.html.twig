@@ -2,7 +2,7 @@
     <div class="blog list-view row">
         <div class="col-md-8 col-sm-12 content">
             <div class="blog-posts">
-                {{ include('front/blog/_partials/views/_pagination.html.twig')}}
+                {% include('admin/dashboard/_partials/pagination.html.twig') %}
                 <div class="divide40"></div>
                 {% for post in posts %}
                 <div class="post box">
@@ -18,7 +18,7 @@
                         <div class="col-sm-7 post-content">
                             <div class="meta">
                                 <span class="category">
-                                        {{ post.category }}
+                                    {{ post.category }}
                                 </span>
                                 <span class="date">{{ post.created_at|date("d/m/Y") }}</span>
                                 <span class="comments"><a href="#">{{ post.numberComments }} <i class="icon-chat-1"></i></a></span>
@@ -40,7 +40,7 @@
                 </div>
                 {% endfor %}
             </div>
-            {{ include('front/blog/_partials/views/_pagination.html.twig')}}
+            {% include('admin/dashboard/_partials/pagination.html.twig') %}
         </div>
         {{ include('front/blog/_partials/aside/index.html.twig')}}
     </div>

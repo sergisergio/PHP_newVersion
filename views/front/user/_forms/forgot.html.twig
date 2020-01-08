@@ -1,9 +1,10 @@
-<form action="">
+<form action="?c=login&t=forgetPassword">
     <fieldset>
         <div class="row">
             <div class="col-md-offset-3 col-md-6 col-sm-12">
-                <div class="form-row text-input-row name-field">
-                    Ajouter 2 champs pour les mots de passe
+                <div class="form-row text-input-row email-field">
+                    <label>Pseudo ou Email</label>
+                    <input type="text" name="username" value="" placeholder="pseudo ou email" class="text-input defaultText required"/>
                 </div>
             </div>
             <div class="col-sm-6 col-xs-6">
@@ -16,6 +17,7 @@
                     <input type="reset" value="Effacer" name="reset" class="btn btn-submit bm0" />
                 </div>
             </div>
+            <input type="hidden" name="forgot_token" id="forgot_token" value="{{ forgot_token }}" />
         </div>
     </fieldset>
 </form>

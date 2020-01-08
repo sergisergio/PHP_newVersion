@@ -8,23 +8,7 @@
                             <h4 class="modal-title">Modification de la barre de progression</h4>
                           </div>
                           <div class="modal-body">
-                            <form action="?c=admin&t=updateSkill" method="post">
-                                <div>
-                                    <label for="title">Titre</label><br />
-                                    <input style="background: #eee; color: #111;" type="text" name="title" id="title" value="{{ skill.name }}">
-                                </div>
-                                <div>
-                                    <label>Niveau</label><br />
-                                    <input  style="background: #eee; color: #111;" type="text" name="level" value="{{ skill.level }}">
-                                </div>
-                                <div>
-                                    <input type="hidden" name="id" value="{{ skill.id }}">
-                                </div>
-                                <div class="divide40"></div>
-                                <div>
-                                    <input class="btn btn-default" type="submit" style="width: 100px;display: block; margin: 0 auto;"/>
-                                </div>
-                            </form>
+                            {% include('front/home/_partials/skills/_form_update_skills.html.twig') %}
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
