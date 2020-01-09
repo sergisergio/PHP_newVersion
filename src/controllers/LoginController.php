@@ -59,48 +59,50 @@ class LoginController extends Controller
 
 
 
-
             if (empty($username) || empty($password)) {
                 $array["error"] = "Veuillez remplir les champs !";
                 $array["isSuccess"] = false;
-            } elseif ($checkUser == false) {
-                $attempts = $this->securityModel->getAttempts($ip);
-
-                //$last_attempt = array_key_last($attempts);
-                $now = strtotime(date("Y-m-d H:i:s"));
-                $limitAttemptsDate = strtotime($attempts[2]['tried_at_plus_one_day']);
-
-
-                // if (isset($limitAttemptsDate)) {
-                //     if ($now - $limitAttemptsDate < 0) {
-                //         $this->securityModel->deleteAttempts($ip);
-                //     }
-                // }
-
-
-                $this->securityModel->registerAttempt($ip, $username);
+            } elseif ($checkUser == false || !$checkPassword) {
                 $count = $this->securityModel->checkBruteForce($ip, $username);
-                if ($count < 2) {
-                    $array["error"] = 'identifiant ou mot de passe incorrect !Il vous reste '.(3 - $count).' tentatives';
-                    $array["isSuccess"] = false;
-                } elseif ($count == 2) {
-                    $array["error"] = 'identifiant ou mot de passe incorrect !Il vous reste une tentative';
-                    $array["isSuccess"] = false;
-                } else {
-                    $this->userModel->banUser($username);
-                    $array["error"] = 'Nombre de tentatives atteintes! Vous pourrez essayer de vous reconnecter dans 24h.';
-                    $array["isSuccess"] = false;
+                if ($count < 3) {
+                    $this->securityModel->registerAttempt($ip, $username);
+                    $count += 1;
+                    if ($count < 2) {
+                        $array["error"] = 'identifiant ou mot de passe incorrect !Il vous reste '.(3 - $count).' tentatives';
+                        $array["isSuccess"] = false;
+                    } elseif ($count == 2) {
+                        $array["error"] = 'identifiant ou mot de passe incorrect !Il vous reste une tentative';
+                        $array["isSuccess"] = false;
+                    } else {
+                        $array["error"] = 'Nombre de tentatives atteintes! Vous pourrez essayer de vous reconnecter dans 24h.';
+                        $array["isSuccess"] = false;
+                    }
+                } elseif ($count == 3) {
+                    $attempts = $this->securityModel->getAttempts($ip);
+                    date_default_timezone_set('Europe/Paris');
+                    $now = strtotime(date("Y-m-d H:i:s"));
+                    $limitAttemptsDate = strtotime($attempts[2]['tried_at_plus_one_day']);
+                    if (isset($limitAttemptsDate)) {
+                        $diff = round(($limitAttemptsDate - $now)/3600);
+                        if ($diff > 0) {
+                            $array["error"] = 'Nombre de tentatives atteintes! Vous pourrez essayer de vous reconnecter dans '.$diff.'h.';
+                            $array["isSuccess"] = false;
+                        } else {
+                            $this->securityModel->deleteAttempts($ip);
+                            $this->securityModel->registerAttempt($ip, $username);
+                            $count = 1;
+                            $array["error"] = 'identifiant ou mot de passe incorrect !Il vous reste 2 tentatives';
+                        }
+                    }
                 }
             } else {
-                if ($checkPassword) {
-                    $array["isSuccess"] = true;
-                    if ($checkUser['roles'] == 1) {
-                        $_SESSION['admin'] = $checkUser;
-                        $array["role"] = 'admin';
-                    } else {
-                        $_SESSION['user'] = $checkUser;
-                        $array["role"] = 'user';
-                    }
+                $array["isSuccess"] = true;
+                if ($checkUser['roles'] == 1) {
+                    $_SESSION['admin'] = $checkUser;
+                    $array["role"] = 'admin';
+                } else {
+                    $_SESSION['user'] = $checkUser;
+                    $array["role"] = 'user';
                 }
             }
             echo json_encode($array);

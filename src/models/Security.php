@@ -18,10 +18,8 @@ class Security extends Model
     {
         $req = $this->db->prepare('
             SELECT * FROM connexion
-            WHERE ip = :ip
-            AND username = :username');
+            WHERE ip = :ip');
         $req->bindParam(':ip', $ip);
-        $req->bindParam(':username', $username);
         $count = $req->execute();
         $count = $req->rowCount();
         return $count;
