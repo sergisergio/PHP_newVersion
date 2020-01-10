@@ -18,7 +18,7 @@ class SecurityService {
     }
 
     public function checkCsrf($token, $session_token) {
-        if (isset($token) AND isset($session_token) AND !empty($session_token) AND !empty(token)) {
+        if (isset($token) AND isset($session_token) AND !empty($session_token) AND !empty($token)) {
             if ($token == $session_token) {
                 return true;
             }

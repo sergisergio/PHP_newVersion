@@ -59,7 +59,8 @@ class BlogCommentController extends Controller
         if ($this->isLogged()) {
             $config = $this->configModel->getConfig();
             $maxLength = $config['characters'];
-
+            //var_dump($session_token);
+            //var_dump($token);die();
             if ($this->securityService->checkCsrf($token, $session_token)) {
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     if (empty($content) || empty($id) || empty($postId)) {
@@ -85,7 +86,16 @@ class BlogCommentController extends Controller
         }
     }
 
+    /**
+     * MODIFIER UN COMMENTAIRE
+     *
+     * - récupère id et contenu
+     * - vérifie que le token CSRF est bon
+     * - met à jour le commentaire en base de données
+     */
     public function updateComment() {
+        $session_token = $_SESSION['update_comment_token'];
+        $token = $_POST['update_comment_token'];
         $id = $_POST['comment_id'];
         $postId = $_POST['post_id'];
         $userId = $_POST['user_id'];
@@ -100,7 +110,7 @@ class BlogCommentController extends Controller
             'validated' => 1
             ];
 
-        //if ($this->securityService->checkCsrf($token, $session_token)) {
+        if ($this->securityService->checkCsrf($token, $session_token)) {
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if (empty($content) || empty($id) || empty($postId)) {
                     echo 'champs vides';
@@ -118,32 +128,37 @@ class BlogCommentController extends Controller
             } else {
                 $this->redirect404();
             }
-        //}
+        }
     }
     /**
      * SUPPRIMER UN COMMENTAIRE
      *
      * - récupère le commentaire en fonction de son identifiant
+     * - vérifie que le token CSRF est bon
      * - supprime le commentaire en base de données
      * - décrémente le nombre de commentaire liés à l'article
      * - TOKEN CSRF A FAIRE
      */
     public function deleteComment() {
+        $session_token = $_SESSION['delete_comment_token'];
+        $token = $_POST['delete_comment_token'];
         $id = $_POST['id'];
         $postId = $_POST['postId'];
         $userId = $_POST['userId'];
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if (!empty($id) && $comment = $this->commentModel->getCommentById($id)) {
-                if ($comment[0]['post_id'] == $postId) {
-                    if (($userId == $_SESSION['admin']['id']) || ($userId == $_SESSION['user']['id'])) {
-                        $this->commentModel->deleteComment($id);
-                        $this->blogModel->minusNumberComment($postId);
-                        $this->msg->warning("Commentaire en attente de validation", $this->getUrl(true));
+        if ($this->securityService->checkCsrf($token, $session_token)) {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                if (!empty($id) && $comment = $this->commentModel->getCommentById($id)) {
+                    if ($comment[0]['post_id'] == $postId) {
+                        if (($userId == $_SESSION['admin']['id']) || ($userId == $_SESSION['user']['id'])) {
+                            $this->commentModel->deleteComment($id);
+                            $this->blogModel->minusNumberComment($postId);
+                            $this->msg->warning("Commentaire en attente de validation", $this->getUrl(true));
+                        }
                     }
                 }
+            } else {
+                $this->msg->error('Le commentaire n\'a pas pu été supprimé.', $this->getUrl(true));
             }
-        } else {
-            $this->msg->error('Le commentaire n\'a pas pu été supprimé.', $this->getUrl(true));
         }
     }
     /**

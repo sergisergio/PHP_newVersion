@@ -41,6 +41,7 @@ class HomeContactController extends Controller
             $message = strip_tags(htmlspecialchars($_POST['message']));
             $address = $_SERVER['REMOTE_ADDR'];
             $body = '<p>Nom: '.$name.'</p><br/><p>Adresse IP: '.$address.'</p><br><p>Email: '.$email.'</p><br><p>Sujet: '.$subject.'</p><br><p>Message: '.$message.'</p>';
+
             $this->mailService->sendToMe($name, $email, $subject, $message, $address, $body);
             $array["success"] = "Votre message a bien été envoyé ! !";
             $array['isSuccess'] = true;

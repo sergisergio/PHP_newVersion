@@ -175,7 +175,7 @@ class AdminPostsController extends Controller
      */
     public function deletePost() {
         $session_token = $_SESSION['delete_post_token'];
-        $delete_post_token = $_POST['delete_post_token'];
+        $token = $_POST['delete_post_token'];
         $postId = $_POST['postId'];
 
         if ($this->securityService->checkCsrf($token, $session_token)) {

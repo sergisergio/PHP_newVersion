@@ -2,16 +2,15 @@
         <div class="blog grid-view row">
             <div class="col-md-8 col-sm-12 content">
                 {% include('admin/dashboard/_partials/pagination.html.twig') %}
+                <div class="divide40"></div>
                 <div class="blog-posts">
-                    <div class="divide40"></div>
-                    {% for post in posts %}
                     <div class="isotope row">
-                        {% if loop.index is odd %}
-                        <div class="" style="width: 49%;position: absolute;top: 0px;left: 0px;">
+                        {% for post in posts %}
+                        <div class="col-md-6">
                             <div class="post box">
                                 <figure class="frame main"><a href="index.php?c=blog&t=post&id={{ post.id }}">
                                         <div class="text-overlay">
-                                            <div class="info"><span>Voir plus</span></div>
+                                            <div class="info"><span>Voir plus {{ loop.index }}</span></div>
                                         </div>
                                         <img src="./assets/img/{{ post.image }}" alt="" /></a></figure>
                                 <div class="meta">
@@ -24,41 +23,14 @@
                                 <h2 class="post-title"><a href="">{{ post.title }}</a></h2>
                                 {{ post.content | slice(0, 200) | raw }}
                             </div>
-                        </div>
-                        {% else %}
-                        <div class="" style="width: 49%;position: absolute !important;top: 0px !important;left: 395px !important;">
-                            <div class="post box">
-                                <figure class="frame main"><a href="index.php?c=blog&t=post&id={{ post.id }}">
-                                        <div class="text-overlay">
-                                            <div class="info"><span>Voir plus</span></div>
-                                        </div>
-                                        <img src="./assets/img/{{ post.image }}" alt="" /></a></figure>
-                                <div class="meta">
-                                    <span class="category">
-
-                                    </span>
-                                    <span class="date">{{ post.createdAt | date('d-m-Y') }}</span>
-                                    <span class="comments"><a href="#">{{ post.numberComments }} <i class="icon-chat-1"></i></a></span>
-                                </div>
-                                <h2 class="post-title"><a href="">{{ post.title }}</a></h2>
-                                {{ post.content | slice(0, 200) | raw }}
-                            </div>
                             <div class="divide40"></div>
-                            <div>
-                                {% for tag in tags %}
-                                    {% for singleTag in tags_per_post %}
-                                        {% if ((singleTag.tag == tag.name) and (singleTag.id == post.id)) %}
-                                            #{{ singleTag.tag}}
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endfor %}
-                            </div>
                         </div>
-                        {% endif %}
+                        {% endfor %}
                     </div>
-                    {% endfor %}
+
                 </div>
-                {% include('admin/dashboard/_partials/pagination.html.twig') %}
+                <div class="divide60"></div>
+                {# include('admin/dashboard/_partials/pagination.html.twig') #}
             </div>
             {{ include('front/blog/_partials/aside/index.html.twig')}}
         </div>

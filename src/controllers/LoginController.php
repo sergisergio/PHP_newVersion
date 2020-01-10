@@ -75,7 +75,6 @@ class LoginController extends Controller
                 if ($checkUser['roles'] == 1) {
                     $_SESSION['admin'] = $checkUser;
                     $array["role"] = 'admin';
-
                 } else {
                     $_SESSION['user'] = $checkUser;
                     $array["role"] = 'user';

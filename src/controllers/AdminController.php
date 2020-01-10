@@ -36,7 +36,7 @@ class AdminController extends Controller
      * METTRE A JOUR LA RUBRIQUE QUI-SUIS-JE ?
      *
      * - récupère titre et contenu via formulaire
-     * - vérifie que le token est bon
+     * - vérifie que le token CSRF est bon
      * - met à jour la description dans la base de données
      */
     public function updateAbout() {

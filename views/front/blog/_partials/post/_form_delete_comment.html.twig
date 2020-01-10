@@ -1,0 +1,9 @@
+<form id="deleteComment" method="post" action="?c=blogComment&t=deleteComment" class="delete-form" style="display:inline-block;">
+                                              <button type="submit" class="btn btn-danger" onclick="return confirm('Confirmer la suppression ?');" style="border:none;margin-top: 7px;">
+                                                <i class="icon-trash" style="color: #9cbc68;"></i>
+                                              </button>
+                                              <input type="hidden" name="id" id="id" value="{{ comment.id }}" />
+                                              <input type="hidden" name="postId" id="postId" value="{{ comment.post_id }}" />
+                                              <input type="hidden" name="userId" id="userId" value="{% if session.admin %}{{ session.admin.id }}{% else %}{{ session.user.id }}{% endif %}" />
+                                              <input type="hidden" name="delete_comment_token" id="delete_comment_token" value="{{ delete_comment_token }}" />
+                                            </form>

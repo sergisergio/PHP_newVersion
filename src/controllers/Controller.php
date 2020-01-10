@@ -6,10 +6,7 @@ namespace Controllers;
 use \Twig_Loader_Filesystem;
 use \Twig_Environment;
 use Models\Model;
-use Service\RegisterService;
 use Service\DebugService;
-//use PHPMailer\PHPMailer\PHPMailer;
-//use PHPMailer\PHPMailer\Exception;
 
 /**
  * CLASSE CONTROLLER
@@ -19,17 +16,13 @@ class Controller
     protected $twig;
     protected $model;
     protected $msg;
-    //protected $mail;
-    protected $registerService;
     protected $debugService;
 
     public function __construct()
     {
-        // démarrage session
         if (!session_id()) @session_start();
-        // messages Flash
         $this->msg = new \Plasticbrain\FlashMessages\FlashMessages();
-        // Configuration Twig
+
         $loader = new Twig_Loader_Filesystem('./views/');
         $this->twig = new Twig_Environment($loader, array(
             'cache' => false,
@@ -39,11 +32,9 @@ class Controller
         $this->twig->addGlobal('_get', $_GET);
         $this->twig->addGlobal('session', $_SESSION);
         $this->twig->getExtension(\Twig\Extension\CoreExtension::class)->setTimezone('Europe/Paris');
-        // Models
+
         $this->model = new Model;
-        $this->registerService = new RegisterService;
         $this->debugService = new DebugService;
-        //$this->mail = new PHPMailer(true);
     }
 
     // Redirection 404

@@ -96,9 +96,15 @@ class BlogController extends Controller
      * - récupération des commentaires liés à l'article
      */
     public function post() {
-        if (!isset($_SESSION['add_comment_token']) || ($_SESSION['add_comment_token'] == NULL)) {
-           $_SESSION['add_comment_token'] = bin2hex(openssl_random_pseudo_bytes(6));
-        }
+
+        $token = bin2hex(openssl_random_pseudo_bytes(6));
+        $_SESSION['add_comment_token'] = $token;
+        $_SESSION['update_comment_token'] = $token;
+        $_SESSION['delete_comment_token'] = $token;
+
+        // if (!isset($_SESSION['add_comment_token']) || ($_SESSION['add_comment_token'] == NULL)) {
+        //    $_SESSION['add_comment_token'] = bin2hex(openssl_random_pseudo_bytes(6));
+        // }
 
         if (isset($_GET['id']) && $post = $this->blogModel->getPostById($_GET['id'])) {
             if ($post['published'] || $this->isAdmin()) {
@@ -127,7 +133,9 @@ class BlogController extends Controller
                     'links'             => $links,
                     'sublinks'          => $sublinks,
                     'tags_per_post'     => $tags_per_post,
-                    'add_comment_token' => $_SESSION['add_comment_token'],
+                    'add_comment_token' => $token,
+                    'update_comment_token' => $token,
+                    'delete_comment_token' => $token,
                 ]);
             } else {
                 $this->redirect404();
@@ -153,10 +161,14 @@ class BlogController extends Controller
             $links = $this->linkModel->getAllLinks();
             $sublinks = $this->linkModel->getAllSublinks();
             $url = $this->getUrl();
+            $id= "";
             $tags_per_post = $this->blogModel->getTagsPerPost($id);
             $number = $this->blogModel->countSearchByCategoryRequest($category);
             $number = (int)$number;
             $number_of_pages = ceil($number/$results_per_page);
+            if ($number_of_pages == 0) {
+                $number_of_pages += 1;
+            }
             $posts = $this->paginationService->paginateCategory($category, $currentPage, $number_of_pages, $results_per_page);
             echo $this->twig->render('front/blog/_partials/category/index.html.twig', [
                 'posts'         => $posts,
@@ -195,6 +207,10 @@ class BlogController extends Controller
             $number = $this->blogModel->countSearchByTagRequest($tag);
             $number = (int)$number;
             $number_of_pages = ceil($number/$results_per_page);
+            if ($number_of_pages == 0) {
+                $number_of_pages += 1;
+            }
+            $id = "";
             $tags_per_post = $this->blogModel->getTagsPerPost($id);
 
             $posts = $this->paginationService->paginateTag($tag, $currentPage, $number_of_pages, $results_per_page);
