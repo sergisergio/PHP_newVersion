@@ -4,8 +4,12 @@
         <p></p>
         <div class="divide30"></div>
         <div class="form-container">
-            {{ message.display }}
-            <div class="response alert alert-success"></div>
+            {# message.display #}
+            <div id="alerte" class="alert alert-dismissible fade show" style="color: white;width: 70%;display: block !important;margin: 0 auto;border-radius:20px;">
+                <a href="#" class="close" aria-label="close" style="color:white;font-weight:800;font-size:30px;right: 0px;">&times;</a>
+                <p class="comments" style="text-align: center; font-weight: bold;"></p>
+            </div>
+            <div class="divide20"></div>
             {% include('front/home/_partials/contact/_form.html.twig') %}
         </div>
     </div>

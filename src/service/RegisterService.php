@@ -11,45 +11,86 @@ class RegisterService {
         $this->msg = new \Plasticbrain\FlashMessages\FlashMessages();
         $this->userModel = new User;
     }
-    public function checkRegister() {
-    // check if fields are empty
-        $email = strip_tags(htmlspecialchars($_POST['email']));
-        $username = strip_tags(htmlspecialchars($_POST['username']));
-        $password = strip_tags(htmlspecialchars($_POST['password']));
-        $passwordCheck = strip_tags(htmlspecialchars($_POST['passwordCheck']));
-        $mailExist = $this->userModel->checkUserByEmail($email);
-        $userExist = $this->userModel->checkUserByUsername($username);
-        if (empty($email) || empty($username) || empty($password) || empty($passwordCheck)) {
-            $this->msg->error("Tous les champs n'ont pas été remplis", self::getUrl());
-            // check if passwords match
-        } elseif ($password != $passwordCheck) {
-            $this->msg->error("Les mots de passe ne correspondent pas", self::getUrl());
-            // check if mail exist
-        } elseif ($mailExist) {
-            $this->msg->error("Adresse mail déjà utilisée", self::getUrl());
-            // check if user exist
-        } elseif ($userExist) {
-            $this->msg->error("Pseudo déjà utilisé", self::getUrl());
-        } else {
-            $data = [
-                'name'      => $_POST['username'],
-                'email'     => $_POST['email'],
-                'password'  => sha1($_POST['password']),
-                'roles'     => 0,
-                'active'    => 1,
-                'created_at' => (new \DateTime())->format('Y-m-d H:i:s')
-            ];
-            // create the user then redirect to "my account"
-            if ($this->userModel->setUser($data)) {
-                //TODO: redirect to "my account"
-                $this->msg->success("Compte créé", self::getUrl());
-            } else {
-                $this->msg->error("Une erreur s'est produite", self::getUrl());
-            }
-        }
-  }
+    public function checkRegistration($array, $email, $username, $password, $passwordCheck, $mailExist, $userExist) {
+            $array["error"] = "test !";
+            $array["isSuccess"] = false;
+        // if (empty($email) || empty($username) || empty($password) || empty($passwordCheck)) {
+        //     $array["error"] = "Veuillez remplir les champs !";
+        //     $array["isSuccess"] = false;
+        // } elseif ($password != $passwordCheck) {
+        //     $array["error"] = "Les mots de passe ne correspondent pas !";
+        //     $array["isSuccess"] = false;
+        // } elseif ($mailExist) {
+        //     $array["error"] = "Adresse mail déjà utilisée !";
+        //     $array["isSuccess"] = false;
+        // } elseif ($userExist) {
+        //     $array["error"] = "Pseudo déjà utilisé !";
+        //     $array["isSuccess"] = false;
+        // } elseif (!preg_match('/^[a-zA-Z0-9_@#&é§è!çà^¨$*`£ù%=+:\;.,?°<>]+$/', $username)) {
+        //     $array["error"] = "Votre pseudo n'est pas valide !";
+        //     $array["isSuccess"] = false;
+        // } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        //     $array["error"] = "Votre email n'est pas valide !";
+        //     $array["isSuccess"] = false;
+        // } elseif (strlen($username) < 5  || strlen($username) > 20) {
+        //     $array["error"] = "Votre pseudo doit faire entre 5 et 20 caractères !";
+        //     $array["isSuccess"] = false;
+        // } elseif (strlen($password) < 6 || strlen($password) > 50) {
+        //     $array["error"] = "Votre mot de passe doit faire entre 6 et 50 caractères !";
+        //     $array["isSuccess"] = false;
+        // }
+        return $array;
+    }
 
-  private static function getUrl(bool $referer = false) {
+    public function empty($array, $email, $username, $password, $passwordCheck) {
+        $array["error"] = "Veuillez remplir les champs !";
+        $array["isSuccess"] = false;
+        return $array;
+    }
+
+    public function notEqualPasswords($array, $password, $passwordCheck) {
+        $array["error"] = "Les mots de passe ne correspondent pas !";
+        $array["isSuccess"] = false;
+        return $array;
+    }
+
+    public function thisMailExist() {
+        $array["error"] = "Adresse mail déjà utilisée !";
+        $array["isSuccess"] = false;
+        return $array;
+    }
+
+    public function thisUserExist() {
+        $array["error"] = "Pseudo déjà utilisé !";
+        $array["isSuccess"] = false;
+        return $array;
+    }
+
+    public function validUsername($array, $username) {
+        $array["error"] = "Votre pseudo n'est pas valide !";
+        $array["isSuccess"] = false;
+        return $array;
+    }
+
+    public function validEmail($array, $email) {
+        $array["error"] = "Votre email n'est pas valide !";
+        $array["isSuccess"] = false;
+        return $array;
+    }
+
+    public function checkLengthUsername($array, $username) {
+        $array["error"] = "Votre pseudo doit faire entre 5 et 20 caractères !";
+        $array["isSuccess"] = false;
+        return $array;
+    }
+
+    public function checkLengthPassword($array, $password) {
+        $array["error"] = "Votre mot de passe doit faire entre 6 et 50 caractères !";
+        $array["isSuccess"] = false;
+        return $array;
+    }
+
+    private static function getUrl(bool $referer = false) {
         if ($referer == true) {
             return $_SERVER['HTTP_REFERER'];
         } else {

@@ -8,6 +8,9 @@ $(function() {
     $('.close').on('click', function(e){
         $('#alert2').hide();
     });
+    $("#lien_connexion").on('click', function(e){
+        $('#inscription').modal('hide');
+    });
     $(".p-viewer-password").on('click', function() {
       var state = $('.fa').attr('class');
       if (state == 'fa fa-eye') {

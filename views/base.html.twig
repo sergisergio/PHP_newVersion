@@ -38,11 +38,7 @@
 
 </head>
 <body class="full-layout">
-    <!--<div id="preloader">
-        <div id="status">
-            <div class="loadcircle"></div>
-        </div>
-    </div>-->
+    {% block circle %}{% endblock %}
     <div class="body-wrapper">
     {% block nav %}{% endblock %}
 
@@ -56,6 +52,7 @@
     <script src="../assets/js/jquery.min.js"></script>
     <script src="../assets/js/login.js"></script>
     <script src="../assets/js/signup.js"></script>
+    <script src="../assets/js/contact.js"></script>
     <script src="../assets/js/bootstrap.min.js"></script>
     <script src="../assets/js/jquery.themepunch.tools.min.js"></script>
     <script src="../assets/js/classie.js"></script>
@@ -85,16 +82,23 @@
     ga('send', 'pageview');
     </script>
     {% if session.user != null or session.admin != null %}
-    <script>
-    </script>
     <script src="https://cdn.tiny.cloud/1/bu5ham6xychsfqjny6a3sxl6r73e1wt3lyjl93m2p8sodbnj
 /tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-    <script>tinymce.init({selector:'.textarea'});</script>
+    <script>tinymce.init({
+      selector:'.textarea',
+      plugins: [
+        'advlist autolink link image imagetools media lists charmap print preview hr anchor pagebreak spellchecker',
+        'searchreplace wordcount visualblocks visualchars code advcode fullscreen insertdatetime media nonbreaking',
+        'table emoticons template paste help'
+      ],
+      toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent | bullist numlist | emoticons | code",
+      menubar: 'favs file edit view insert format tools table help',
+      encoding: 'xml',
+      entity_encoding: 'raw',
+      entities: '160,nbsp',
+      language : 'fr_FR',
+    });</script>
     {% endif %}
-    <script>
-
-
-    </script>
     {% block js %}{% endblock %}
 </body>
 </html>

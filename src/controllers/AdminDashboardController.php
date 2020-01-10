@@ -76,6 +76,11 @@ class AdminDashboardController extends AdminController
     }
     /*
      * AFFICHER LES ARTICLES
+     *
+     * - met en place les tokens CSRF pour le CRUD d'un article
+     * - récupération des articles et pagination
+     * - récupération des catégories
+     * - récupération des tags
      */
     public function index() {
 
@@ -96,11 +101,12 @@ class AdminDashboardController extends AdminController
         if ($number_of_pages == 0) {
             $number_of_pages += 1;
         }
-
         $posts = $this->paginationService->paginate($currentPage, $number_of_pages, $results_per_page);
         $categories = $this->categoryModel->getAllCategories();
         $tags = $this->tagModel->getAllTags();
+        $id = "";
         $tags_per_post = $this->blogModel->getTagsPerPost($id);
+
         echo $this->twig->render('admin/dashboard/posts/index.html.twig', [
             'message'            => $this->msg,
             'posts'              => $posts,
@@ -118,6 +124,9 @@ class AdminDashboardController extends AdminController
     }
     /*
      * AFFICHER LES MEMBRES
+     *
+     * - met en place les tokens CSRF pour le CRUD des membres
+     * - récupération des membres et pagination
      */
     public function users() {
         if (!isset($_SESSION['update_user_token']) || ($_SESSION['update_user_token'] == NULL)) {
@@ -134,7 +143,6 @@ class AdminDashboardController extends AdminController
         if ($number_of_pages == 0) {
             $number_of_pages += 1;
         }
-
         $users = $this->paginationService->paginateUser($currentPage, $number_of_pages, $results_per_page);
 
         echo $this->twig->render('admin/dashboard/users/users.html.twig', [
@@ -149,6 +157,9 @@ class AdminDashboardController extends AdminController
     }
     /*
      * AFFICHER LES CATEGORIES
+     *
+     * - met en place les tokens CSRF du CRUD des catégories
+     * - récupération des catégories et pagination
      */
     public function categories() {
         if (!isset($_SESSION['add_category_token']) || ($_SESSION['add_category_token'] == NULL)) {
@@ -167,7 +178,6 @@ class AdminDashboardController extends AdminController
         if ($number_of_pages == 0) {
             $number_of_pages += 1;
         }
-
         $categories = $this->paginationService->paginateCategoryAdmin($currentPage, $number_of_pages, $results_per_page);
 
         echo $this->twig->render('admin/dashboard/categories/categories.html.twig', [
@@ -183,12 +193,15 @@ class AdminDashboardController extends AdminController
     }
     /*
      * AFFICHER LES COMMENTAIRES
+     *
+     * - met en place les tokens CSRF du CRUD des commentaires
+     * - récupération des commentaires
      */
     public function comments() {
         if (!isset($_SESSION['delete_comment_token']) || ($_SESSION['delete_comment_token'] == NULL)) {
            $_SESSION['delete_comment_token'] = bin2hex(openssl_random_pseudo_bytes(6));
         }
-        $_SESSION['delete_comment_token'] = $delete_comment_token;
+        $delete_comment_token = $_SESSION['delete_comment_token'];
         $currentPage = intval($_GET['page']);
         $results_per_page = 10;
         $number_of_comments = $this->commentModel->getNumberComments();
@@ -209,6 +222,9 @@ class AdminDashboardController extends AdminController
     }
     /*
      * AFFICHER LES TAGS
+     *
+     * - met en place les tokens CSRF des tags
+     * - récupération des tags et pagination
      */
     public function tags() {
         if (!isset($_SESSION['add_tag_token']) || ($_SESSION['add_tag_token'] == NULL)) {
@@ -243,6 +259,10 @@ class AdminDashboardController extends AdminController
     }
     /*
      * AFFICHER LES PROJETS
+     *
+     * - met en place les tokens CSRF du CRUD des projets
+     * - récupération des catégories
+     * - récupération des projets et pagination
      */
     public function projects() {
         if (!isset($_SESSION['add_project_token']) || ($_SESSION['add_project_token'] == NULL)) {
@@ -278,6 +298,9 @@ class AdminDashboardController extends AdminController
     }
     /**
      * METTRE A JOUR LA CONFIGURATION
+     *
+     * récupère le nombre d'articles par page et le nombre de caractères par chapo
+     * met à jour la table config
      */
     public function editConfig() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['edit_config'])) {

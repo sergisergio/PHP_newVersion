@@ -35,6 +35,15 @@ class BlogController extends Controller
     }
     /**
      * AFFICHER LA PAGE PRINCIPALE
+     *
+     * - récupère le type d'affichage désiré
+     * - récupération des articles et pagination
+     * - récupération des 3 articles les plus commentés
+     * - récupération des catégories
+     * - récupération des tags
+     * - récupération des liens
+     * - récupération des sous-liens
+     * - récupération des tags par article
      */
     public function index() {
         $view = $_GET['v'];
@@ -43,9 +52,7 @@ class BlogController extends Controller
         $number_of_posts = $this->blogModel->getNumberOfPosts();
         $number_of_pages = ceil($number_of_posts/$results_per_page);
         $url = $this->getUrl();
-
         $posts = $this->paginationService->paginate($currentPage, $number_of_pages, $results_per_page);
-
         $populars = $this->blogModel->getMostSeens();
         $categories = $this->categoryModel->getAllCategories();
         $tags = $this->tagModel->getAllTags();
@@ -81,10 +88,16 @@ class BlogController extends Controller
     }
     /*
      * AFFICHER UN ARTICLE EN PARTICULIER
+     *
+     * - met en place un token CSRF pour l'ajout d'un commentaire
+     * - récupération de l'article avec son identifiant
+     * - récupération des catégories, tags, populaires, liens, sous-liens et tags par article
+     * - récupération des commentaires liés à l'article
      */
     public function post() {
-        $add_comment_token = $this->securityService->str_random(100);
-        $_SESSION['add_comment_token'] = $add_comment_token;
+        if (!isset($_SESSION['add_comment_token']) || ($_SESSION['add_comment_token'] == NULL)) {
+           $_SESSION['add_comment_token'] = bin2hex(openssl_random_pseudo_bytes(6));
+        }
 
         if (isset($_GET['id']) && $post = $this->blogModel->getPostById($_GET['id'])) {
             if ($post['published'] || $this->isAdmin()) {
@@ -101,18 +114,18 @@ class BlogController extends Controller
                     $comments = null;
                 }
                 echo $this->twig->render('front/blog/_partials/post/index.html.twig', [
-                    'post'        => $post,
-                    'comments'    => $comments,
-                    'message'     => $this->msg,
-                    'maxLength'   => $this->configModel->getConfig()['characters'],
-                    'categories'  => $categories,
-                    'tags'        => $tags,
-                    'populars'    => $populars,
-                    'subcomments' => $subcomments,
-                    'links'       => $links,
-                    'sublinks'    => $sublinks,
-                    'tags_per_post' => $tags_per_post,
-                    'add_comment_token' => $add_comment_token,
+                    'post'              => $post,
+                    'comments'          => $comments,
+                    'message'           => $this->msg,
+                    'maxLength'         => $this->configModel->getConfig()['characters'],
+                    'categories'        => $categories,
+                    'tags'              => $tags,
+                    'populars'          => $populars,
+                    'subcomments'       => $subcomments,
+                    'links'             => $links,
+                    'sublinks'          => $sublinks,
+                    'tags_per_post'     => $tags_per_post,
+                    'add_comment_token' => $_SESSION['add_comment_token'],
                 ]);
             } else {
                 $this->redirect404();
@@ -123,6 +136,9 @@ class BlogController extends Controller
     }
     /**
      * RECUPERER LES ARTICLES PAR CATEGORIE
+     *
+     * - récupération des articles populaires, catégories, tags, liens, sous-liens et tags par article
+     * - récupération des articles par catégorie et pagination
      */
     public function getPostsByCategory($category) {
         $category = isset($_GET['category']) ? $_GET['category'] : '';
@@ -136,7 +152,6 @@ class BlogController extends Controller
             $sublinks = $this->linkModel->getAllSublinks();
             $url = $this->getUrl();
             $tags_per_post = $this->blogModel->getTagsPerPost($id);
-            //$posts = $this->blogModel->searchByCategory($category);
             $number = $this->blogModel->countSearchByCategoryRequest($category);
             $number = (int)$number;
             $number_of_pages = ceil($number/$results_per_page);
@@ -159,6 +174,9 @@ class BlogController extends Controller
     }
     /**
      * RECUPERER LES ARTICLES PAR TAG
+     *
+     * - récupération des articles populaires, catégories, tags, liens, sous-liens et tags par article
+     * - récupération des articles par tag et pagination
      */
     public function getPostsByTag($tag) {
         $tag = isset($_GET['tag']) ? $_GET['tag'] : '';

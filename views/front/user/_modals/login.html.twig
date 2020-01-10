@@ -10,7 +10,7 @@
                   </div>
                   <div class="modal-body">
                     <div class="divide20"></div>
-                    <form id="loginForm" class="m-t" role="form" action="?c=login" method="post" novalidate>
+                    <form id="loginForm" class="m-t form-horizontal" role="form" action="?c=login" method="post" novalidate>
                       <fieldset>
                           <div class="row">
                               {# message.display #}
@@ -39,18 +39,11 @@
                                         <i class="fa fa-eye" aria-hidden="true"></i>
                                       </span>
                                   </div>
-                                  <style>
-                                    .pwd {
-                                      position: relative;
-                                    }
-                                    .p-viewer {
-                                      z-index: 9999;
-                                      position: absolute;
-                                      top: 40%;
-                                      right: 10px;
-                                    }
-                                  </style>
-                              </div>
+                                  <div class="checkbox">
+                                        <label for="remember-me" style="margin-left: 5px;">Se souvenir de moi
+                                        <input class="btn" style="margin-top: -19px" type="checkbox" name="remember" id="remember-me" checked  ?>
+                                        </label>
+                                  </div>
                               <div class="col-sm-6 col-xs-6">
                                   <div class="button-row pull-right">
                                       <input id='login_button' type="submit" value="Connexion" name="submit" class="btn btn-submit bm0" />
@@ -66,7 +59,7 @@
                       </fieldset>
                   </form>
                   <div class="divide40"></div>
-                  <p style="text-align: center;">Pas de compte ? <a href="" data-toggle="modal" data-target="#inscription">Inscrivez-vous !</a></p>
+                  <p style="text-align: center;">Pas de compte ? <a id="lien_inscription" href="" data-toggle="modal" data-target="#inscription">Inscrivez-vous !</a></p>
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>

@@ -8,8 +8,8 @@ use \Twig_Environment;
 use Models\Model;
 use Service\RegisterService;
 use Service\DebugService;
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+//use PHPMailer\PHPMailer\PHPMailer;
+//use PHPMailer\PHPMailer\Exception;
 
 /**
  * CLASSE CONTROLLER
@@ -19,7 +19,7 @@ class Controller
     protected $twig;
     protected $model;
     protected $msg;
-    protected $mail;
+    //protected $mail;
     protected $registerService;
     protected $debugService;
 
@@ -43,7 +43,7 @@ class Controller
         $this->model = new Model;
         $this->registerService = new RegisterService;
         $this->debugService = new DebugService;
-        $this->mail = new PHPMailer(true);
+        //$this->mail = new PHPMailer(true);
     }
 
     // Redirection 404

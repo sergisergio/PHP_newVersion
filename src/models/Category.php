@@ -53,7 +53,7 @@ class Category extends Model
      *
      * SUPPRIMER UNE CATEGORIE
      */
-    public function deletecategory(int $id) {
+    public function deletecategory($id) {
         $req = $this->db->prepare('
             DELETE
             FROM category

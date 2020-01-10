@@ -20,10 +20,20 @@ class HomeContactController extends Controller
      * ENVOI DE MESSAGE SUR MA BOITE MAIL
      */
     public function send() {
+        $array = [
+            "name"      => "",
+            "email"     => "",
+            "subject"   => "",
+            "message"   => "",
+            "error"     => "",
+            "success"   => "",
+            "isSuccess" => false,
+        ];
+
         if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['subject']) || empty($_POST['message'])) {
-            echo 'Veuillez remplir tous les champs !';
+            $array["error"] = "Veuillez remplir les champs !";
         } elseif (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-            $this->msg->error("Veuillez entrer un email valide ! ");
+            $array["error"] = "Veuillez entrer un email valide ! !";
         } else {
             $name = strip_tags(htmlspecialchars($_POST['name']));
             $email = strip_tags(htmlspecialchars($_POST['email']));
@@ -32,7 +42,9 @@ class HomeContactController extends Controller
             $address = $_SERVER['REMOTE_ADDR'];
             $body = '<p>Nom: '.$name.'</p><br/><p>Adresse IP: '.$address.'</p><br><p>Email: '.$email.'</p><br><p>Sujet: '.$subject.'</p><br><p>Message: '.$message.'</p>';
             $this->mailService->sendToMe($name, $email, $subject, $message, $address, $body);
-            echo 'Votre message a bien été envoyé';die();
+            $array["success"] = "Votre message a bien été envoyé ! !";
+            $array['isSuccess'] = true;
         }
+        echo json_encode($array);
     }
 }

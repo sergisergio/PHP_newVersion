@@ -7,6 +7,7 @@ use Models\Category;
 use Models\Image;
 use Models\Tag;
 use Service\UploadService;
+use Service\SecurityService;
 
 /**
  * classe AdminPostsController
@@ -20,6 +21,7 @@ class AdminPostsController extends Controller
     protected $imageModel;
     protected $tagModel;
     protected $uploadService;
+    protected $securityService;
     /**
      * Constructeur
      *
@@ -37,13 +39,22 @@ class AdminPostsController extends Controller
         $this->imageModel = new Image;
         $this->tagModel = new Tag;
         $this->uploadService = new UploadService;
+        $this->securityService = new SecurityService;
     }
     /**
      * AJOUTER UN ARTICLE
+     *
+     * - récupère titre, contenu, image, tag, auteur via formulaire
+     * - vérifie que le token CSRF est bon
+     * - upload de l'image dans un dossier propre au projet
+     * - ajout de l'article en base de données
+     * - ajout d'une catégorie liée à l'article en base de données
+     * - définit le nombre d'articles reliés à une catégorie
+     * - lie les tags à l'article
      */
     public function addPost() {
-        $add_post_token = $_POST['add_post_token'];
-
+        $session_token = $_SESSION['add_post_token'];
+        $token = $_POST['add_post_token'];
         $title = htmlspecialchars($_POST['title']);
         $content =  html_entity_decode($_POST['content']);
         $category = htmlspecialchars($_POST['category']);
@@ -55,8 +66,8 @@ class AdminPostsController extends Controller
         $file_extension_size = $_FILES['file_extension']['size'];
         $file_extension_tmp = $_FILES['file_extension']['tmp_name'];
 
-        if (isset($_SESSION['add_post_token']) AND isset($add_post_token) AND !empty($_SESSION['add_post_token']) AND !empty($add_post_token)) {
-            if ($_SESSION['add_post_token'] == $add_post_token) {
+        if ($this->securityService->checkCsrf($token, $session_token)) {
+            if (isset($title) && isset($content)) {
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $imageId = $this->uploadService->uploadPost($file_extension, $file_extension_error, $file_extension_size, $file_extension_tmp, $image, $title);
                     $data = [
@@ -75,12 +86,12 @@ class AdminPostsController extends Controller
                         foreach ($tag as $singleTag) {
                             $this->tagModel->linkTagsToPost($singleTag, $last_id);
                         }
-                        //$this->msg->success("L'article a bien été ajouté !", $this->getUrl());
+                        $this->msg->success("L'article a bien été ajouté !", $this->getUrl());
                         header('Location: ' . '?c=adminDashboard&page=1');
                         exit;
 
                     } else {
-                        //$this->msg->error("L'article n'a pas pu être ajouté.", $this->getUrl());
+                        $this->msg->error("L'article n'a pas pu être ajouté.", $this->getUrl());
                         header('Location: ' . '?c=adminDashboard&page=1');
                         exit;
                     }
@@ -97,10 +108,17 @@ class AdminPostsController extends Controller
     }
     /**
      * MODIFIER UN ARTICLE
+     *
+     * - récupération du titre, contenu, catégorie, image, identifiant et auteur
+     * - vérifie que le token CSRF est bon
+     * - met à jour l'image
+     * - met à jour l'article
+     * - met à jour la catégorie liée à l'article
+     * - met à jour les tags liés au post
      */
     public function updatePost() {
-        $update_post_token = $_POST['update_post_token'];
-
+        $session_token = $_SESSION['update_post_token'];
+        $token = $_POST['update_post_token'];
         $title = htmlspecialchars($_POST['title']);
         $content =  html_entity_decode($_POST['content']);
         $category = htmlspecialchars($_POST['category']);
@@ -113,43 +131,36 @@ class AdminPostsController extends Controller
         $file_extension_size = $_FILES['file_extension']['size'];
         $file_extension_tmp = $_FILES['file_extension']['tmp_name'];
 
-        if (isset($_SESSION['update_post_token']) AND isset($update_post_token) AND !empty($_SESSION['update_post_token']) AND !empty($update_post_token)) {
-            if ($_SESSION['update_post_token'] == $update_post_token) {
+        if ($this->securityService->checkCsrf($token, $session_token)) {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                $imageId = $this->uploadService->uploadPost($file_extension, $file_extension_error, $file_extension_size, $file_extension_tmp, $image, $title);
+                $data = [
+                        'title'         => $title,
+                        'content'       => $content,
+                        'user_id'       => $user_id,
+                        'img_id'        => $imageId,
+                        'published'     => 1,
+                        'id'            => $id,
+                    ];
 
-                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                    $imageId = $this->uploadService->uploadPost($file_extension, $file_extension_error, $file_extension_size, $file_extension_tmp, $image, $title);
-                    $data = [
-                            'title'         => $title,
-                            'content'       => $content,
-                            'user_id'       => $user_id,
-                            'img_id'        => $imageId,
-                            'published'     => 1,
-                            'id'            => $id,
-                        ];
-
-                    if ($this->blogModel->updatePost($data)) {
-                        $this->categoryModel->deleteCategoryToPost($id);
-                        $this->categoryModel->addCategoryToPost($category, $id);
-                        $this->tagModel->deleteTagsToPost($id);
-                        foreach ($tag as $singleTag) {
-                            $this->tagModel->linkTagsToPost($singleTag, $id);
-                        }
-                        $this->msg->success("L'article a bien été modifié !");
-                        header('Location: ' . '?c=adminDashboard&page=1');
-                        exit;
-
-                    } else {
-                        $this->msg->error("L'article n'a pas pu être modifié.");
-                        header('Location: ' . '?c=adminDashboard&page=1');
-                        exit;
+                if ($this->blogModel->updatePost($data)) {
+                    $this->categoryModel->deleteCategoryToPost($id);
+                    $this->categoryModel->addCategoryToPost($category, $id);
+                    $this->tagModel->deleteTagsToPost($id);
+                    foreach ($tag as $singleTag) {
+                        $this->tagModel->linkTagsToPost($singleTag, $id);
                     }
+                    $this->msg->success("L'article a bien été modifié !");
+                    header('Location: ' . '?c=adminDashboard&page=1');
+                    exit;
                 } else {
+                    $this->msg->error("L'article n'a pas pu être modifié.");
                     header('Location: ' . '?c=adminDashboard&page=1');
                     exit;
                 }
-
             } else {
-                $this->msg->error("Une erreur est survenue !", $this->getUrl(true));
+                header('Location: ' . '?c=adminDashboard&page=1');
+                exit;
             }
         } else {
             $this->msg->error("Une erreur est survenue !", $this->getUrl(true));
@@ -157,42 +168,42 @@ class AdminPostsController extends Controller
     }
     /**
      * SUPPRIMER UN ARTICLE
+     *
+     * - récupère l'identifiant de l'article
+     * - vérifie que le token CSRF est bon
+     * - supprime l'article ainsi que son image
      */
     public function deletePost() {
+        $session_token = $_SESSION['delete_post_token'];
         $delete_post_token = $_POST['delete_post_token'];
+        $postId = $_POST['postId'];
 
-        if (isset($_SESSION['delete_post_token']) AND isset($delete_post_token) AND !empty($_SESSION['delete_post_token']) AND !empty($delete_post_token)) {
-            if ($_SESSION['delete_post_token'] == $delete_post_token) {
-                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                    $postId = $_POST['postId'];
-                    if (isset($postId) && $post = $this->blogModel->getPostById($_POST['postId'])) {
-                        $category = $post['category'];
-                        $imageId = $post['img_id'];
-
-                        if ($this->blogModel->deletePost($post['id'])) {
-                            if ($imageId != 14) {
-                                $this->imageModel->deleteImage($imageId);
-                            }
-                            $this->categoryModel->minusNumberPosts($category);
-                            $this->msg->success("L'article a bien été supprimé");
-                            header('Location: ?c=adminDashboard&page=1');
-                            exit;
-                        } else {
-                            $this->msg->error("L'article n'a pas pu être supprimé");
-                            header('Location: ?c=adminDashboard&page=1');
-                            exit;
+        if ($this->securityService->checkCsrf($token, $session_token)) {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                if (isset($postId) && $post = $this->blogModel->getPostById($_POST['postId'])) {
+                    $category = $post['category'];
+                    $imageId = $post['img_id'];
+                    if ($this->blogModel->deletePost($post['id'])) {
+                        if ($imageId != 14) {
+                            $this->imageModel->deleteImage($imageId);
                         }
+                        $this->categoryModel->minusNumberPosts($category);
+                        $this->msg->success("L'article a bien été supprimé");
+                        header('Location: ?c=adminDashboard&page=1');
+                        exit;
                     } else {
-                        $this->msg->error("L'article n'existe pas", $this->getUrl());
+                        $this->msg->error("L'article n'a pas pu être supprimé");
                         header('Location: ?c=adminDashboard&page=1');
                         exit;
                     }
                 } else {
+                    $this->msg->error("L'article n'existe pas", $this->getUrl());
                     header('Location: ?c=adminDashboard&page=1');
                     exit;
                 }
             } else {
-                $this->msg->error("Une erreur est survenue !", $this->getUrl(true));
+                header('Location: ?c=adminDashboard&page=1');
+                exit;
             }
         } else {
             $this->msg->error("Une erreur est survenue !", $this->getUrl(true));
@@ -201,6 +212,10 @@ class AdminPostsController extends Controller
 
     /**
      * PUBLIER OU DEPUBLIER UN ARTICLE
+     *
+     * - récupère l'identifiant et le statut de l'article
+     * - publie l'article si celui-ci est dépublié
+     * - dépublie l'article si celui-ci est publié
      */
     public function togglePublished() {
         $published = $_GET['g'];

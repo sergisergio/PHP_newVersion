@@ -2,6 +2,16 @@
 
 {% block nav %}{% include('front/_partials/nav.html.twig') %}{% endblock %}
 
+{% block circle %}
+
+    <div id="preloader">
+        <div id="status">
+            <div class="loadcircle"></div>
+        </div>
+    </div>
+
+{% endblock %}
+
 {% block header %}{{ include('front/home/_partials/header/header.html.twig') }}{% endblock %}
 
 {# Main content #}
@@ -21,8 +31,11 @@
 
 {% endblock %}
 
+{% block footer %}{{ include('front/_partials/footer.html.twig') }}{% endblock %}
+
 {% block js %}
   {{ parent() }}
+
   <script>
     $(window).scroll(function() {
         if ($(window).scrollTop() > 2450) { // scroll down abit and get the action

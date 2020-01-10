@@ -8,6 +8,7 @@ use Models\Image;
 use Models\Tag;
 use Models\Project;
 use Service\UploadService;
+use Service\SecurityService;
 
 /**
  * classe AdminProjectsController
@@ -22,6 +23,7 @@ class AdminProjectsController extends Controller
     protected $tagModel;
     protected $projectModel;
     protected $uploadService;
+    protected $securityService;
     /**
      * Constructeur
      *
@@ -40,15 +42,21 @@ class AdminProjectsController extends Controller
         $this->tagModel = new Tag;
         $this->projectModel = new Project;
         $this->uploadService = new UploadService;
+        $this->securityService = new SecurityService;
     }
 
     /**
      * AJOUTER UN PROJET
+     *
+     * - récupère titre, lien, contenu, catégorie, image et statut
+     * - vérifie que le token CSRF est bon
+     * - ajoute l'image dans un dossier propre au projet
+     * - ajoute le projet
+     * - ajoute une catégorie liée au projet
      */
     public function addProject() {
-        $token = $_SESSION['add_project_token'];
-        $add_project_token = $_POST['add_project_token'];
-
+        $session_token = $_SESSION['add_project_token'];
+        $token = $_POST['add_project_token'];
         $title = htmlspecialchars($_POST['title']);
         $link = htmlspecialchars($_POST['link']);
         $content =  html_entity_decode($_POST['content']);
@@ -61,33 +69,23 @@ class AdminProjectsController extends Controller
         $file_extension_tmp = $_FILES['file_extension']['tmp_name'];
 
 
-        if (isset($token) AND isset($add_project_token) AND !empty($token) AND !empty($add_project_token)) {
-            if ($token == $add_project_token) {
-                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                    $imageId = $this->uploadService->uploadProject($file_extension, $file_extension_error, $file_extension_size, $file_extension_tmp, $image, $title);
-                    $data = [
-                            'title'         => $title,
-                            'link'          => $link,
-                            'content'       => $content,
-                            'img_id'        => $imageId,
-                            'published'     => $published,
-                        ];
+        if ($this->securityService->checkCsrf($token, $session_token)) {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                $imageId = $this->uploadService->uploadProject($file_extension, $file_extension_error, $file_extension_size, $file_extension_tmp, $image, $title);
+                $data = [
+                    'title'         => $title,
+                    'link'          => $link,
+                    'content'       => $content,
+                    'img_id'        => $imageId,
+                    'published'     => $published,
+                    ];
 
-                    if ($this->projectModel->setProject($data)) {
-                        $last_id = $this->projectModel->getLastId();
-                        $this->categoryModel->addCategoryToProject($category, $last_id);
-                        $this->msg->success("Le projet a bien été ajouté !", $this->getUrl(true));
-                        // header('Location: ' . '?c=adminDashboard&page=1');
-                        // exit;
-
-                    } else {
-                        //$this->msg->error("L'article n'a pas pu être ajouté.", $this->getUrl());
-                        header('Location: ' . '?c=adminDashboard&page=1');
-                        exit;
-                    }
+                if ($this->projectModel->setProject($data)) {
+                    $last_id = $this->projectModel->getLastId();
+                    $this->categoryModel->addCategoryToProject($category, $last_id);
+                    $this->msg->success("Le projet a bien été ajouté !", $this->getUrl(true));
                 } else {
-                    header('Location: ' . '?c=adminDashboard&page=1');
-                    exit;
+                    $this->msg->error("L'article n'a pas pu être ajouté.", $this->getUrl(true));
                 }
             }
         } else {
@@ -97,48 +95,46 @@ class AdminProjectsController extends Controller
 
     /**
      * MODIFIER UN PROJET
+     *
+     * - récupère identifiant, titre, contenu, catégorie et image
+     * - vérifie que le token CSRF est bon
+     * - upload l'image dans un dossier propre au projet
+     * - met à jour le projet
+     * - met à jour la catégorie liée au projet
      */
     public function updateProject() {
-        $token = $_SESSION['update_project_token'];
-        $update_project_token = $_POST['update_project_token'];
-
+        $session_token = $_SESSION['update_project_token'];
+        $token = $_POST['update_project_token'];
         $id = htmlspecialchars($_POST['id']);
         $title = htmlspecialchars($_POST['title']);
         $content =  html_entity_decode($_POST['content']);
         $category = htmlspecialchars($_POST['category']);
         $image = htmlspecialchars($_FILES['file_extension']['name']);
         $id = htmlspecialchars($_POST['id']);
-        $tag = $_POST['tag'];
         $file_extension = $_FILES['file_extension'];
         $file_extension_error = $_FILES['file_extension']['error'];
         $file_extension_size = $_FILES['file_extension']['size'];
         $file_extension_tmp = $_FILES['file_extension']['tmp_name'];
 
-        if (isset($token) AND isset($update_project_token) AND !empty($token) AND !empty($update_project_token)) {
-            if ($token == $update_project_token) {
-                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                    $imageId = $this->uploadService->uploadProject($file_extension, $file_extension_error, $file_extension_size, $file_extension_tmp, $image, $title);
-                    $data = [
-                            'title'         => $title,
-                            'link'          => $link,
-                            'content'       => $content,
-                            'img_id'        => $imageId,
-                            'published'     => 1,
-                            'id'            => $id,
-                        ];
+        if ($this->securityService->checkCsrf($token, $session_token)) {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                $imageId = $this->uploadService->uploadProject($file_extension, $file_extension_error, $file_extension_size, $file_extension_tmp, $image, $title);
+                $data = [
+                    'title'         => $title,
+                    'link'          => $link,
+                    'content'       => $content,
+                    'img_id'        => $imageId,
+                    'published'     => 1,
+                    'id'            => $id,
+                    ];
 
-                    if ($this->projectModel->updateProject($data)) {
-                        $this->categoryModel->updateCategoryToProject($category, $id);
-                        $this->msg->success("Le projet a bien été modifié !");
-                        header('Location: ' . '?c=adminDashboard&t=projects&page=1');
-                        exit;
-
-                    } else {
-                        $this->msg->error("L'article n'a pas pu être modifié.");
-                        header('Location: ' . '?c=adminDashboard&page=1');
-                        exit;
-                    }
+                if ($this->projectModel->updateProject($data)) {
+                    $this->categoryModel->updateCategoryToProject($category, $id);
+                    $this->msg->success("Le projet a bien été modifié !");
+                    header('Location: ' . '?c=adminDashboard&t=projects&page=1');
+                    exit;
                 } else {
+                    $this->msg->error("L'article n'a pas pu être modifié.");
                     header('Location: ' . '?c=adminDashboard&page=1');
                     exit;
                 }
@@ -150,35 +146,33 @@ class AdminProjectsController extends Controller
 
     /**
      * SUPPRIMER UN PROJET
+     *
+     * - récupère l'identifiant du projet
+     * - vérifie que le token CSRF est bon
+     * - supprime le projet de la base de données
      */
     public function deleteProject() {
-        $token = $_SESSION['delete_project_token'];
-        $delete_project_token = $_POST['delete_project_token'];
+        $session_token = $_SESSION['delete_project_token'];
+        $token = $_POST['delete_project_token'];
+        $id = $_POST['projectId'];
 
-        if (isset($token) AND isset($delete_project_token) AND !empty($token) AND !empty($delete_project_token)) {
-            if ($token == $delete_project_token) {
-                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                    $id = $_POST['projectId'];
-                    if (isset($id) && $project = $this->projectModel->getProjectById($id)) {
-                        $imageId = $project['img_id'];
+        if ($this->securityService->checkCsrf($token, $session_token)) {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                if (isset($id) && $project = $this->projectModel->getProjectById($id)) {
+                    $imageId = $project['img_id'];
 
-                        if ($this->projectModel->deleteProject($project['id'])) {
-                            //if ($imageId != 14) {
-                            //    $this->imageModel->deleteImage($imageId);
-                            //}
-                            //$this->categoryModel->minusNumberPosts($category);
-                            $this->msg->success("Le projet a bien été supprimé");
-                            header('Location: ?c=adminDashboard&t=projects&page=1');
-                            exit;
-                        } else {
-                            $this->msg->error("Le projet n'a pas pu être supprimé");
-                            header('Location: ?c=adminDashboard&t=projects&page=1');
-                            exit;
-                        }
+                    if ($this->projectModel->deleteProject($project['id'])) {
+                        //if ($imageId != 14) {
+                        //    $this->imageModel->deleteImage($imageId);
+                        //}
+                        //$this->categoryModel->minusNumberPosts($category);
+                        $this->msg->success("Le projet a bien été supprimé");
+                        header('Location: ?c=adminDashboard&t=projects&page=1');
+                        exit;
                     } else {
-                        $this->msg->error("Le projet n'existe pas", $this->getUrl(true));
-                        //header('Location: ?c=adminDashboard&t=projects&page=1');
-                        //exit;
+                        $this->msg->error("Le projet n'a pas pu être supprimé");
+                        header('Location: ?c=adminDashboard&t=projects&page=1');
+                        exit;
                     }
                 } else {
                     header('Location: ?c=adminDashboard&page=1');
@@ -188,8 +182,6 @@ class AdminProjectsController extends Controller
         } else {
             $this->msg->error("Une erreur est survenue !", $this->getUrl(true));
         }
-
-
     }
 
     /**

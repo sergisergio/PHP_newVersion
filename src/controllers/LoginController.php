@@ -5,6 +5,10 @@ namespace Controllers;
 use Models\User;
 use Models\Security;
 use Service\SecurityService;
+use Service\LoginService;
+use Service\RegisterService;
+use Service\MailService;
+
 
 /**
  * CLASSE GERANT L'INSCRIPTION, LA CONNEXION ET LA DECONNEXION
@@ -14,34 +18,38 @@ class LoginController extends Controller
     protected $userModel;
     protected $securityModel;
     protected $securityService;
+    protected $loginService;
+    protected $registerService;
+    protected $mailService;
 
     public function __construct() {
         parent::__construct();
         $this->userModel = new User;
         $this->securityModel = new Security;
         $this->securityService = new SecurityService;
+        $this->loginService = new LoginService;
+        $this->registerService = new RegisterService;
+        $this->mailService = new MailService;
     }
 
     /*
      * GERER LA CONNEXION
      */
     public function index() {
-
-        $array = [
-            "username" => "",
-            "password" => "",
-            "error" => "",
-            "success" => "",
-            "isSuccess" => false,
-            "role" => ""
-        ];
-
-
-
         if ($this->isLogged()) {
             header('Location: ?c=index');
             exit();
         }
+
+        $array = [
+            "username"  => "",
+            "password"  => "",
+            "error"     => "",
+            "success"   => "",
+            "isSuccess" => false,
+            "role"      => ""
+        ];
+
         if ((isset($_GET['g'])) && $_GET['g'] == 'confirm') {
             $this->msg->success("Votre compte est activé !", 'index.php?c=login');
         } elseif (((isset($_GET['g'])) && $_GET['g'] == 'notvalid') && (isset($_GET['user']))) {
@@ -57,49 +65,17 @@ class LoginController extends Controller
             sleep(0.3);
             $ip = $_SERVER['REMOTE_ADDR'];
 
-
-
             if (empty($username) || empty($password)) {
                 $array["error"] = "Veuillez remplir les champs !";
                 $array["isSuccess"] = false;
             } elseif ($checkUser == false || !$checkPassword) {
-                $count = $this->securityModel->checkBruteForce($ip, $username);
-                if ($count < 3) {
-                    $this->securityModel->registerAttempt($ip, $username);
-                    $count += 1;
-                    if ($count < 2) {
-                        $array["error"] = 'identifiant ou mot de passe incorrect !Il vous reste '.(3 - $count).' tentatives';
-                        $array["isSuccess"] = false;
-                    } elseif ($count == 2) {
-                        $array["error"] = 'identifiant ou mot de passe incorrect !Il vous reste une tentative';
-                        $array["isSuccess"] = false;
-                    } else {
-                        $array["error"] = 'Nombre de tentatives atteintes! Vous pourrez essayer de vous reconnecter dans 24h.';
-                        $array["isSuccess"] = false;
-                    }
-                } elseif ($count == 3) {
-                    $attempts = $this->securityModel->getAttempts($ip);
-                    date_default_timezone_set('Europe/Paris');
-                    $now = strtotime(date("Y-m-d H:i:s"));
-                    $limitAttemptsDate = strtotime($attempts[2]['tried_at_plus_one_day']);
-                    if (isset($limitAttemptsDate)) {
-                        $diff = round(($limitAttemptsDate - $now)/3600);
-                        if ($diff > 0) {
-                            $array["error"] = 'Nombre de tentatives atteintes! Vous pourrez essayer de vous reconnecter dans '.$diff.'h.';
-                            $array["isSuccess"] = false;
-                        } else {
-                            $this->securityModel->deleteAttempts($ip);
-                            $this->securityModel->registerAttempt($ip, $username);
-                            $count = 1;
-                            $array["error"] = 'identifiant ou mot de passe incorrect !Il vous reste 2 tentatives';
-                        }
-                    }
-                }
+                $array = $this->loginService->checkAttempts($array, $ip, $username);
             } else {
                 $array["isSuccess"] = true;
                 if ($checkUser['roles'] == 1) {
                     $_SESSION['admin'] = $checkUser;
                     $array["role"] = 'admin';
+
                 } else {
                     $_SESSION['user'] = $checkUser;
                     $array["role"] = 'user';
@@ -114,11 +90,16 @@ class LoginController extends Controller
      * Metttre SMTP et port du FAI ds php.ini et utiliser PHPMailer
      */
     public function registration() {
+        if ($this->isLogged()) {
+            header('Location: ?c=index');
+            exit();
+        }
+
         $array = [
-            "email" => "",
-            "username" => "",
-            "password" => "",
-            "error" => "",
+            "email"     => "",
+            "username"  => "",
+            "password"  => "",
+            "error"     => "",
             "isSuccess" => false
         ];
 
@@ -130,42 +111,23 @@ class LoginController extends Controller
             $mailExist = $this->userModel->checkUserByEmail($email);
             $userExist = $this->userModel->checkUserByUsername($username);
             $token = $this->securityService->str_random(100);
-            // check if fields are empty
+
             if (empty($email) || empty($username) || empty($password) || empty($passwordCheck)) {
-                //echo "Tous les champs n'ont pas été remplis";
-                $array["error"] = "Veuillez remplir les champs !";
-                $array["isSuccess"] = false;
-            // check if passwords match
+                $array = $this->registerService->empty($array, $email, $username, $password, $passwordCheck);
             } elseif ($password != $passwordCheck) {
-                //echo 'Les mots de passe ne correspondent pas';
-                $array["error"] = "Les mots de passe ne correspondent pas !";
-                $array["isSuccess"] = false;
-            // check if mail exist
+                $array = $this->registerService->notEqualPasswords($array, $password, $passwordCheck);
             } elseif ($mailExist) {
-                //echo 'Adresse mail déjà utilisée';
-                $array["error"] = "Adresse mail déjà utilisée !";
-                $array["isSuccess"] = false;
-            // check if user exist
+                $array = $this->registerService->thisMailExist($array, $mailExist);
             } elseif ($userExist) {
-                //echo 'Pseudo déjà utilisé';
-                $array["error"] = "Pseudo déjà utilisé !";
-                $array["isSuccess"] = false;
+                $array = $this->registerService->thisUserExist($array, $userExist);
             } elseif (!preg_match('/^[a-zA-Z0-9_@#&é§è!çà^¨$*`£ù%=+:\;.,?°<>]+$/', $username)) {
-                //echo "Votre pseudo n'est pas valide";
-                $array["error"] = "Votre pseudo n'est pas valide !";
-                $array["isSuccess"] = false;
+                $array = $this->registerService->validUsername($array, $username);
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                //echo "Votre email n'est pas valide !";
-                $array["error"] = "Votre email n'est pas valide !";
-                $array["isSuccess"] = false;
+                $array = $this->registerService->validEmail($array, $email);
             } elseif (strlen($username) < 5  || strlen($username) > 20) {
-                //echo 'Votre pseudo doit faire entre 5 et 20 caractères !';
-                $array["error"] = "Votre pseudo doit faire entre 5 et 20 caractères !";
-                $array["isSuccess"] = false;
+                $array = $this->registerService->checkLengthUsername($array, $username);
             } elseif (strlen($password) < 6 || strlen($password) > 50) {
-                //echo 'Votre mot de passe doit faire entre 6 et 50 caractères !';
-                $array["error"] = "Votre mot de passe doit faire entre 6 et 50 caractères !";
-                $array["isSuccess"] = false;
+                $array = $this->registerService->checkLengthPassword($array, $password);
             } else {
                 date_default_timezone_set('Europe/Paris');
                 $password = password_hash($password, PASSWORD_ARGON2I);
@@ -181,55 +143,11 @@ class LoginController extends Controller
                     'banned'     => 0,
                     'avatar_id'  => 15
                 ];
-                if ($this->userModel->setUser($data)) {
-
-                    //On active la visibilité des erreurs SMTP
+                if ($this->userModel->setUser($data) == 'g') {
+                    $body = '<a href="http://localhost:8003/index.php?c=login&t=confirm&username='.$username.'&token='.$token.'">Lien</a>';
+                    $subject = 'Vérification de votre adresse mail';
                     try {
-                        $this->mail->SMTPDebug = 3;
-
-                        // On change certaines options du SSL
-                        $this->mail->SMTPOptions = [
-                            'ssl' => [
-                                'verify_peer' => false,
-                                'verify_peer_name' => false,
-                                'allow_self_signed' => true
-                            ]
-                        ];
-
-                        // On indique que l'on veut envoyer le mail via du SMTP
-                        $this->mail->isSMTP();
-
-                        // On indique notre serveur SMTP (local avec maildev)
-                        $this->mail->Host = 'smtp.free.fr';
-                        $this->mail->Port = 587;
-                        $this->mail->SMTPAuth = false;
-
-                        $this->mail->CharSet = 'UTF-8';
-
-                        // From
-                        $this->mail->setFrom('admin@free.fr', 'Admin du site');
-
-                        // To
-                        $this->mail->addAddress($email, explode('@', $email)[0]);
-
-                        // On défini notre mail en HTML
-                        $this->mail->isHTML(true);
-
-                        // Subject
-                        $this->mail->Subject = 'Vérification de votre adresse mail';
-
-                        // On va faire le rendu de notre mail mais on va
-                        // le stoquer pour le mettre dans le mail
-                        $this->mail->Body = '<a href="http://localhost:8003/index.php?c=login&t=confirm&username='.$username.'&token='.$token.'">Lien</a>';
-
-                        // On y mets la version sans html pour le mail texte
-                        $this->mail->AltBody = 'Version text sans html';
-
-                        // On envoie le mail
-                        ob_start();
-                        $this->mail->send();
-                        ob_end_clean();
-                        //header('Location: ?c=login&g=sentmail');
+                        $this->mailService->send($email, $body, $subject);
                         $array["isSuccess"] = true;
                     } catch (Exception $e) {
                         $array["error"] = "Un problème est survenu ! Le message n\'a pas pu être envoyé... ";
@@ -238,7 +156,7 @@ class LoginController extends Controller
                     exit();
                 } else {
                     $array["error"] = "Une erreur s'est produite";
-                        $array["isSuccess"] = false;
+                    $array["isSuccess"] = false;
                 }
             }
             echo json_encode($array);
@@ -252,7 +170,7 @@ class LoginController extends Controller
             session_unset();
             session_destroy();
         }
-        header('Location: ?c=home');
+        header('Location: index.php');
         exit();
     }
 
@@ -277,34 +195,13 @@ class LoginController extends Controller
         $username = strip_tags(htmlspecialchars($_GET['user']));
         $getUser = $this->userModel->getUserByUsernameOrEmail($username);
         $email = $getUser['email'];
-        //var_dump($username);
-        //var_dump($getUser['email']);
-        //die();
         $token = $this->securityService->str_random(100);
         $this->userModel->updateToken($username, $token);
+        $body = '<a href="http://localhost:8003/index.php?c=login&t=confirm&username='.$username.'&token='.$token.'">Lien</a>';
+        $subject = 'Vérification de votre adresse mail';
         try {
-            $this->mail->SMTPDebug = 3;
-            $this->mail->SMTPOptions = [
-                'ssl' => [
-                'verify_peer' => false,
-                'verify_peer_name' => false,
-                'allow_self_signed' => true
-                ]
-            ];
-            $this->mail->isSMTP();
-            $this->mail->Host = 'smtp.free.fr';
-            $this->mail->Port = 587;
-            $this->mail->SMTPAuth = false;
-            $this->mail->CharSet = 'UTF-8';
-            $this->mail->setFrom('admin@free.fr', 'Admin du site');
-            $this->mail->addAddress($email, explode('@', $email)[0]);
-            $this->mail->isHTML(true);
-            $this->mail->Subject = 'Vérification de votre adresse mail';
-            $this->mail->Body = '<a href="http://localhost:8003/index.php?c=login&t=confirm&username='.$username.'&token='.$token.'">Lien</a>';
-            $this->mail->AltBody = 'Version text sans html';
-            ob_start();
-            $this->mail->send();
-            ob_end_clean();
+            $this->mailService->send($email, $body, $subject);
+            $array["isSuccess"] = true;
             header('Location: ?c=login&g=sentmail');
         } catch (Exception $e) {
             $this->msg->error("Un problème est survenu ! Le message n\'a pas pu être envoyé... ");
@@ -316,33 +213,14 @@ class LoginController extends Controller
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $username = strip_tags(htmlspecialchars($_POST['username']));
             $getUser = $this->userModel->getUserByUsernameOrEmail($username);
+            $subject = 'Vérification de votre adresse mail';
+            $body = '<a href="?login&t=reset&username='.$username.'">Réinitialiser mon mot de passe</a>';
 
             if (empty($username)) {
                 $this->msg->error("Veuillez remplir le champ", $this->getUrl());
             } else {
                 try {
-                    $this->mail->SMTPDebug = 3;
-                    $this->mail->SMTPOptions = [
-                        'ssl' => [
-                        'verify_peer' => false,
-                        'verify_peer_name' => false,
-                        'allow_self_signed' => true
-                        ]
-                    ];
-                    $this->mail->isSMTP();
-                    $this->mail->Host = 'smtp.free.fr';
-                    $this->mail->Port = 587;
-                    $this->mail->SMTPAuth = false;
-                    $this->mail->CharSet = 'UTF-8';
-                    $this->mail->setFrom('admin@free.fr', 'Admin du site');
-                    $this->mail->addAddress($email, explode('@', $email)[0]);
-                    $this->mail->isHTML(true);
-                    $this->mail->Subject = 'Vérification de votre adresse mail';
-                    $this->mail->Body = '<a href="?login&t=reset&username='.$username.'">Réinitialiser mon mot de passe</a>';
-                    $this->mail->AltBody = 'Version text sans html';
-                    ob_start();
-                    $this->mail->send();
-                    ob_end_clean();
+                    $this->mailService->send($email, $body, $subject);
                     $this->msg->error("Un lien de réinitialisation de votre mot de passe vous a été envoyé par mail");
                 } catch (Exception $e) {
                     $this->msg->error("Un problème est survenu ! Le message n\'a pas pu être envoyé... ");
