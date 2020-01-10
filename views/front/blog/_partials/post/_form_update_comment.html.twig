@@ -1,0 +1,18 @@
+<form action="index.php?c=blogComment&t=updateComment" method="post">
+    <input type="hidden" name="user_id" value="{% if session.admin %}{{ session.admin.id }}{% elseif session.user %}{{ session.user.id }}{% endif %}">
+    <input type="hidden" name="comment_id" value="{{ comment.id }}">
+    <input type="hidden" name="post_id" value="{{ post.id }}">
+    <input type="hidden" name="user_id" value="{% if session.admin %}{{ session.admin.id }}{% elseif session.user %}{{ session.user.id }}{% endif %}">
+    <div>
+    <label for="content">Commentaire</label>
+    <br />
+    <textarea id="content" name="content">{{ comment.content }}</textarea>
+    </div>
+    <p class="text-center">Votre commentaire sera publié dans les plus brefs délais après modération</p>
+    <div class="text-center">
+    <input class="btn btn-default validate" type="submit" />
+    </div>
+    <div>
+    <input type="hidden" name="update_comment_token" id="update_comment_token" value="{{ update_comment_token }}" />
+    </div>
+</form>

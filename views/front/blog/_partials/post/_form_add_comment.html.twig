@@ -4,13 +4,13 @@
     <div>
     <label for="content">Commentaire</label>
     <br />
-    <textarea id="content" name="content"></textarea>
+    <textarea id="content" name="content" style="min-height: 130px;"></textarea>
     </div>
     <p class="text-center">Votre commentaire sera publié dans les plus brefs délais après modération</p>
     <div class="text-center">
-    <input class="btn btn-default validate" type="submit" />
+    <input class="btn btn-default validate" type="submit" style="width:auto;" />
     </div>
     <div>
-    <input type="hidden" name="add_comment_token" id="add_comment_token" value="{{ add_comment_token; }}" />
+    <input type="hidden" name="add_comment_token" id="add_comment_token" value="{{ add_comment_token }}" />
     </div>
 </form>

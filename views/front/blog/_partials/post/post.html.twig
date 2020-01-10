@@ -31,8 +31,23 @@
                         <div class="divide20"></div>
                     </div>
                 </div>
+
                 <div class="divide20"></div>
-                <div class="divide20"></div>
+                <div class="blog-posts">
+                    <div class="post box">
+                        <button id="addComment" class="btn">Ajouter un commentaire</<button></button>
+                        <div class="form-container" id="formAddComment" style="display:none;">
+                            <div class="response alert"></div>
+                            {{ message.display }}
+                            {% if session.user != null or session.admin != null %}
+                                {% include('front/blog/_partials/post/_form_add_comment.html.twig') %}
+                            {% else %}
+                                <p>Vous devez vous connecter ;-)</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="divide40"></div>
                 <div class="blog-posts" id="comments">
                     <div class="post box">
                             {% if comments|length == 0 %}
@@ -58,10 +73,21 @@
                                         {{ comment.published_at|date() }}
                                     </em>&nbsp;&nbsp;&nbsp;&nbsp;
                                         {% if ((session.admin.username == comment.username) or (session.user.username == comment.username)or (session.admin != null)) %}
-                                            <a href="#"> <i class="icon-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <a href="?c=comment&t=deleteComment&id={{ comment.id }}&postId={{ comment.post_id }}" data-toggle='confirmation' id="important_action"> <i class="icon-trash"></i></a>
+                                            <a href="" data-toggle="modal" data-target="#updateComment{{ comment.id }}" data-id="{{ comment.id }}"> <i class="icon-pencil"></i></a>
+                                            <form id="deleteComment" method="post" action="?c=blogComment&t=deleteComment" class="delete-form" style="display:inline-block;">
+                                              <button type="submit" class="btn btn-danger" onclick="return confirm('Confirmer la suppression ?');" style="border:none;margin-top: 7px;">
+                                                <i class="icon-trash" style="color: #9cbc68;"></i>
+                                              </button>
+                                              <input type="hidden" name="id" id="id" value="{{ comment.id }}" />
+                                              <input type="hidden" name="postId" id="postId" value="{{ comment.post_id }}" />
+                                              <input type="hidden" name="userId" id="userId" value="{% if session.admin %}{{ session.admin.id }}{% else %}{{ session.user.id }}{% endif %}" />
+                                              <input type="hidden" name="delete_comment_token" id="delete_comment_token" value="{{ delete_comment_token }}" />
+                                            </form>
+                                            <!--<a href="?c=blogComment&t=deleteComment&id={{ comment.id }}&postId={{ comment.post_id }}&userId={% if session.admin %}{{ session.admin.id }}{% else %}{{ session.user.id }}{% endif %}" data-toggle='confirmation' id="important_action"> <i class="icon-trash"></i></a>-->
+                                            {% include('front/blog/_partials/post/_modal_update_comment.html.twig') %}
                                         {% endif %}
                                 </div>
+                                <div class="divide40"></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-1 col-sm-1 col-xs-2">
@@ -72,12 +98,13 @@
                                     </p>
                                 </div>
                             </div>
+                            <div class="divide10"></div>
                             <div class="row">
                                 <div class="col-md-1 col-sm-1 col-xs-2">
                                 </div>
                                 <div class="col-md-11 col-sm-11 col-xs-10">
-                                    <button id="show"><i class="icon-reply"></i> Répondre </button>&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <a href=""> Réponses (2) </a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <button id="show" class="btn btn-default" style="border:none;margin-top:9px;color: #9cbc68 !important;"><i class="icon-reply"></i> Répondre </button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a href=""> Réponses (0) </a>&nbsp;&nbsp;&nbsp;&nbsp;
                                     <a href=""> <i class="budicon-alert"></i> Signaler</a>&nbsp;&nbsp;&nbsp;&nbsp;
                                     <a href="?c=comment&t=likes"><i class="icon-thumbs-up"></i> {{ comment.likes }}</a>&nbsp;&nbsp;&nbsp;
                                     <a href=""><i class="icon-thumbs-down"></i> {{ comment.dislikes }}</a>
@@ -101,7 +128,7 @@
                                                     <em style="font-weight: 200">le
                                                         {# subcomment.published_at|date() #}
                                                     </em>&nbsp;&nbsp;&nbsp;&nbsp;
-                                                        {% if ((session.admin.username == subcomment.username) or (session.user.username == comment.username)or (session.admin != null)) %}
+                                                        {% if ((session.admin.username == subcomment.username) or (session.user.username == comment.username) or (session.admin != null)) %}
                                                             <a href="#"> <i class="icon-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
                                                             <a href="#" data-toggle='confirmation' id="important_action"> <i class="icon-trash"></i></a>
                                                         {% endif %}
@@ -129,22 +156,6 @@
                             {% endfor %}
                     </div>
                 </div>
-                <div class="divide20"></div>
-                <div class="blog-posts">
-                    <div class="post box">
-                        <button id="addComment">Ajouter un commentaire</<button></button>
-                        <div class="form-container" id="formAddComment" style="display:none;">
-                            <div class="response alert"></div>
-                            {{ message.display }}
-                            {% if session.user != null or session.admin != null %}
-                                {% include('front/blog/_partials/post/_form_add_comment.html.twig') %}
-                            {% else %}
-                                <p>Vous devez vous connecter ;-)</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                <div class="divide60"></div>
             </div>
                 {{ include('front/blog/_partials/aside/index.html.twig')}}
             </div>

@@ -47,6 +47,15 @@ class Comment extends Model
         return $req->execute();
     }
 
+    public function updateComment($data) {
+        $req = $this->db->prepare('UPDATE comment
+            SET content = :content
+            WHERE id = :id');
+        $req->bindParam(':id', $data['comment_id'], \PDO::PARAM_INT);
+        $req->bindParam(':content', $data['content'], \PDO::PARAM_LOB);
+        return $req->execute();
+    }
+
     /**
      * RECUPERER UN COMMENTAIRE AVEC SON ID
      */
@@ -54,7 +63,7 @@ class Comment extends Model
         $req = $this->db->prepare('
             SELECT c.id, c.content, c.post_id, c.published_at, c.validated, s.id as sub_id, s.content as sub_content, s.published_at as sub_published_at, s.validated as sub_validated, s.post_id as sub_post_id
             FROM comment c
-            INNER JOIN subcomment s ON c.id = s.comment_id
+            LEFT JOIN subcomment s ON c.id = s.comment_id
             WHERE c.id = :id');
         $req->bindValue(':id', $id, \PDO::PARAM_INT);
         $req->execute();

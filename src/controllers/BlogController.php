@@ -58,6 +58,7 @@ class BlogController extends Controller
         $tags = $this->tagModel->getAllTags();
         $links = $this->linkModel->getAllLinks();
         $sublinks = $this->linkModel->getAllSublinks();
+        $id = "";
         $tags_per_post = $this->blogModel->getTagsPerPost($id);
 
         $data = [
@@ -107,6 +108,7 @@ class BlogController extends Controller
                 $populars = $this->blogModel->getMostSeens();
                 $links = $this->linkModel->getAllLinks();
                 $sublinks = $this->linkModel->getAllSublinks();
+                $id = '';
                 $tags_per_post = $this->blogModel->getTagsPerPost($id);
                 if ($this->isLogged()) {
                     $comments = $this->commentModel->getVerifiedCommentsByPostId($post['id']);
@@ -121,7 +123,7 @@ class BlogController extends Controller
                     'categories'        => $categories,
                     'tags'              => $tags,
                     'populars'          => $populars,
-                    'subcomments'       => $subcomments,
+                    //'subcomments'       => $subcomments,
                     'links'             => $links,
                     'sublinks'          => $sublinks,
                     'tags_per_post'     => $tags_per_post,

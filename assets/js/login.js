@@ -1,5 +1,22 @@
 $(function() {
-
+    // Fermer toute alerte en même temps que la fermeture de la modale
+    $('#connexion').on('hidden.bs.modal', function (e) {
+        $('#alert').hide();
+    });
+    // Fermer toute alerte à l'ouverture de la modale
+    $("#connexion").on('show.bs.modal', function () {
+        $('#alert').hide();
+    });
+    // Fermer l'alerte en cliquant sur la croix
+    $('.close').on('click', function(e){
+        $('#alert').hide();
+    });
+    $("#connexion").on('show.bs.modal', function () {
+        $('#success').hide();
+    });
+    $("#lien_inscription").on('click', function(e){
+        $('#connexion').modal('hide');
+    });
     $(".p-viewer").on('click', function() {
       var state = $('.fa').attr('class');
       if (state == 'fa fa-eye') {

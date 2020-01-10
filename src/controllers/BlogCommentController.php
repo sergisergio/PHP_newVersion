@@ -73,6 +73,7 @@ class BlogCommentController extends Controller
                         } else {
                             $this->msg->error("Le commentaire n'a pas pu être ajouté", $this->getUrl(true));
                         }
+                    }
                 } else {
                     $this->redirect404();
                 }
@@ -83,6 +84,42 @@ class BlogCommentController extends Controller
             $this->redirect404();
         }
     }
+
+    public function updateComment() {
+        $id = $_POST['comment_id'];
+        $postId = $_POST['post_id'];
+        $userId = $_POST['user_id'];
+        $user = $this->userModel->getUserById($id);
+        $content = $_POST['content'];
+
+        $data = [
+            'user_id'   => $userId,
+            'post_id'   => $postId,
+            'content'   => $content,
+            'comment_id' => $id,
+            'validated' => 1
+            ];
+
+        //if ($this->securityService->checkCsrf($token, $session_token)) {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                if (empty($content) || empty($id) || empty($postId)) {
+                    echo 'champs vides';
+                    //$this->msg->error("Tous les champs n'ont pas été remplis", $this->getUrl(true) .'#comments-notification');
+                } elseif (strlen($content) > 250) {
+                    $this->msg->error("Le commentaire fait plus de 250 caractères", $this->getUrl(true));
+                } else {
+                    if ($this->commentModel->updateComment($data)) {
+                        //$this->blogModel->addNumberComment($data['post_id']);
+                        $this->msg->warning("Commentaire en attente de validation", $this->getUrl(true));
+                    } else {
+                        //$this->msg->error("Le commentaire n'a pas pu être ajouté", $this->getUrl(true));
+                    }
+                }
+            } else {
+                $this->redirect404();
+            }
+        //}
+    }
     /**
      * SUPPRIMER UN COMMENTAIRE
      *
@@ -92,10 +129,19 @@ class BlogCommentController extends Controller
      * - TOKEN CSRF A FAIRE
      */
     public function deleteComment() {
-        if ($_SERVER['REQUEST_METHOD'] == 'GET' && !empty($_GET['id']) && $comment = $this->commentModel->getCommentById($_GET['id'], $_GET['postId'])) {
-            $this->commentModel->deleteComment($comment[0]['id']);
-            $this->blogModel->minusNumberComment($_GET['postId']);
-            $this->msg->success('Le commentaire a été supprimé !', $this->getUrl(true).'#comments');
+        $id = $_POST['id'];
+        $postId = $_POST['postId'];
+        $userId = $_POST['userId'];
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if (!empty($id) && $comment = $this->commentModel->getCommentById($id)) {
+                if ($comment[0]['post_id'] == $postId) {
+                    if (($userId == $_SESSION['admin']['id']) || ($userId == $_SESSION['user']['id'])) {
+                        $this->commentModel->deleteComment($id);
+                        $this->blogModel->minusNumberComment($postId);
+                        $this->msg->warning("Commentaire en attente de validation", $this->getUrl(true));
+                    }
+                }
+            }
         } else {
             $this->msg->error('Le commentaire n\'a pas pu été supprimé.', $this->getUrl(true));
         }
