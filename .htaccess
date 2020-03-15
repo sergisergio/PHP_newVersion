@@ -5,7 +5,7 @@ Options +FollowSymlinks -MultiViews
 <IfModule mod_rewrite.c>
 # Activation du mod rewrite d'Apache
 RewriteEngine On
-RewriteBase /newVersion/
+RewriteBase /
 
 # Options -Indexes
 
@@ -16,12 +16,16 @@ RewriteBase /newVersion/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
+# Réécriture de index.html vers index.php
+RewriteRule ^index\.html$ index.php [L]
 # Réécriture de l'URL principale
 RewriteRule ^index.php/accueil$ index.php [QSA,L]
 # Réécriture de l'URL du blog
 RewriteRule ^blog$ index.php?c=blog [QSA,L]
 # Réécriture de l'URL de la partie admin
-RewriteRule ^admin$ index.php?c=admin [QSA,L]
+RewriteRule ^admin$ index.php?c=adminDashboard&page=1 [QSA,L]
+
+RewriteRule ^blog/(.*)/(.*)$ index.php?c=blog&v=$1&page=$2 [NC,L]
 
 </IfModule>
 
